@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
+  // حارس الترطيب القياسي في next-themes لتفادي عدم تطابق SSR — استثناء مقصود
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   React.useEffect(() => setMounted(true), []);
 
   const isDark = theme !== "light";
