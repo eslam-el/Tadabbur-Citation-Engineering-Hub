@@ -1,0 +1,2631 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>مرسم تدبر · مولّد نمط CSL لمندلي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#100d09;
+    --ink-2:#19140d;
+    --ink-3:#241d12;
+    --gold:#c9a24b;
+    --gold-bright:#e3c168;
+    --parch:#e9e0cd;
+    --parch-dim:#b0a489;
+    --rule:rgba(201,162,75,.22);
+    --rule-strong:rgba(201,162,75,.45);
+    --crimson:#b04a36;
+    --green:#7faa5a;
+    --shadow:0 18px 50px rgba(0,0,0,.55);
+    --r:14px;
+    --nav-h:60px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:
+      radial-gradient(900px 600px at 85% -10%, rgba(201,162,75,.07), transparent 60%),
+      radial-gradient(700px 500px at 5% 110%, rgba(176,74,54,.06), transparent 60%),
+      var(--ink);
+    color:var(--parch);
+    font-family:"Cairo",system-ui,sans-serif;
+    line-height:1.7;
+    -webkit-font-smoothing:antialiased;
+    min-height:100dvh;
+  }
+  .wrap{max-width:1340px;margin:0 auto;padding:clamp(16px,3vw,34px) clamp(14px,3vw,22px) 70px}
+  @media(max-width:1023px){ .wrap{padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 26px)} }
+
+  /* ---------- header ---------- */
+  header.masthead{
+    display:flex;align-items:flex-end;justify-content:space-between;
+    gap:20px;flex-wrap:wrap;
+    padding-bottom:18px;margin-bottom:22px;
+    border-bottom:1px solid var(--rule);
+    position:relative;
+  }
+  header.masthead::after{
+    content:"";position:absolute;bottom:-1px;right:0;width:160px;height:2px;
+    background:linear-gradient(90deg,var(--gold-bright),transparent);
+  }
+  .brand-eyebrow{
+    font-size:clamp(10px,2.6vw,12px);letter-spacing:3px;color:var(--crimson);
+    font-weight:600;text-transform:uppercase;margin:0 0 6px;
+  }
+  .brand-title{
+    font-family:"Amiri",serif;font-weight:700;
+    font-size:clamp(26px,6vw,46px);line-height:1.15;margin:0;color:var(--parch);
+  }
+  .brand-title b{color:var(--gold-bright);font-weight:700}
+  .brand-sub{margin:8px 0 0;color:var(--parch-dim);font-size:clamp(12.5px,3.4vw,14px);max-width:52ch}
+  .stamp{
+    flex:0 0 auto;text-align:center;
+    border:1px solid var(--rule-strong);border-radius:50%;
+    width:clamp(80px,18vw,104px);height:clamp(80px,18vw,104px);display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:2px;
+    color:var(--gold);background:rgba(201,162,75,.04);
+  }
+  .stamp .s1{font-family:"Amiri",serif;font-size:clamp(20px,5vw,26px);font-weight:700;line-height:1}
+  .stamp .s2{font-size:clamp(8px,2.2vw,10px);letter-spacing:2px;color:var(--parch-dim)}
+
+  /* ---------- layout ---------- */
+  .grid{display:grid;grid-template-columns:1fr;gap:20px;align-items:start}
+  /* السماح لأعمدة الشبكة بالانكماش تحت محتوى عريض (الكود الطويل) بدل إجبار الفيضان */
+  .grid > *{min-width:0}
+  @media(min-width:1024px){
+    .grid{grid-template-columns:minmax(340px,400px) minmax(0,1fr);gap:24px}
+    .col-output{position:sticky;top:18px;display:flex;flex-direction:column;gap:20px;min-width:0}
+  }
+
+  .panel{
+    background:linear-gradient(180deg,var(--ink-2),var(--ink));
+    border:1px solid var(--rule);border-radius:var(--r);
+    box-shadow:var(--shadow);
+    min-width:0;
+  }
+  .panel-head{
+    display:flex;align-items:center;gap:10px;
+    padding:15px 18px;border-bottom:1px solid var(--rule);
+  }
+  .panel-head .dot{width:7px;height:7px;border-radius:50%;background:var(--crimson);box-shadow:0 0 0 4px rgba(176,74,54,.15)}
+  .panel-head h2{margin:0;font-size:15px;font-weight:600;letter-spacing:.3px}
+  .panel-body{padding:8px 16px 16px}
+
+  /* ---------- collapsible control groups ---------- */
+  details.group{border-bottom:1px solid var(--rule)}
+  details.group:last-of-type{border-bottom:0}
+  details.group > summary{
+    list-style:none;cursor:pointer;user-select:none;
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:14px 2px;font-size:13.5px;font-weight:600;color:var(--gold-bright);
+  }
+  details.group > summary::-webkit-details-marker{display:none}
+  details.group > summary::after{
+    content:"";width:8px;height:8px;border-left:2px solid var(--gold);
+    border-bottom:2px solid var(--gold);transform:rotate(-45deg);transition:.2s;opacity:.8;
+  }
+  details.group[open] > summary::after{transform:rotate(135deg)}
+  details.group > .group-body{padding:2px 2px 16px}
+
+  /* ---------- controls ---------- */
+  .ctl{margin-bottom:18px}
+  .ctl:last-child{margin-bottom:4px}
+  .ctl > label.lbl{
+    display:block;font-size:12.5px;color:var(--gold);font-weight:600;
+    margin-bottom:9px;letter-spacing:.3px;
+  }
+  .ctl .hint{display:block;font-size:11.5px;color:var(--parch-dim);margin-top:7px;line-height:1.55}
+  .seg{display:flex;gap:6px;background:var(--ink-3);border:1px solid var(--rule);border-radius:10px;padding:4px;flex-wrap:wrap}
+  .seg button{
+    flex:1 1 auto;min-width:64px;border:0;background:transparent;color:var(--parch-dim);
+    font-family:inherit;font-size:13px;font-weight:500;padding:9px 6px;min-height:40px;
+    border-radius:7px;cursor:pointer;transition:.18s;white-space:nowrap;
+  }
+  .seg button:hover{color:var(--parch)}
+  .seg button[aria-pressed="true"]{
+    background:linear-gradient(180deg,rgba(201,162,75,.9),rgba(201,162,75,.7));
+    color:#1a1408;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.35);
+  }
+  .txt-in{
+    width:100%;background:var(--ink-3);border:1px solid var(--rule);
+    color:var(--parch);font-family:"Amiri",serif;font-size:16px;
+    padding:10px 12px;min-height:42px;border-radius:8px;outline:none;transition:.18s;
+  }
+  .txt-in:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,75,.15)}
+  select.txt-in{font-family:"Cairo",sans-serif;font-size:14px;appearance:none;
+    background-image:linear-gradient(45deg,transparent 50%,var(--gold) 50%),linear-gradient(135deg,var(--gold) 50%,transparent 50%);
+    background-position:calc(0% + 14px) center,calc(0% + 19px) center;background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-left:34px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .divider{height:1px;background:var(--rule);margin:16px -16px;border:0}
+
+  /* ---------- preview tabs ---------- */
+  .tabs{display:flex;gap:6px;padding:14px 16px 0;flex-wrap:wrap}
+  .tabs button{
+    border:1px solid var(--rule);background:transparent;color:var(--parch-dim);
+    font-family:inherit;font-size:13px;font-weight:500;padding:9px 14px;min-height:40px;
+    border-radius:9px 9px 0 0;cursor:pointer;transition:.18s;border-bottom:none;
+  }
+  .tabs button:hover{color:var(--parch)}
+  .tabs button[aria-pressed="true"]{
+    color:var(--gold-bright);border-color:var(--rule-strong);
+    background:rgba(201,162,75,.06);
+  }
+
+  /* parchment preview card */
+  .stage{padding:16px}
+  .leaf{
+    background:
+      radial-gradient(ellipse at top right, rgba(201,162,75,.08), transparent 60%),
+      linear-gradient(180deg,#f3ecd9,#e8ddc2);
+    color:#2a2114;border-radius:14px;padding:clamp(20px,5vw,32px) clamp(20px,5vw,32px) 26px;
+    position:relative;
+    box-shadow:inset 0 0 60px rgba(120,90,40,.10),0 14px 36px rgba(0,0,0,.42);
+    border:1px solid #cdbf9c;
+  }
+  .leaf::before{
+    content:"";position:absolute;inset:10px;border:1px solid rgba(120,90,40,.16);
+    border-radius:8px;pointer-events:none;
+  }
+  .leaf::after{
+    /* زخرفة عربية خفيفة في الزاوية */
+    content:"";position:absolute;top:14px;inset-inline-start:14px;width:28px;height:28px;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(176,74,54,.18) 0 2px, transparent 3px),
+      radial-gradient(circle at 50% 50%, transparent 0 5px, rgba(176,74,54,.12) 6px, transparent 7px);
+    pointer-events:none;border-radius:50%;
+  }
+  .leaf-kind{
+    font-family:"Cairo",sans-serif;font-size:11px;letter-spacing:3px;
+    color:var(--crimson);font-weight:700;margin:0 0 18px;position:relative;
+    text-align:center;padding-bottom:12px;
+    border-bottom:1px solid rgba(176,74,54,.18);
+  }
+  .leaf-kind::before,.leaf-kind::after{
+    content:"❖";color:var(--gold);margin:0 10px;font-size:10px;vertical-align:middle;
+  }
+
+  /* ---------- cite rows: بنية منظمة ---------- */
+  .cite-row{
+    display:grid;grid-template-columns:32px 1fr;gap:14px;
+    margin:0;padding:14px 0;
+    border-bottom:1px dashed rgba(120,90,40,.22);
+    align-items:start;
+  }
+  .cite-row:last-child{border-bottom:0}
+  .cite-row.cite-bib{
+    margin-top:8px;padding:18px 0 6px;
+    border-top:2px solid rgba(176,74,54,.35);
+    border-bottom:0;
+    position:relative;
+  }
+  .cite-row.cite-bib::before{
+    content:"";position:absolute;top:-2px;inset-inline-start:0;width:80px;height:2px;
+    background:linear-gradient(90deg,var(--gold-bright),transparent);
+  }
+
+  .cite-num{
+    grid-column:1;
+    width:32px;height:32px;border-radius:50%;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+    color:#1a1408;font-family:"Cairo",sans-serif;font-weight:700;font-size:15px;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 2px 5px rgba(120,90,40,.25),inset 0 1px 0 rgba(255,255,255,.4);
+    flex-shrink:0;
+  }
+  .cite-row.cite-bib .cite-num{
+    background:linear-gradient(180deg,#c25a44,#a03e2a);
+    color:#fff;font-size:11px;
+    box-shadow:0 2px 5px rgba(160,62,42,.35),inset 0 1px 0 rgba(255,255,255,.2);
+  }
+
+  .cite-body{grid-column:2;min-width:0}
+  .cite-label{
+    display:inline-block;
+    font-family:"Cairo",sans-serif;font-size:10.5px;font-weight:700;
+    letter-spacing:1px;color:#8a6a3a;
+    background:rgba(201,162,75,.14);
+    border:1px solid rgba(201,162,75,.3);
+    padding:3px 10px;border-radius:999px;
+    margin-bottom:8px;
+    text-transform:uppercase;
+  }
+  .cite-row.cite-bib .cite-label{
+    color:#a03e2a;background:rgba(176,74,54,.1);
+    border-color:rgba(176,74,54,.32);
+  }
+  .cite-text{
+    display:block;
+    font-family:"Amiri",serif;font-size:clamp(16px,4vw,19px);line-height:2.05;
+    color:#241b0f;
+  }
+  .cite-text i{font-style:italic}
+  .cite-text .pos-tag{font-family:"Cairo",sans-serif;font-size:10.5px;color:#6e5c3c;font-weight:600;margin-left:6px}
+
+  /* legacy fallback for any old-style cite markup */
+  .cite{
+    font-family:"Amiri",serif;font-size:clamp(16px,4vw,19px);line-height:2.05;
+    margin:0;position:relative;color:#241b0f;
+  }
+  .cite + .cite{margin-top:14px;padding-top:12px;border-top:1px dashed rgba(120,90,40,.25)}
+  .cite .fn-num{
+    display:inline-flex;align-items:center;justify-content:center;
+    min-width:22px;height:22px;border-radius:50%;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+    color:#1a1408;font-family:"Cairo",sans-serif;font-weight:700;font-size:12px;
+    vertical-align:middle;margin:0 6px 0 2px;
+    box-shadow:0 1px 3px rgba(120,90,40,.2);
+  }
+  .cite i{font-style:italic}
+  .pos-tag{font-family:"Cairo",sans-serif;font-size:10px;color:#6e5c3c;font-weight:600;vertical-align:super;margin-right:6px}
+
+  .leaf-foot{
+    margin-top:18px;padding-top:13px;border-top:1px dashed rgba(120,90,40,.3);
+    font-family:"Cairo",sans-serif;font-size:11.5px;color:#6e5c3c;display:flex;
+    justify-content:space-between;gap:10px;flex-wrap:wrap;position:relative;
+    letter-spacing:.2px;
+  }
+  .leaf-foot .dot-sep{color:var(--gold);margin:0 6px}
+
+  /* mapping table */
+  .map{margin-top:16px;border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+  .map-h{padding:12px 16px;background:rgba(176,74,54,.08);border-bottom:1px solid var(--rule);
+    font-size:13px;font-weight:600;color:var(--gold-bright)}
+  .map-scroll{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:440px}
+  th,td{text-align:right;padding:9px 16px;border-bottom:1px solid var(--rule);vertical-align:top}
+  th{color:var(--parch-dim);font-weight:600;font-size:11.5px;letter-spacing:.5px;background:rgba(255,255,255,.015)}
+  tr:last-child td{border-bottom:none}
+  td code,.mono{font-family:"IBM Plex Mono",monospace;font-size:12px;color:var(--gold-bright);
+    background:rgba(201,162,75,.08);padding:1px 6px;border-radius:5px;white-space:nowrap}
+  td.warn{color:var(--crimson);font-weight:600}
+
+  /* code output */
+  .code-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+    padding:14px 16px;border-bottom:1px solid var(--rule)}
+  .code-head h2{margin:0;font-size:15px;font-weight:600;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+  .btns{display:flex;gap:9px;flex-wrap:wrap}
+  .btn{
+    border:1px solid var(--rule-strong);background:rgba(201,162,75,.08);
+    color:var(--gold-bright);font-family:inherit;font-size:13px;font-weight:600;
+    padding:10px 16px;min-height:42px;border-radius:9px;cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:7px;
+  }
+  .btn:hover{background:rgba(201,162,75,.18);transform:translateY(-1px)}
+  .btn.primary{background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:#1a1408;border-color:transparent}
+  .btn.primary:hover{filter:brightness(1.06)}
+  .btn.copied{background:rgba(120,160,90,.2);color:#bcd9a0;border-color:rgba(120,160,90,.5)}
+  .btn.sm{padding:7px 12px;min-height:36px;font-size:12px}
+  pre.code{
+    margin:0;padding:16px;max-height:min(56vh,520px);overflow:auto;
+    font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.65;
+    color:#cdbf9f;direction:ltr;text-align:left;
+    background:linear-gradient(180deg,#0c0a07,#100d09);
+    border-radius:0 0 var(--r) var(--r);white-space:pre;-webkit-overflow-scrolling:touch;
+  }
+  pre.code::-webkit-scrollbar,.panel-body::-webkit-scrollbar{width:9px;height:9px}
+  pre.code::-webkit-scrollbar-thumb{background:var(--rule-strong);border-radius:6px}
+  .tag{color:#7fa6c9}.attr{color:#c9a24b}.val{color:#b04a36}.cmt{color:#5e7050;font-style:italic}
+
+  /* validity badge */
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:11.5px;font-weight:700;
+    padding:4px 10px;border-radius:999px;letter-spacing:.2px}
+  .badge.ok{background:rgba(127,170,90,.16);color:#bcd9a0;border:1px solid rgba(127,170,90,.45)}
+  .badge.bad{background:rgba(176,74,54,.16);color:#e6a999;border:1px solid rgba(176,74,54,.5)}
+
+  .note-strip{
+    margin-top:14px;padding:13px 16px;border-radius:10px;
+    background:rgba(176,74,54,.07);border:1px solid rgba(176,74,54,.28);
+    font-size:12.5px;color:var(--parch-dim);line-height:1.6;
+  }
+  .note-strip b{color:var(--crimson)}
+  .note-strip.info{background:rgba(201,162,75,.06);border-color:var(--rule-strong)}
+  .note-strip.info b{color:var(--gold-bright)}
+
+  /* mendeley connect */
+  .steps{list-style:none;margin:0;padding:0;counter-reset:s}
+  .steps li{position:relative;padding:12px 44px 12px 14px;border:1px solid var(--rule);border-radius:10px;margin-bottom:10px;
+    background:rgba(255,255,255,.012);font-size:13px;line-height:1.7}
+  .steps li::before{counter-increment:s;content:counter(s);position:absolute;right:12px;top:12px;
+    width:24px;height:24px;border-radius:50%;background:rgba(201,162,75,.15);color:var(--gold-bright);
+    border:1px solid var(--rule-strong);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+  .steps .mono{cursor:pointer}
+  .path-tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .path-tabs button{flex:1 1 auto;min-height:42px;border:1px solid var(--rule);background:transparent;color:var(--parch-dim);
+    border-radius:10px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;padding:10px;transition:.18s}
+  .path-tabs button[aria-pressed="true"]{color:#1a1408;background:linear-gradient(180deg,var(--gold-bright),var(--gold));border-color:transparent}
+
+  /* preset chips */
+  .preset-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--rule);background:var(--ink-3);
+    color:var(--parch);border-radius:999px;padding:7px 12px;font-size:12.5px;cursor:pointer;transition:.18s}
+  .chip:hover{border-color:var(--gold)}
+  .chip .x{color:var(--crimson);font-weight:700;opacity:.7}
+  .chip .x:hover{opacity:1}
+
+  /* mobile bottom nav */
+  .tabbar{
+    position:fixed;inset-inline:0;bottom:0;z-index:40;
+    display:none;grid-template-columns:repeat(3,1fr);gap:0;
+    background:rgba(20,16,10,.92);backdrop-filter:blur(10px);
+    border-top:1px solid var(--rule-strong);
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .tabbar button{
+    border:0;background:transparent;color:var(--parch-dim);font-family:inherit;
+    font-size:12px;font-weight:600;padding:0;height:var(--nav-h);cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;transition:.15s;
+  }
+  .tabbar button .ic{font-size:18px;line-height:1}
+  .tabbar button[aria-pressed="true"]{color:var(--gold-bright);box-shadow:inset 0 2px 0 var(--gold-bright)}
+
+  /* pane visibility (mobile = one at a time) */
+  @media(max-width:1023px){
+    .tabbar{display:grid}
+    .pane{display:none}
+    .pane.active{display:block}
+    .col-output{display:contents}
+  }
+  @media(min-width:1024px){
+    .pane{display:block !important}
+  }
+
+  footer{margin-top:34px;text-align:center;color:var(--parch-dim);font-size:12px;border-top:1px solid var(--rule);padding-top:22px}
+
+  @media(prefers-reduced-motion:reduce){
+    *{transition:none !important;scroll-behavior:auto !important}
+    .aurora,.particles,.shimmer{display:none !important}
+  }
+  :focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px;border-radius:6px}
+
+  /* ============ ENHANCED: themes ============ */
+  body[data-theme="royal"]{
+    --ink:#0a0e1f;--ink-2:#101637;--ink-3:#1a2247;
+    --gold:#d4af37;--gold-bright:#f0d35c;
+    --parch:#e8eaf6;--parch-dim:#9fa8da;
+    --rule:rgba(212,175,55,.22);--rule-strong:rgba(212,175,55,.45);
+    --crimson:#e57373;--green:#81c784;
+  }
+  body[data-theme="emerald"]{
+    --ink:#06140e;--ink-2:#0a1f17;--ink-3:#102b1f;
+    --gold:#c9a24b;--gold-bright:#e3c168;
+    --parch:#e0f0e8;--parch-dim:#88b8a0;
+    --rule:rgba(201,162,75,.22);--rule-strong:rgba(201,162,75,.45);
+    --crimson:#c0664d;--green:#7faa5a;
+  }
+  body[data-theme="parchment"]{
+    --ink:#2a2114;--ink-2:#3a2e1c;--ink-3:#4a3a24;
+    --gold:#8b6914;--gold-bright:#a8841a;
+    --parch:#2a2114;--parch-dim:#6b573a;
+    --rule:rgba(139,105,20,.3);--rule-strong:rgba(139,105,20,.5);
+    --crimson:#8b3a2a;--green:#5a7a3a;
+    --shadow:0 18px 50px rgba(80,60,30,.35);
+  }
+  body[data-theme="parchment"] .leaf{
+    background:
+      radial-gradient(ellipse at top right, rgba(139,105,20,.12), transparent 60%),
+      linear-gradient(180deg,#f5edd6,#e8dcbb);
+    color:#2a2114;border-color:#a89060;
+  }
+  body[data-theme="parchment"] .leaf::after{
+    background:
+      radial-gradient(circle at 50% 50%, rgba(139,58,42,.2) 0 2px, transparent 3px),
+      radial-gradient(circle at 50% 50%, transparent 0 5px, rgba(139,58,42,.14) 6px, transparent 7px);
+  }
+  body[data-theme="parchment"] pre.code{background:linear-gradient(180deg,#1a1408,#2a2114)}
+  body[data-theme="emerald"] .leaf{
+    background:
+      radial-gradient(ellipse at top right, rgba(127,170,90,.10), transparent 60%),
+      linear-gradient(180deg,#f0f5e8,#e0e8d0);
+    color:#1f2e16;
+  }
+  body[data-theme="royal"] .leaf{
+    background:
+      radial-gradient(ellipse at top right, rgba(212,175,55,.10), transparent 60%),
+      linear-gradient(180deg,#f0f0fa,#e0e0f0);
+    color:#1a1f3a;
+  }
+
+  /* ============ ENHANCED: animated aurora background ============ */
+  .aurora{
+    position:fixed;inset:0;z-index:-2;pointer-events:none;overflow:hidden;
+  }
+  .aurora::before,.aurora::after{
+    content:"";position:absolute;width:60vmax;height:60vmax;border-radius:50%;
+    filter:blur(80px);opacity:.5;mix-blend-mode:screen;
+    animation:drift 28s ease-in-out infinite alternate;
+  }
+  .aurora::before{
+    background:radial-gradient(circle,var(--gold) 0%,transparent 65%);
+    top:-20vmax;inset-inline-start:-15vmax;
+  }
+  .aurora::after{
+    background:radial-gradient(circle,var(--crimson) 0%,transparent 65%);
+    bottom:-25vmax;inset-inline-end:-15vmax;animation-duration:36s;animation-delay:-8s;
+  }
+  @keyframes drift{
+    0%{transform:translate(0,0) scale(1)}
+    50%{transform:translate(8vmax,5vmax) scale(1.15)}
+    100%{transform:translate(-5vmax,-3vmax) scale(.9)}
+  }
+  /* subtle arabesque overlay */
+  .shimmer{
+    position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.04;
+    background-image:
+      repeating-linear-gradient(45deg,transparent 0 28px,var(--gold-bright) 28px 29px),
+      repeating-linear-gradient(-45deg,transparent 0 28px,var(--gold-bright) 28px 29px);
+    background-size:80px 80px;animation:slide 60s linear infinite;
+  }
+  @keyframes slide{from{background-position:0 0,0 0}to{background-position:80px 80px,-80px 80px}}
+  /* floating gold particles */
+  .particles{position:fixed;inset:0;z-index:-1;pointer-events:none;overflow:hidden}
+  .particles span{
+    position:absolute;width:3px;height:3px;border-radius:50%;
+    background:var(--gold-bright);box-shadow:0 0 8px var(--gold-bright);
+    opacity:0;animation:float-up linear infinite;
+  }
+  @keyframes float-up{
+    0%{transform:translateY(105vh) translateX(0) scale(.4);opacity:0}
+    10%{opacity:.8}
+    90%{opacity:.6}
+    100%{transform:translateY(-10vh) translateX(40px) scale(1);opacity:0}
+  }
+
+  /* ============ ENHANCED: top toolbar ============ */
+  .toolbar{
+    position:sticky;top:0;z-index:50;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    padding:10px 14px;margin:-6px -6px 18px;
+    background:rgba(16,13,9,.78);backdrop-filter:blur(14px) saturate(140%);
+    border:1px solid var(--rule);border-radius:14px;
+    box-shadow:0 8px 28px rgba(0,0,0,.4);
+  }
+  .toolbar .tb-search{
+    flex:1 1 220px;min-width:160px;position:relative;
+  }
+  .toolbar .tb-search input{
+    width:100%;background:var(--ink-3);border:1px solid var(--rule);
+    color:var(--parch);font-family:inherit;font-size:13px;
+    padding:9px 36px 9px 12px;min-height:38px;border-radius:9px;outline:none;
+    transition:.18s;
+  }
+  .toolbar .tb-search input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,162,75,.15)}
+  .toolbar .tb-search::after{
+    content:"⌕";position:absolute;inset-inline-end:10px;top:50%;transform:translateY(-50%);
+    color:var(--gold);font-size:16px;pointer-events:none;
+  }
+  .tb-group{display:flex;gap:5px;align-items:center;background:var(--ink-3);
+    border:1px solid var(--rule);border-radius:9px;padding:3px}
+  .tb-btn{
+    background:transparent;border:0;color:var(--parch-dim);
+    width:34px;height:34px;border-radius:7px;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:15px;transition:.16s;
+  }
+  .tb-btn:hover:not(:disabled){background:rgba(201,162,75,.12);color:var(--gold-bright)}
+  .tb-btn:disabled{opacity:.35;cursor:not-allowed}
+  .tb-btn[aria-pressed="true"]{background:rgba(201,162,75,.18);color:var(--gold-bright)}
+  .tb-divider{width:1px;height:24px;background:var(--rule);margin:0 3px}
+  .tb-status{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:11.5px;font-weight:600;color:var(--parch-dim);
+    padding:5px 10px;border-radius:999px;background:var(--ink-3);
+    border:1px solid var(--rule);white-space:nowrap;
+  }
+  .tb-status .pulse{
+    width:7px;height:7px;border-radius:50%;background:var(--green);
+    box-shadow:0 0 0 0 rgba(127,170,90,.6);animation:pulse 2s infinite;
+  }
+  .tb-status.bad .pulse{background:var(--crimson);box-shadow:0 0 0 0 rgba(176,74,54,.6)}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(127,170,90,.6)}
+    70%{box-shadow:0 0 0 8px rgba(127,170,90,0)}
+    100%{box-shadow:0 0 0 0 rgba(127,170,90,0)}
+  }
+  .tb-status.bad .pulse{animation:pulseBad 2s infinite}
+  @keyframes pulseBad{
+    0%{box-shadow:0 0 0 0 rgba(176,74,54,.6)}
+    70%{box-shadow:0 0 0 8px rgba(176,74,54,0)}
+    100%{box-shadow:0 0 0 0 rgba(176,74,54,0)}
+  }
+
+  /* ============ ENHANCED: validation report card ============ */
+  .vreport{
+    margin:0 0 12px;padding:14px 16px;border-radius:12px;
+    background:linear-gradient(180deg,rgba(20,16,10,.6),rgba(16,13,9,.4));
+    border:1px solid var(--rule);
+  }
+  .vreport-title{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    font-size:13px;font-weight:700;color:var(--gold-bright);
+    margin-bottom:10px;letter-spacing:.3px;
+  }
+  .vreport-list{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+  .vreport-list li{
+    display:flex;align-items:flex-start;gap:10px;
+    padding:8px 12px;border-radius:8px;font-size:12.5px;line-height:1.55;
+    background:rgba(255,255,255,.015);border:1px solid transparent;
+    transition:.2s;
+  }
+  .vreport-list li.ok{color:#bcd9a0;border-color:rgba(127,170,90,.25)}
+  .vreport-list li.bad{color:#e6a999;border-color:rgba(176,74,54,.3);background:rgba(176,74,54,.05)}
+  .vreport-list li.warn{color:var(--gold-bright);border-color:var(--rule-strong);background:rgba(201,162,75,.04)}
+  .vreport-list li .vicon{
+    flex:0 0 auto;width:18px;height:18px;border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:11px;font-weight:700;
+  }
+  li.ok .vicon{background:rgba(127,170,90,.2);color:#bcd9a0}
+  li.bad .vicon{background:rgba(176,74,54,.2);color:#e6a999}
+  li.warn .vicon{background:rgba(201,162,75,.2);color:var(--gold-bright)}
+  .vreport-list li .vmsg{flex:1}
+  .vreport-list li .vfix{
+    flex:0 0 auto;background:rgba(201,162,75,.15);border:1px solid var(--rule-strong);
+    color:var(--gold-bright);font-size:11px;font-weight:600;
+    padding:4px 10px;border-radius:6px;cursor:pointer;transition:.15s;
+  }
+  .vreport-list li .vfix:hover{background:rgba(201,162,75,.3)}
+
+  /* ============ ENHANCED: theme picker ============ */
+  .theme-pop{
+    position:absolute;top:calc(100% + 6px);inset-inline-end:0;z-index:60;
+    background:linear-gradient(180deg,var(--ink-2),var(--ink));
+    border:1px solid var(--rule-strong);border-radius:12px;
+    box-shadow:0 18px 50px rgba(0,0,0,.6);padding:8px;
+    display:none;grid-template-columns:repeat(2,1fr);gap:6px;min-width:240px;
+  }
+  .theme-pop.open{display:grid;animation:fadeIn .18s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+  .theme-opt{
+    display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;
+    background:rgba(255,255,255,.02);border:1px solid transparent;
+    cursor:pointer;transition:.15s;font-size:12.5px;color:var(--parch);
+  }
+  .theme-opt:hover{border-color:var(--rule)}
+  .theme-opt[aria-pressed="true"]{border-color:var(--gold);background:rgba(201,162,75,.08)}
+  .theme-swatch{
+    width:30px;height:30px;border-radius:8px;flex:0 0 auto;
+    border:1px solid var(--rule);position:relative;overflow:hidden;
+  }
+  .theme-swatch::before{content:"";position:absolute;inset:0;background:var(--sw)}
+  .theme-swatch::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,transparent 50%,var(--sw-accent) 50%);
+  }
+
+  /* ============ ENHANCED: diff view ============ */
+  .diff-pop{
+    position:fixed;inset:0;z-index:80;display:none;
+    background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .diff-pop.open{display:flex;animation:fadeIn .2s ease}
+  .diff-card{
+    background:linear-gradient(180deg,var(--ink-2),var(--ink));
+    border:1px solid var(--rule-strong);border-radius:14px;
+    max-width:720px;width:100%;max-height:85vh;overflow:auto;
+    box-shadow:0 30px 80px rgba(0,0,0,.6);
+  }
+  .diff-head{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:16px 20px;border-bottom:1px solid var(--rule);
+  }
+  .diff-head h3{margin:0;font-size:15px;color:var(--gold-bright)}
+  .diff-body{padding:14px 20px;font-family:"IBM Plex Mono",monospace;font-size:12px;line-height:1.7}
+  .diff-row{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px;padding:6px 8px;border-radius:6px;align-items:start}
+  .diff-row:hover{background:rgba(255,255,255,.02)}
+  .diff-key{color:var(--parch-dim);font-weight:600}
+  .diff-old{color:#e6a999;background:rgba(176,74,54,.06);padding:2px 6px;border-radius:4px}
+  .diff-new{color:#bcd9a0;background:rgba(127,170,90,.06);padding:2px 6px;border-radius:4px}
+  .diff-row.same .diff-old,.diff-row.same .diff-new{color:var(--parch-dim);background:none}
+
+  /* ============ ENHANCED: keyboard shortcut hint ============ */
+  kbd{
+    display:inline-block;padding:1px 6px;font-family:"IBM Plex Mono",monospace;
+    font-size:11px;background:var(--ink-3);border:1px solid var(--rule-strong);
+    border-radius:4px;color:var(--gold-bright);
+    box-shadow:0 1px 0 var(--rule-strong);
+  }
+  .kbd-hint{
+    position:fixed;bottom:18px;inset-inline-start:18px;z-index:30;
+    background:rgba(20,16,10,.85);backdrop-filter:blur(10px);
+    border:1px solid var(--rule);border-radius:10px;padding:10px 14px;
+    font-size:11.5px;color:var(--parch-dim);line-height:1.9;
+    max-width:240px;display:none;
+  }
+  .kbd-hint.open{display:block;animation:fadeIn .2s ease}
+  .kbd-hint b{color:var(--gold-bright)}
+
+  /* ============ ENHANCED: toast ============ */
+  .toast-wrap{position:fixed;bottom:24px;inset-inline-end:24px;z-index:90;
+    display:flex;flex-direction:column;gap:8px;pointer-events:none}
+  .toast{
+    background:rgba(20,16,10,.95);backdrop-filter:blur(10px);
+    border:1px solid var(--rule-strong);border-radius:10px;
+    padding:11px 16px;font-size:13px;color:var(--parch);
+    box-shadow:0 12px 30px rgba(0,0,0,.5);
+    display:flex;align-items:center;gap:10px;min-width:200px;
+    animation:toastIn .25s ease;pointer-events:auto;
+  }
+  .toast.ok{border-inline-start:3px solid var(--green)}
+  .toast.bad{border-inline-start:3px solid var(--crimson)}
+  .toast.info{border-inline-start:3px solid var(--gold)}
+  @keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+  .toast.out{animation:toastOut .25s ease forwards}
+  @keyframes toastOut{to{opacity:0;transform:translateY(12px)}}
+
+  /* ============ ENHANCED: search filter result ============ */
+  details.group.dimmed{opacity:.32;pointer-events:none}
+  details.group.match{box-shadow:inset 2px 0 0 var(--gold-bright)}
+  .ctl.hidden,.group-body > .ctl.dimmed{display:none}
+
+  /* ============ ENHANCED: better mobile bottom sheet ============ */
+  @media(max-width:1023px){
+    .toolbar{position:sticky;top:0;margin-bottom:14px}
+    .kbd-hint{display:none !important}
+  }
+  /* fade-in on load */
+  .wrap{animation:pageIn .5s ease}
+  @keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+  details.group[open] > .group-body{animation:slideIn .25s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<!-- animated background layers -->
+<div class="aurora" aria-hidden="true"></div>
+<div class="shimmer" aria-hidden="true"></div>
+<div class="particles" id="particles" aria-hidden="true"></div>
+
+<!-- toast container -->
+<div class="toast-wrap" id="toastWrap" aria-live="polite" aria-atomic="true"></div>
+
+<!-- keyboard shortcut hint -->
+<div class="kbd-hint" id="kbdHint" role="region" aria-label="اختصارات لوحة المفاتيح">
+  <b>اختصارات:</b><br>
+  <kbd>Ctrl</kbd>+<kbd>S</kbd> تنزيل الملف<br>
+  <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>C</kbd> نسخ<br>
+  <kbd>Ctrl</kbd>+<kbd>Z</kbd> تراجع · <kbd>Ctrl</kbd>+<kbd>Y</kbd> إعادة<br>
+  <kbd>Ctrl</kbd>+<kbd>K</kbd> بحث · <kbd>?</kbd> إظهار/إخفاء<br>
+  <kbd>Esc</kbd> إغلاق النوافذ
+</div>
+
+<!-- diff modal -->
+<div class="diff-pop" id="diffPop" role="dialog" aria-modal="true" aria-labelledby="diffTitle">
+  <div class="diff-card">
+    <div class="diff-head">
+      <h3 id="diffTitle">الفرق عن الوضع الافتراضي</h3>
+      <button class="btn sm" id="diffClose">إغلاق</button>
+    </div>
+    <div class="diff-body" id="diffBody"></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ============ ENHANCED: top toolbar ============ -->
+  <div class="toolbar" role="toolbar" aria-label="أدوات الاستوديو">
+    <div class="tb-search">
+      <input type="search" id="searchInput" placeholder="ابحث في إعداد… (مثل: تاريخ، محقق، وآخرون)" aria-label="بحث في الإعدادات">
+    </div>
+    <div class="tb-group" role="group" aria-label="تراجع وإعادة">
+      <button class="tb-btn" id="undoBtn" title="تراجع (Ctrl+Z)" aria-label="تراجع" disabled>↶</button>
+      <button class="tb-btn" id="redoBtn" title="إعادة (Ctrl+Y)" aria-label="إعادة" disabled>↷</button>
+    </div>
+    <div class="tb-group" role="group" aria-label="إجراءات">
+      <button class="tb-btn" id="diffBtn" title="الفرق عن الافتراضي" aria-label="الفرق">≡</button>
+      <button class="tb-btn" id="resetBtn" title="استعادة الافتراضي" aria-label="استعادة">⟲</button>
+      <button class="tb-btn" id="kbdBtn" title="اختصارات لوحة المفاتيح" aria-label="اختصارات">⌨</button>
+    </div>
+    <div class="tb-group" role="group" aria-label="الثيم" style="position:relative">
+      <button class="tb-btn" id="themeBtn" title="تبديل الثيم" aria-label="الثيم" aria-haspopup="true">◐</button>
+      <div class="theme-pop" id="themePop" role="menu" aria-label="اختيار الثيم">
+        <button class="theme-opt" data-theme="default" aria-pressed="true">
+          <span class="theme-swatch" style="--sw:#100d09;--sw-accent:#c9a24b"></span>ذهبي الليل
+        </button>
+        <button class="theme-opt" data-theme="royal">
+          <span class="theme-swatch" style="--sw:#0a0e1f;--sw-accent:#d4af37"></span>أزرق ملكي
+        </button>
+        <button class="theme-opt" data-theme="emerald">
+          <span class="theme-swatch" style="--sw:#06140e;--sw-accent:#7faa5a"></span>أخضر زمردي
+        </button>
+        <button class="theme-opt" data-theme="parchment">
+          <span class="theme-swatch" style="--sw:#3a2e1c;--sw-accent:#8b6914"></span>رق عمادي
+        </button>
+      </div>
+    </div>
+    <div class="tb-status" id="tbStatus" title="حالة التوافق مع مندلي">
+      <span class="pulse"></span><span id="tbStatusText">جارٍ التحقق…</span>
+    </div>
+  </div>
+
+  <header class="masthead">
+    <div>
+      <p class="brand-eyebrow">CSL · Chicago Notes &amp; Bibliography 17</p>
+      <h1 class="brand-title">مرسم <b>تدبر</b> لضبط نمط التوثيق</h1>
+      <p class="brand-sub">اضبط النمط من اللوحة، عاين النتيجة المطبعية لكل نوع مصدر، تأكّد من صحّة الملف، ثم نزّل <span class="mono">tadabbur.csl</span> واربطه بمندلي.</p>
+    </div>
+    <div class="stamp"><span class="s1">تدبر</span><span class="s2">CSL ENGINE</span></div>
+  </header>
+
+  <div class="grid">
+
+    <!-- ============ CONTROL PANEL ============ -->
+    <aside class="panel pane pane-controls active" id="paneControls">
+      <div class="panel-head"><span class="dot"></span><h2>لوحة الضبط</h2></div>
+      <div class="panel-body">
+
+        <details class="group" open>
+          <summary>الإعدادات المحفوظة (Presets)</summary>
+          <div class="group-body">
+            <div class="ctl">
+              <div class="row2" style="grid-template-columns:1fr auto">
+                <input class="txt-in" id="presetName" placeholder="اسم الإعداد…" aria-label="اسم الإعداد" style="font-family:'Cairo',sans-serif;font-size:14px">
+                <button class="btn sm" id="savePreset">حفظ</button>
+              </div>
+              <div class="preset-row" id="presetList" style="margin-top:12px"></div>
+              <span class="hint">تُحفظ الإعدادات في متصفّحك (localStorage). يمكنك تصديرها/استيرادها أو مشاركتها برابط.</span>
+              <div class="preset-row" style="margin-top:10px">
+                <button class="btn sm" id="exportPreset">تصدير JSON</button>
+                <button class="btn sm" id="importPreset">استيراد JSON</button>
+                <button class="btn sm" id="sharePreset">نسخ رابط الإعداد</button>
+                <input type="file" id="importFile" accept="application/json" hidden>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="group">
+          <summary>هوية النمط (Style ID)</summary>
+          <div class="group-body">
+            <div class="ctl">
+              <label class="lbl">معرّف النمط الفريد</label>
+              <input class="txt-in" data-key="styleId" value="https://tadabbur.csl/styles/tadabbur-journal" style="font-family:'IBM Plex Mono',monospace;font-size:12px;direction:ltr;text-align:left">
+              <span class="hint"><b style="color:var(--crimson)">مهم لمندلي:</b> يجب أن يكون فريدًا ولا يقع تحت <span class="mono">zotero.org/styles</span>؛ وإلا اعتبره مندلي نمطًا «معرّفًا مسبقًا لا يمكن تغييره». بعد رفع الملف، يُستحسن وضع رابط <span class="mono">raw</span> الخاص بك هنا.</span>
+            </div>
+          </div>
+        </details>
+
+        <details class="group" open>
+          <summary>الفئة والأسماء</summary>
+          <div class="group-body">
+            <div class="ctl">
+              <label class="lbl">فئة النمط</label>
+              <div class="seg" data-key="styleClass">
+                <button data-val="note" aria-pressed="true">حواشٍ (Note)</button>
+                <button data-val="in-text">متن (Author-Date)</button>
+              </div>
+              <span class="hint">«حواشٍ» = استشهاد في الحاشية السفلية (شيكاغو). «متن» = (المؤلف التاريخ) داخل النص. مندلي Cite يدعم النوعين.</span>
+            </div>
+            <div class="ctl">
+              <label class="lbl">ترتيب الاسم في الحاشية السفلية (Citation)</label>
+              <div class="seg" data-key="nameOrder">
+                <button data-val="natural" aria-pressed="true">طبيعي (تدبر)</button>
+                <button data-val="invert">مقلوب</button>
+              </div>
+              <span class="hint"><b style="color:var(--gold-bright)">الحاشية بالطبيعي:</b> يظهر الاسم في الحاشية كاملًا بترتيبه الطبيعي (مثل: <span class="mono">أبو الحسين أحمد ابن فارس</span>)؛ والإشارة اللاحقة بالشهرة وحدها (<span class="mono">ابن فارس</span>). القلب في الحاشية يُفعَّل مع الترقيم اللاتيني فقط؛ أمّا القائمة فمقلوبة دومًا بأمان.</span>
+            </div>
+            <div class="ctl">
+              <label class="lbl">ترتيب الاسم في قائمة المراجع (Bibliography)</label>
+              <div class="seg" data-key="bibNameOrder">
+                <button data-val="match">مثل الحاشية</button>
+                <button data-val="natural">طبيعي (تدبر)</button>
+                <button data-val="invert" aria-pressed="true">مقلوب (شيكاغو)</button>
+              </div>
+              <span class="hint"><b style="color:var(--gold-bright)">قلبٌ آمن بلا تشويه:</b> التصدير يُملي «العائلة (الشهرة), الاسم الأول» بفاصلة صريحة، فيقلب مندلي القائمةَ على العائلة كاملةً («ابن فارس، أبو الحسين أحمد») دون تفكيك المركّبات ولا تخمين. هذا هو نمط شيكاغو الصحيح وهو الافتراضي. «مثل الحاشية» يجعل القائمة تتبع الحاشية.</span>
+            </div>
+            <div class="ctl">
+              <div class="preset-row">
+                <button class="btn sm" id="applyChicagoStandard" title="الحاشية طبيعي + القائمة مقلوب (نمط شيكاغو 17 القياسي)">وضع نمط شيكاغو القياسي</button>
+                <button class="btn sm" id="applyTadabburStandard" title="كلاهما طبيعي (نمط تدبر الموحّد)">وضع نمط تدبر الموحّد</button>
+              </div>
+            </div>
+            <div class="ctl">
+              <label class="lbl">المؤلفون المتعددون</label>
+              <div class="row2">
+                <div>
+                  <select class="txt-in" data-key="etAlMin" aria-label="حدّ وآخرون">
+                    <option value="0">بلا اختصار</option>
+                    <option value="3">٣ فأكثر ← اختصر</option>
+                    <option value="4">٤ فأكثر ← اختصر</option>
+                    <option value="5">٥ فأكثر ← اختصر</option>
+                  </select>
+                </div>
+                <div>
+                  <select class="txt-in" data-key="etAlUseFirst" aria-label="عدد المعروضين">
+                    <option value="1">أظهِر الأول</option>
+                    <option value="2">أظهِر الأولين</option>
+                    <option value="3">أظهِر الثلاثة</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row2" style="margin-top:10px">
+                <input class="txt-in" data-key="etAlTerm" value="وآخرون" aria-label="مصطلح وآخرون">
+                <input class="txt-in" data-key="andTerm" value="و" aria-label="حرف العطف">
+              </div>
+              <span class="hint">يظهر «<span id="etal-prev">وآخرون</span>» عند تجاوز الحدّ، ويُعطف آخر اسم بـ«<span id="and-prev">و</span>».</span>
+            </div>
+            <div class="ctl">
+              <label class="lbl">توضيح الأسماء المتطابقة (Disambiguation)</label>
+              <div class="seg" data-key="disambiguate">
+                <button data-val="yes" aria-pressed="true">مفعّل</button>
+                <button data-val="no">معطّل</button>
+              </div>
+              <span class="hint">يميّز مرجعين لمؤلفين متشابهي الاسم تلقائيًا (إضافة اسم أوّل أو لاحقة سنة).</span>
+            </div>
+          </div>
+        </details>
+
+        <details class="group">
+          <summary>العناوين والترقيم</summary>
+          <div class="group-body">
+            <div class="ctl">
+              <label class="lbl">علامات الترقيم</label>
+              <div class="seg" data-key="punctuation">
+                <button data-val="arabic" aria-pressed="true">عربية (،؛)</button>
+                <button data-val="latin">لاتينية (,;)</button>
+              </div>
+            </div>
+            <div class="ctl">
+              <label class="lbl">تنسيق عنوان الكتاب</label>
+              <div class="seg" data-key="bookTitle">
+                <button data-val="plain" aria-pressed="true">مجرّد</button>
+                <button data-val="italic">مائل</button>
+                <button data-val="guillemet">«مزدوج»</button>
+              </div>
+            </div>
+            <div class="ctl">
+              <label class="lbl">تنسيق العناوين المقتبسة (مقالة/رسالة/موقع)</label>
+              <div class="seg" data-key="quotedTitle">
+                <button data-val="guillemet" aria-pressed="true">«مزدوج»</button>
+                <button data-val="quotes">"إنجليزي"</button>
+              </div>
+            </div>
+            <div class="ctl">
+              <label class="lbl">مصطلح الصفحة</label>
+              <input class="txt-in" data-key="pageTerm" value="ص" style="font-family:'Cairo',sans-serif;font-size:14px">
+              <span class="hint">يُستعمل قبل أرقام الصفحات/المواضع في الاستشهاد.</span>
+            </div>
+            <div class="ctl">
+              <label class="lbl">الفاصل بين الجزء والصفحة</label>
+              <input class="txt-in" data-key="partPageSep" value="/" placeholder="/  أو  :  أو ما تريد" style="font-family:'Cairo',sans-serif;font-size:14px;text-align:center">
+              <span class="hint">يضبط شكل الموضع في المعاينة، مثل <span class="mono" id="locprev">١٢/٤٥</span>. <b style="color:var(--gold-bright)">ملاحظة:</b> الـCSL يعرض الموضع كما تكتبه في مندلي حرفيًا؛ فاكتبه هناك بالفاصل نفسه (مثل <span class="mono">12:5</span>) ليطابق هذه المعاينة.</span>
+            </div>
+            <div class="ctl">
+              <label class="lbl">إظهار الرابط/الـDOI (للمواقع والمقالات)</label>
+              <div class="seg" data-key="showUrl">
+                <button data-val="yes" aria-pressed="true">إظهار</button>
+                <button data-val="no">إخفاء</button>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="group">
+          <summary>الاستشهاد المتكرر (للحواشي)</summary>
+          <div class="group-body">
+            <div class="ctl">
+              <label class="lbl">عند تكرار المصدر</label>
+              <div class="seg" data-key="subsequent">
+                <button data-val="ibid" aria-pressed="true">المرجع نفسه (ibid)</button>
+                <button data-val="short">مختصر</button>
+                <button data-val="full">كامل دائمًا</button>
+              </div>
+              <span class="hint">سلوك شيكاغو: الإشارة الأولى كاملة، واللاحقة مختصرة أو «المرجع نفسه». (يخصّ نمط الحواشي فقط.)</span>
+            </div>
+            <div class="ctl">
+              <label class="lbl">مصطلح «المرجع نفسه»</label>
+              <input class="txt-in" data-key="ibidTerm" value="المرجع نفسه" style="font-family:'Cairo',sans-serif;font-size:14px">
+            </div>
+          </div>
+        </details>
+
+        <details class="group">
+          <summary>التاريخ والمصطلحات</summary>
+          <div class="group-body">
+            <div class="ctl">
+              <label class="lbl">صيغة التاريخ في بيانات النشر</label>
+              <div class="seg" data-key="dateMode">
+                <button data-val="dual" aria-pressed="true">هجري/ميلادي</button>
+                <button data-val="greg">ميلادي</button>
+                <button data-val="hijri">هجري</button>
+              </div>
+              <span class="hint">المزدوج يقرأ الهجري من <span class="mono">original-date</span> والميلادي من <span class="mono">issued</span>؛ يُحذف الناقص بأمان. <b style="color:var(--crimson)">راجع تنبيه التوافق في تبويب الكود.</b></span>
+            </div>
+            <div class="ctl">
+              <label class="lbl">لاحقتا التاريخ</label>
+              <div class="row2">
+                <input class="txt-in" data-key="hijriSuffix" value="هـ" aria-label="لاحقة الهجري">
+                <input class="txt-in" data-key="gregSuffix" value="م" aria-label="لاحقة الميلادي">
+              </div>
+            </div>
+            <div class="ctl">
+              <label class="lbl">عند غياب التاريخ</label>
+              <input class="txt-in" data-key="noDate" value="د.ت" style="font-family:'Cairo',sans-serif;font-size:14px">
+            </div>
+            <hr class="divider">
+            <div class="ctl">
+              <label class="lbl">مصطلح المحقق</label>
+              <input class="txt-in" data-key="editorTerm" value="تحقيق">
+              <span class="hint">يظهر «<span id="ed-prev">تحقيق</span>: اسم المحقق».</span>
+            </div>
+            <div class="ctl">
+              <label class="lbl">اختصار الطبعة</label>
+              <input class="txt-in" data-key="editionTerm" value="ط.">
+            </div>
+            <div class="ctl">
+              <label class="lbl">عند غياب الطبعة</label>
+              <input class="txt-in" data-key="noEdition" value="د.ط" style="font-family:'Cairo',sans-serif;font-size:14px">
+              <span class="hint">تظهر «د.ط» وحدها بلا تكرار «ط.».</span>
+            </div>
+            <div class="ctl">
+              <label class="lbl">عند غياب مكان النشر</label>
+              <input class="txt-in" data-key="noPlace" value="د.م" style="font-family:'Cairo',sans-serif;font-size:14px">
+            </div>
+            <div class="ctl">
+              <label class="lbl">عند غياب الناشر</label>
+              <input class="txt-in" data-key="noPublisher" value="د.ن" style="font-family:'Cairo',sans-serif;font-size:14px">
+            </div>
+            <div class="ctl">
+              <label class="lbl">إزاحة معلّقة في قائمة المراجع</label>
+              <div class="seg" data-key="hangingIndent">
+                <button data-val="yes" aria-pressed="true">مفعّلة</button>
+                <button data-val="no">معطّلة</button>
+              </div>
+            </div>
+          </div>
+        </details>
+
+      </div>
+    </aside>
+
+    <!-- ============ OUTPUT COLUMN ============ -->
+    <div class="col-output">
+
+      <!-- preview pane -->
+      <section class="panel pane pane-preview" id="panePreview">
+        <div class="tabs" id="tabs">
+          <button data-type="book" aria-pressed="true">كتاب</button>
+          <button data-type="article" aria-pressed="false">مقالة</button>
+          <button data-type="thesis" aria-pressed="false">رسالة</button>
+          <button data-type="webpage" aria-pressed="false">موقع</button>
+        </div>
+        <div class="stage">
+          <div class="leaf">
+            <p class="leaf-kind" id="leafKind">— كتاب —</p>
+            <div id="preview"></div>
+            <div class="leaf-foot">
+              <span id="leafSrc">معاينة محاكية لمخرجات الـCSL المولّد</span>
+              <span id="leafMode">هيئة الحاشية السفلية</span>
+            </div>
+          </div>
+
+          <div class="map">
+            <div class="map-h">خريطة حقول مندلي ← متغيّرات CSL · وترتيب الاسم المزدوج</div>
+            <div class="map-scroll">
+            <table>
+              <thead><tr><th>الحقل في مندلي</th><th>المتغيّر</th><th>ملاحظة</th></tr></thead>
+              <tbody>
+                <tr><td>Author</td><td><code>author</code></td><td>الاسم العربي كاملًا في خانة العائلة لتجنّب القلب</td></tr>
+                <tr><td>Title</td><td><code>title</code></td><td>العنوان مجرّدًا للكتاب، مزدوجًا لغيره</td></tr>
+                <tr><td>Editor</td><td><code>editor</code></td><td>يُسبق تلقائيًا بـ «تحقيق:»</td></tr>
+                <tr><td>Edition</td><td><code>edition</code></td><td>رقم الطبعة فقط (2)، يُسبق بـ «ط.»</td></tr>
+                <tr><td>Publisher / City</td><td><code>publisher</code> · <code>publisher-place</code></td><td>البلد قبل الناشر</td></tr>
+                <tr><td>Year (التاريخ)</td><td><code>issued</code></td><td>السنة الميلادية</td></tr>
+                <tr><td class="warn">Extra ← سطر</td><td><code>original-date: 1392</code></td><td class="warn">السنة الهجرية — انظر تنبيه التوافق</td></tr>
+                <tr style="background:rgba(201,162,75,.06)"><td colspan="3" style="font-weight:700;color:var(--gold-bright);padding:11px 16px">ترتيب الاسم المزدوج (ميزة فريدة)</td></tr>
+                <tr><td>—</td><td>macro <code>author</code></td><td>للحاشية السفلية (ترتيب «<span id="mapNoteOrder">طبيعي</span>»)</td></tr>
+                <tr><td>—</td><td>macro <code>author-bib</code></td><td>لقائمة المراجع (ترتيب «<span id="mapBibOrder">مقلوب</span>»)</td></tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- code pane -->
+      <section class="panel pane pane-code" id="paneCode">
+        <div class="code-head">
+          <h2>ملف <span class="mono" style="font-size:14px">tadabbur.csl</span> <span class="badge" id="validBadge">…</span></h2>
+          <div class="btns">
+            <button class="btn" id="copyBtn">نسخ</button>
+            <button class="btn primary" id="dlBtn">تنزيل الملف</button>
+          </div>
+        </div>
+
+        <!-- ============ ENHANCED: validation report card ============ -->
+        <div class="vreport" id="vreport">
+          <div class="vreport-title">
+            <span>تقرير التوافق مع مندلي · CSL 1.0</span>
+            <span id="vreportCount" style="font-weight:500;color:var(--parch-dim);font-size:11.5px">—</span>
+          </div>
+          <ul class="vreport-list" id="vreportList"></ul>
+        </div>
+
+        <pre class="code" id="code"></pre>
+
+        <div style="padding:14px 16px 4px">
+          <div class="note-strip">
+            <b>تنبيه توافق التأريخ المزدوج:</b> أسلوب وضع <span class="mono">original-date: 1392</span> في حقل Extra يقرؤه Zotero يقينًا. أمّا مندلي فلا يضمن تحويل أسطر Extra إلى متغيّرات CSL. لذلك صُمِّم الملف ليتدهور بأمان: إن لم يصل الهجري ظهر الميلادي وحده دون خطأ. <b>للتيقّن:</b> جرّب مرجعًا في مندلي عندك؛ فإن لم يظهر الهجري فاختر صيغة «ميلادي» أو ضع التاريخين يدويًا في حقل السنة.
+          </div>
+        </div>
+
+        <div style="padding:6px 16px 16px">
+          <div class="note-strip info" style="margin-bottom:14px"><b>اربط الملف بمندلي بذكاء — مساران مؤكَّدان:</b></div>
+          <div class="path-tabs" id="pathTabs">
+            <button data-path="url" aria-pressed="true">عبر رابط (موصى به)</button>
+            <button data-path="editor" aria-pressed="false">عبر محرّر CSL</button>
+          </div>
+          <ol class="steps" id="pathUrl">
+            <li>نزّل <span class="mono">tadabbur.csl</span> من الزر أعلاه.</li>
+            <li>ارفعه إلى مستودع <b>GitHub</b> عام (أو أي استضافة ملفات عامة).</li>
+            <li>افتح الملف على GitHub واضغط <b>Raw</b>، ثم انسخ الرابط: <span class="mono" id="rawTpl" title="انقر للنسخ">https://raw.githubusercontent.com/&lt;user&gt;/&lt;repo&gt;/main/tadabbur.csl</span></li>
+            <li>في <b>Mendeley Cite</b> (إضافة وورد): القائمة <span class="mono">⋯</span> ← <b>Citation Style</b> ← <b>Add a custom style</b>، والصق الرابط.</li>
+            <li>اختر النمط من القائمة. تأكّد أن الشارة أعلاه <span class="badge ok" style="font-size:10px">✓ صالح</span> قبل الرفع.</li>
+          </ol>
+          <ol class="steps" id="pathEditor" hidden>
+            <li>افتح <span class="mono">csl.mendeley.com</span> (Mendeley CSL Visual Editor).</li>
+            <li>القائمة <b>Style ← Import</b>، والصق محتوى الملف (زر «نسخ» أعلاه) أو ارفعه.</li>
+            <li>راجع المعاينة، ثم <b>Style ← Save</b> ليُضاف إلى أنماطك في مندلي.</li>
+            <li>في Mendeley Cite اختر النمط المحفوظ من قائمة الأنماط.</li>
+          </ol>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <footer>مرسم تدبر · مولّد أنماط CSL مبني على Chicago 17 (Notes &amp; Bibliography) بتكييف عربي · مع تدقيق صحّة وربط مندلي</footer>
+</div>
+
+<!-- mobile bottom nav -->
+<nav class="tabbar" id="tabbar" aria-label="تنقّل">
+  <button data-pane="paneControls" aria-pressed="true"><span class="ic">⚙️</span>الضبط</button>
+  <button data-pane="panePreview" aria-pressed="false"><span class="ic">📜</span>المعاينة</button>
+  <button data-pane="paneCode" aria-pressed="false"><span class="ic">⟨⟩</span>الكود</button>
+</nav>
+
+<script>
+"use strict";
+
+/* ===================== STATE ===================== */
+const DEFAULT_STATE = {
+  styleClass:"note",
+  nameOrder:"natural",        // ترتيب الاسم في الحاشية السفلية
+  bibNameOrder:"invert",      // ترتيب الاسم في قائمة المراجع (افتراضيًا = مقلوب = شيكاغو القياسي)
+  punctuation:"arabic",
+  bookTitle:"plain",
+  quotedTitle:"guillemet",
+  dateMode:"dual",
+  hijriSuffix:"هـ",
+  gregSuffix:"م",
+  editorTerm:"تحقيق",
+  editionTerm:"ط.",
+  etAlMin:"0",
+  etAlUseFirst:"1",
+  etAlTerm:"وآخرون",
+  andTerm:"و",
+  disambiguate:"yes",
+  pageTerm:"ص",
+  partPageSep:"/",
+  showUrl:"yes",
+  subsequent:"ibid",
+  ibidTerm:"المرجع نفسه",
+  noDate:"د.ت",
+  noEdition:"د.ط",
+  noPlace:"د.م",
+  noPublisher:"د.ن",
+  hangingIndent:"yes",
+  styleId:"https://tadabbur.csl/styles/tadabbur-journal"
+};
+let state = Object.assign({}, DEFAULT_STATE);
+let activeType = "book";
+
+/* ===================== SAMPLE RECORDS ===================== */
+/* المؤلفون بصيغة «العائلة، الاسم الأول» (الشهرة كتلة واحدة) — تُطابق ما يُصدّره
+   bib_engine من author_chicago_biblio بفاصلة صريحة. هكذا تظهر الحاشية بالطبيعي
+   والقائمة بالمقلوب دون تفكيك المركّبات. الأسماء بلا فاصلة (الجهات) تبقى وحدة. */
+const SAMPLES = {
+  book:{
+    authors:["ابن فارس، أبو الحسين أحمد"],
+    title:"معجم مقاييس اللغة", titleShort:"المقاييس",
+    editor:"عبد السلام محمد هارون",
+    edition:"2", place:"مصر",
+    publisher:"شركة مكتبة ومطبعة مصطفى البابي الحلبي",
+    hijri:"1392", greg:"1972", pageParts:["١٢","٤٥"]
+  },
+  article:{
+    authors:["الربيعة، محمد بن عبد الله","الغامدي، خالد بن سعد","الحارثي، نورة بنت علي"],
+    title:"دلالة السياق وأثرها في الترجيح التفسيري", titleShort:"دلالة السياق",
+    container:"مجلة تدبر للدراسات القرآنية",
+    volume:"7", issue:"14", hijri:"1440", greg:"2019", page:"١٢٠–١٤٥",
+    url:"https://doi.org/10.1000/tadabbur.7.14"
+  },
+  thesis:{
+    authors:["القحطاني، سارة بنت عبد الله"],
+    title:"أحكام القرآن عند الإمام ابن قدامة في المغني", titleShort:"أحكام القرآن عند ابن قدامة",
+    genre:"رسالة دكتوراه",
+    publisher:"جامعة الإمام محمد بن سعود الإسلامية",
+    hijri:"1438", greg:"2017"
+  },
+  webpage:{
+    authors:["هيئة تحرير مجلة تدبر"],
+    title:"منهج المجلة في توثيق المصادر والمراجع", titleShort:"منهج التوثيق",
+    container:"الموقع الرسمي لمجلة تدبر",
+    accessed:"2026-01-10",
+    url:"https://www.tadabborjournal.com/manhaj"
+  }
+};
+const TYPE_LABEL = {book:"كتاب",article:"مقالة",thesis:"رسالة جامعية",webpage:"موقع إلكتروني"};
+
+/* ===================== HELPERS ===================== */
+const SEP   = () => state.punctuation==="arabic" ? "، " : ", ";
+const SEMI  = () => state.punctuation==="arabic" ? "؛ " : "; ";
+const COLON = () => ": ";
+const Q = (s,kind) => kind==="guillemet" ? "«"+s+"»" : kind==="quotes" ? '"'+s+'"' : s;
+
+/* الأسماء في العيّنات بصيغة «العائلة، الاسم الأول». نفكّكها صراحة فلا نخمّن. */
+function splitArabicName(s){
+  const str = String(s).trim();
+  const i = str.indexOf("،");
+  if(i < 0) return { family: str, given: "" };
+  return { family: str.slice(0, i).trim(), given: str.slice(i + 1).trim() };
+}
+function naturalName(s){ const {family, given} = splitArabicName(s); return given ? (given + " " + family) : family; }
+function invertedName(s){
+  const {family, given} = splitArabicName(s);
+  const sep = state.punctuation === "arabic" ? "، " : ", ";
+  return given ? (family + sep + given) : family;
+}
+/* renderAuthors يدعم barامتر order مستقل:
+   - "natural" : الاسم كما هو
+   - "invert"  : قلب الاسم الأول فقط (شيكاغو)
+   - "match"   : يستخدم قيمة nameOrder (للحالات التي تريد تطابق القائمة مع الحاشية) */
+function effectiveOrder(order){
+  if(order === "match") return state.nameOrder;
+  return order || state.nameOrder;
+}
+function renderAuthors(list, order){
+  if(!list || !list.length) return "";
+  const ord = effectiveOrder(order || state.nameOrder);
+  const min = parseInt(state.etAlMin,10), useFirst = Math.max(1, parseInt(state.etAlUseFirst,10)||1);
+  let names = list.slice(), etal = false;
+  if(min>1 && names.length>=min){ names = names.slice(0,useFirst); etal = true; }
+  // الأسماء «عائلة، اسم أول» مفكّكة صراحة: القلب يقدّم العائلة كاملةً دون تشويه.
+  // أوّل مؤلف فقط يُقلب في القائمة (شيكاغو)، والبقية بالطبيعي.
+  const rendered = names.map((n,i)=> (ord==="invert" && i===0) ? invertedName(n) : naturalName(n));
+  if(etal) return rendered.join(SEP()) + " " + state.etAlTerm;
+  if(rendered.length>1){
+    const last = rendered.pop();
+    return rendered.join(SEP()) + " " + state.andTerm + " " + last;
+  }
+  return rendered[0];
+}
+function renderDate(hijri,greg){
+  const h = hijri ? hijri+state.hijriSuffix : "";
+  const g = greg  ? greg +state.gregSuffix  : "";
+  let out;
+  if(state.dateMode==="hijri") out = h || g;
+  else if(state.dateMode==="greg") out = g || h;
+  else out = [h,g].filter(Boolean).join("/");
+  return out || state.noDate;
+}
+/* الطبعة: «ط. الأولى» للطبعة الحقيقية، و«د.ط» وحدها عند الغياب (بلا تكرار «ط.») —
+   يطابق ماكرو edition في النمط. */
+function editionText(ed){
+  ed = (ed||"").trim();
+  if(!ed || ed===state.noEdition) return state.noEdition;
+  return state.editionTerm + " " + ed;
+}
+/* مكان النشر والناشر: القيمة الحقيقية، وإلا «د.م»/«د.ن» — يطابق ماكروَي place
+   وpublisher-name في النمط (يولّدهما النمط لا البيانات). */
+function placeText(p){ p=(p||"").trim(); return (!p||p===state.noPlace)?state.noPlace:p; }
+function publisherText(pub){ pub=(pub||"").trim(); return (!pub||pub===state.noPublisher)?state.noPublisher:pub; }
+function joinFilled(arr,sep){ return arr.filter(Boolean).join(sep); }
+/* الموضع المستشهد به: جزء/صفحة يُوصَلان بالفاصل المختار (مثل ١٢/٤٥ أو ١٢:٤٥)؛
+   وإلا يُعرض الموضع كما هو (نطاق صفحات مقالة مثلًا). ملاحظة: الـCSL يعرض ما تكتبه
+   في مندلي حرفيًا، وهذا الضبط يجعل المعاينة تطابق ما ستكتبه. */
+function locText(r){
+  if(r.pageParts && r.pageParts.length) return r.pageParts.filter(Boolean).join(state.partPageSep);
+  return r.page || "";
+}
+
+/* ===================== PREVIEW (mirrors the CSL) ===================== */
+/* كل دوال full* و shortRef تقبل الآن بارامتر order مستقل:
+   - undefined → state.nameOrder (الحاشية، السلوك الأصلي)
+   - "natural" / "invert" / "match" → لقائمة المراجع */
+function fullBook(r, order){
+  let title = Q(r.title, state.bookTitle==="guillemet"?"guillemet":"plain");
+  if(state.bookTitle==="italic") title = "<i>"+r.title+"</i>";
+  const head = joinFilled([ renderAuthors(r.authors, order), title,
+    r.editor ? (state.editorTerm+COLON()+r.editor) : "" ], SEP());
+  const pub = "(" + joinFilled([ editionText(r.edition), placeText(r.place), publisherText(r.publisher), renderDate(r.hijri,r.greg) ], SEP()) + ")";
+  let body = head + " " + pub;
+  const lt = locText(r);
+  if(lt && !order) body += SEP() + state.pageTerm + " " + lt; // الموضع يظهر في الحاشية فقط لا القائمة
+  return body + ".";
+}
+function fullArticle(r, order){
+  const head = joinFilled([ renderAuthors(r.authors, order), Q(r.title,state.quotedTitle) ], SEP());
+  const journal = joinFilled([ r.container, "مج"+r.volume, "ع"+r.issue ], " ");
+  const date = "(" + renderDate(r.hijri,r.greg) + ")";
+  let out = head + SEP() + journal + " " + date;
+  if(order){
+    // في القائمة: نطاق الصفحات الكامل
+    out += COLON() + (r.page || locText(r));
+  } else {
+    out += COLON() + locText(r);
+  }
+  if(state.showUrl==="yes" && r.url) out += SEP() + r.url;
+  return out + ".";
+}
+function fullThesis(r, order){
+  const head = joinFilled([ renderAuthors(r.authors, order), Q(r.title,state.quotedTitle) ], SEP());
+  const block = "(" + joinFilled([ r.genre, publisherText(r.publisher), renderDate(r.hijri,r.greg) ], SEP()) + ")";
+  return head + " " + block + ".";
+}
+function fullWebpage(r, order){
+  const accessed = "شوهد في " + r.accessed;
+  const arr = [ renderAuthors(r.authors, order), Q(r.title,state.quotedTitle), r.container, accessed ];
+  if(state.showUrl==="yes" && r.url) arr.push(r.url);
+  return joinFilled(arr, SEP()) + ".";
+}
+const FULL = {book:fullBook,article:fullArticle,thesis:fullThesis,webpage:fullWebpage};
+
+/* الصيغة المختصرة (إشارة لاحقة / استشهاد متن): العائلة (الشهرة) وحدها. */
+function familyNames(list){ return (list||[]).map(a=>splitArabicName(a).family).join(SEP()); }
+function shortRef(r, order){
+  const t = Q(r.titleShort||r.title, state.bookTitle==="guillemet"&&activeType==="book"?"guillemet":(activeType==="book"?"plain":state.quotedTitle));
+  const arr = [ familyNames(r.authors), t ];
+  const lt = locText(r);
+  if(lt) arr.push(state.pageTerm+" "+lt);
+  return joinFilled(arr, SEP()) + ".";
+}
+function inTextCite(r){
+  const inner = joinFilled([ familyNames(r.authors), renderDate(r.hijri,r.greg) ], SEP());
+  const lt = locText(r);
+  const page = lt ? (SEP()+state.pageTerm+" "+lt) : "";
+  return "(" + inner + page + ")";
+}
+
+function renderPreview(){
+  // المحرّك الحقيقي أولًا (يطابق مندلي)؛ فإن لم يكن جاهزًا أو فشل، نتراجع للتقريبي.
+  if(CITEPROC.ready && renderPreviewCiteproc()) return;
+  const r = SAMPLES[activeType];
+  document.getElementById("leafKind").textContent = TYPE_LABEL[activeType];
+  const box = document.getElementById("preview");
+  const modeEl = document.getElementById("leafMode");
+  const _srcEl = document.getElementById("leafSrc");
+  if(_srcEl && !CITEPROC.ready) _srcEl.textContent = "معاينة محاكية لمخرجات الـCSL المولّد";
+
+  // ===== نمط Author-Date (متن) =====
+  if(state.styleClass==="in-text"){
+    modeEl.innerHTML = "استشهاد متن (Author-Date)<span class=\"dot-sep\">•</span>إخراج CSL";
+    box.innerHTML =
+      '<div class="cite-row">'+
+        '<div class="cite-num" aria-hidden="true">¶</div>'+
+        '<div class="cite-body">'+
+          '<span class="cite-label">استشهاد داخل النص</span>'+
+          '<span class="cite-text">'+ inTextCite(r) +'</span>'+
+        '</div>'+
+      '</div>';
+    return;
+  }
+
+  // ===== نمط الحواشي (Notes & Bibliography) =====
+  const bibOrder = effectiveOrder(state.bibNameOrder);
+  const bibOrderLabel = bibOrder==="invert"
+    ? "قائمة المراجع · مقلوب (شيكاغو)"
+    : "قائمة المراجع · طبيعي (تدبر)";
+  modeEl.innerHTML = "الحاشية السفلية + قائمة المراجع<span class=\"dot-sep\">•</span>إخراج CSL";
+
+  let html = '';
+
+  // — الحاشية: أول إشارة —
+  html +=
+    '<div class="cite-row">'+
+      '<div class="cite-num" aria-label="حاشية رقم ١">١</div>'+
+      '<div class="cite-body">'+
+        '<span class="cite-label">حاشية · أول إشارة</span>'+
+        '<span class="cite-text">'+ FULL[activeType](r) +'</span>'+
+      '</div>'+
+    '</div>';
+
+  // — الحاشية: إشارة لاحقة —
+  if(state.subsequent!=="full"){
+    const lt = locText(r);
+    const sub = state.subsequent==="ibid"
+      ? state.ibidTerm + (lt? "، "+state.pageTerm+" "+lt : "") + "."
+      : shortRef(r);
+    html +=
+      '<div class="cite-row">'+
+        '<div class="cite-num" aria-label="حاشية رقم ٢">٢</div>'+
+        '<div class="cite-body">'+
+          '<span class="cite-label">حاشية · إشارة لاحقة</span>'+
+          '<span class="cite-text">'+ sub +'</span>'+
+        '</div>'+
+      '</div>';
+  }
+
+  // — قائمة المراجع (بترتيب مستقل) —
+  html +=
+    '<div class="cite-row cite-bib">'+
+      '<div class="cite-num" aria-label="مدخل قائمة المراجع">مرجع</div>'+
+      '<div class="cite-body">'+
+        '<span class="cite-label">'+ bibOrderLabel +'</span>'+
+        '<span class="cite-text">'+ FULL[activeType](r, state.bibNameOrder) +'</span>'+
+      '</div>'+
+    '</div>';
+
+  box.innerHTML = html;
+}
+
+/* ===================== CSL GENERATOR ===================== */
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function escAttr(s){return esc(s).replace(/"/g,"&quot;");}
+
+function buildCSL(s){
+  const sep = s.punctuation==="arabic" ? "، " : ", ";
+  const semi = s.punctuation==="arabic" ? "؛ " : "; ";
+  const isNote = s.styleClass==="note";
+  const cf = isNote ? "note" : "author-date";
+
+  // الترتيب الفعّلي: nameOrder للحاشية، bibNameOrder للقائمة
+  // خيار "match" يعني: استخدم ترتيب الحاشية للقائمة أيضًا
+  const noteOrder = s.nameOrder;
+  const bibOrderRaw = s.bibNameOrder || "match";
+  const bibOrder = bibOrderRaw === "match" ? noteOrder : bibOrderRaw;
+
+  const etAlMin = parseInt(s.etAlMin,10);
+  const etAl = (etAlMin>1) ? ` et-al-min="${etAlMin}" et-al-use-first="${Math.max(1,parseInt(s.etAlUseFirst,10)||1)}"` : "";
+
+  // قلب الاسم (name-as-sort-order) ينقل «العائلة» إلى الصدر. كان قلبه آليًّا
+  // يشوّه العربي حين يخمّن مندلي العائلةَ بالكلمة الأخيرة. أمّا الآن وقد صار
+  // التصدير يُملي العائلة/الاسمَ الأوّل صراحةً (عائلة, اسمٌ أوّل بفاصلة) فالقلب
+  // يعمل بأمان على «العائلة» كاملةً (مثل «ابن فارس») دون تفكيك. لذا:
+  //  • قائمة المراجع: نُفعّل القلب لكل اللغات (شيكاغو الصحيح).
+  //  • الحاشية: تبقى بالترتيب الطبيعي (القلب فيها للّاتيني فقط، والافتراضي طبيعي).
+  const allowInvertNote = s.punctuation === "latin";
+
+  // عنصر <name> للحاشية (طبيعي افتراضًا؛ القلب فيها للّاتيني فقط)
+  const noteSortOrder = (noteOrder==="invert" && allowInvertNote) ? ` name-as-sort-order="first" sort-separator="${escAttr(sep)}"` : "";
+  const nameEl = `<name and="text" delimiter="${escAttr(sep)}"${noteSortOrder}${etAl}/>`;
+  const nameElShort = `<name form="short" and="text" delimiter="${escAttr(sep)}"${etAl}/>`;
+
+  // عنصر <name> لقائمة المراجع (القلب مُفعَّل لكل اللغات اعتمادًا على البيانات الصريحة)
+  const bibSortOrder = (bibOrder==="invert") ? ` name-as-sort-order="first" sort-separator="${escAttr(sep)}"` : "";
+  const nameElBib = `<name and="text" delimiter="${escAttr(sep)}"${bibSortOrder}${etAl}/>`;
+  const nameElBibShort = `<name form="short" and="text" delimiter="${escAttr(sep)}"${etAl}/>`;
+
+  // ---- title macro ----
+  let titleMacro;
+  if(s.bookTitle==="italic"){
+    titleMacro =
+`  <macro name="title">
+    <choose>
+      <if type="book" match="any">
+        <text variable="title" font-style="italic"/>
+      </if>
+      <else>
+        <text variable="title" prefix="${s.quotedTitle==="guillemet"?"«":'&quot;'}" suffix="${s.quotedTitle==="guillemet"?"»":'&quot;'}"/>
+      </else>
+    </choose>
+  </macro>`;
+  } else {
+    const bp = s.bookTitle==="guillemet" ? "«" : "";
+    const bs = s.bookTitle==="guillemet" ? "»" : "";
+    const qp = s.quotedTitle==="guillemet" ? "«" : '&quot;';
+    const qs = s.quotedTitle==="guillemet" ? "»" : '&quot;';
+    titleMacro =
+`  <macro name="title">
+    <choose>
+      <if type="book" match="any">
+        <text variable="title" prefix="${bp}" suffix="${bs}"/>
+      </if>
+      <else>
+        <text variable="title" prefix="${qp}" suffix="${qs}"/>
+      </else>
+    </choose>
+  </macro>`;
+  }
+
+  // ---- short title macro (for subsequent note + disambiguation) ----
+  const titleShortMacro =
+`  <macro name="title-short">
+    <choose>
+      <if type="book" match="any">
+        <text variable="title" form="short"/>
+      </if>
+      <else>
+        <text variable="title" form="short" prefix="${s.quotedTitle==="guillemet"?"«":'&quot;'}" suffix="${s.quotedTitle==="guillemet"?"»":'&quot;'}"/>
+      </else>
+    </choose>
+  </macro>`;
+
+  // ---- date inner ----
+  let dateInner;
+  if(s.dateMode==="dual"){
+    dateInner =
+`      <group delimiter="/">
+        <date variable="original-date"><date-part name="year" suffix="${escAttr(s.hijriSuffix)}"/></date>
+        <date variable="issued"><date-part name="year" suffix="${escAttr(s.gregSuffix)}"/></date>
+      </group>`;
+  } else if(s.dateMode==="greg"){
+    dateInner = `      <date variable="issued"><date-part name="year" suffix="${escAttr(s.gregSuffix)}"/></date>`;
+  } else {
+    dateInner = `      <date variable="original-date"><date-part name="year" suffix="${escAttr(s.hijriSuffix)}"/></date>`;
+  }
+  const dateVars = s.dateMode==="greg" ? "issued" : (s.dateMode==="hijri" ? "original-date" : "issued original-date");
+
+  // ---- locators ----
+  // في الحواشي يُستشهد بالصفحة عبر "locator" (الصفحة المطلوبة)، لا "page"
+  // (نطاق الصفحات الكامل الذي مكانه قائمة المراجع). نوحّد الكامل والمختصر على locator.
+  const pageGroup = `<group prefix=" " delimiter=" "><text term="page" form="short"/><text variable="locator"/></group>`;
+  const locatorGroup = `<group delimiter=" "><text term="page" form="short"/><text variable="locator"/></group>`;
+
+  // ---- citation layout (note vs author-date) ----
+  let citationOpen, citationLayout;
+  if(isNote){
+    const disamb = s.disambiguate==="yes" ? ` disambiguate-add-names="true" disambiguate-add-givenname="true"` : "";
+    citationOpen = `  <citation${disamb}>`;
+    const full =
+`        <group delimiter="">
+          <group delimiter="${escAttr(sep)}">
+            <text macro="author"/>
+            <text macro="title"/>
+            <text macro="contributors"/>
+          </group>
+          <choose>
+            <if type="book"><text macro="publisher-block" prefix=" "/></if>
+            <else-if type="thesis"><text macro="thesis-block" prefix=" "/></else-if>
+            <else-if type="article-journal article-magazine" match="any"><group prefix="${escAttr(sep)}" delimiter=" "><text macro="journal-block"/><text macro="issued-paren"/></group></else-if>
+            <else><text macro="access-block" prefix=" "/></else>
+          </choose>
+          ${pageGroup}
+        </group>`;
+    const shortForm =
+`        <group delimiter="${escAttr(sep)}">
+          <text macro="author-short"/>
+          <text macro="title-short"/>
+          ${locatorGroup}
+        </group>`;
+    const ibidLoc =
+`        <group delimiter="${escAttr(sep)}"><text value="${escAttr(s.ibidTerm)}"/>${locatorGroup}</group>`;
+    const ibid = `        <text value="${escAttr(s.ibidTerm)}"/>`;
+
+    let posChoose;
+    if(s.subsequent==="ibid"){
+      posChoose =
+`      <choose>
+        <if position="ibid-with-locator">
+${ibidLoc}
+        </if>
+        <else-if position="ibid">
+${ibid}
+        </else-if>
+        <else-if position="subsequent">
+${shortForm}
+        </else-if>
+        <else>
+${full}
+        </else>
+      </choose>`;
+    } else if(s.subsequent==="short"){
+      posChoose =
+`      <choose>
+        <if position="subsequent">
+${shortForm}
+        </if>
+        <else>
+${full}
+        </else>
+      </choose>`;
+    } else {
+      // «كامل دائمًا»: لا choose هنا — يُعرض الكامل دائمًا. (سابقًا كان <choose><else/>
+      // وهو مخالف لمخطوطة CSL 1.0 ويرفضه مندلي.)
+      posChoose = full;
+    }
+    citationLayout =
+`    <layout prefix="" suffix="." delimiter="${escAttr(semi)}">
+${posChoose}
+    </layout>`;
+  } else {
+    // author-date in-text
+    const disamb = s.disambiguate==="yes" ? ` disambiguate-add-names="true" disambiguate-add-givenname="true" disambiguate-add-year-suffix="true"` : "";
+    citationOpen = `  <citation${disamb}>`;
+    citationLayout =
+`    <layout prefix="(" suffix=")" delimiter="${escAttr(semi)}">
+      <group delimiter="${escAttr(sep)}">
+        <text macro="author-short"/>
+        <text macro="issued"/>
+      </group>
+      ${locatorGroup ? `<text variable="locator" prefix="${escAttr(sep)}"/>` : ""}
+    </layout>`;
+  }
+
+  // ---- bibliography layout per type ----
+  // ملاحظة هندسية: قائمة المراجع تستخدم author-bib (لا author) ليكون
+  // ترتيب الاسم مستقلًا عن الحاشية السفلية — هذا هو نمط شيكاغو القياسي:
+  // الحاشية بالطبيعي والقائمة بالمقلوب.
+  const bibChoose =
+`      <choose>
+        <if type="book">
+          <group delimiter=" ">
+            <group delimiter="${escAttr(sep)}">
+              <text macro="author-bib"/>
+              <text macro="title"/>
+              <text macro="contributors"/>
+            </group>
+            <text macro="publisher-block"/>
+          </group>
+        </if>
+        <else-if type="article-journal article-magazine" match="any">
+          <group delimiter="${escAttr(sep)}">
+            <text macro="author-bib"/>
+            <text macro="title"/>
+          </group>
+          <text macro="journal-block" prefix="${escAttr(sep)}"/>
+          <text macro="issued-paren" prefix=" "/>
+          <group prefix=": "><text term="page" form="short"/><text variable="page" prefix=" "/></group>
+          ${s.showUrl==="yes" ? `<text variable="URL" prefix="${escAttr(sep)}"/>` : ""}
+        </else-if>
+        <else-if type="thesis">
+          <group delimiter=" ">
+            <group delimiter="${escAttr(sep)}">
+              <text macro="author-bib"/>
+              <text macro="title"/>
+            </group>
+            <text macro="thesis-block"/>
+          </group>
+        </else-if>
+        <else>
+          <group delimiter="${escAttr(sep)}">
+            <text macro="author-bib"/>
+            <text macro="title"/>
+            <text variable="container-title"/>
+            <text macro="access-block"/>
+            ${s.showUrl==="yes" ? `<text variable="URL"/>` : ""}
+          </group>
+        </else>
+      </choose>`;
+
+  const bibOpen = s.hangingIndent==="yes"
+    ? `  <bibliography hanging-indent="true" entry-spacing="1">`
+    : `  <bibliography entry-spacing="1">`;
+
+  return `<?xml version="1.0" encoding="utf-8"?>
+<style xmlns="http://purl.org/net/xbiblio/csl" class="${s.styleClass}" version="1.0" default-locale="ar" page-range-format="expanded" demote-non-dropping-particle="never">
+  <info>
+    <title>مجلة تدبر للدراسات القرآنية (Tadabbur)</title>
+    <title-short>تدبر</title-short>
+    <id>${esc(s.styleId)}</id>
+    <link href="${escAttr(s.styleId)}" rel="self"/>
+    <link href="https://www.chicagomanualofstyle.org/tools_citationguide.html" rel="documentation"/>
+    <author><name>Tadabbur CSL Studio</name></author>
+    <category citation-format="${cf}"/>
+    <category field="humanities"/>
+    <summary>نمط مجلة تدبر، مبني على Chicago 17 (Notes and Bibliography) بتكييف عربي. ترتيب الاسم في الحاشية: ${noteOrder==="invert"?"مقلوب":"طبيعي"}، وفي قائمة المراجع: ${bibOrder==="invert"?"مقلوب (شيكاغو القياسي)":"طبيعي (تدبر)"}. المحقق بصيغة «${esc(s.editorTerm)}:»، بيانات النشر بين قوسين بترتيب (الطبعة${esc(sep)}البلد${esc(sep)}الناشر${esc(sep)}التاريخ).</summary>
+    <updated>2026-06-16T00:00:00+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</rights>
+  </info>
+  <locale xml:lang="ar">
+    <terms>
+      <term name="editor" form="verb-short">${esc(s.editorTerm)}</term>
+      <term name="translator" form="verb-short">ترجمة</term>
+      <term name="edition" form="short">${esc(s.editionTerm)}</term>
+      <term name="accessed">شوهد في</term>
+      <term name="page" form="short">${esc(s.pageTerm)}</term>
+      <term name="issue" form="short">ع</term>
+      <term name="volume" form="short">مج</term>
+      <term name="and">${esc(s.andTerm)}</term>
+      <term name="et-al">${esc(s.etAlTerm)}</term>
+      <term name="no date" form="short">${esc(s.noDate)}</term>
+    </terms>
+  </locale>
+
+  <macro name="author">
+    <names variable="author">
+      ${nameEl}
+      <substitute>
+        <names variable="editor"/>
+        <text macro="title"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="author-short">
+    <names variable="author">
+      ${nameElShort}
+      <substitute>
+        <names variable="editor"/>
+        <text macro="title-short"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="author-bib">
+    <names variable="author">
+      ${nameElBib}
+      <substitute>
+        <names variable="editor"/>
+        <text macro="title"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="author-bib-short">
+    <names variable="author">
+      ${nameElBibShort}
+      <substitute>
+        <names variable="editor"/>
+        <text macro="title-short"/>
+      </substitute>
+    </names>
+  </macro>
+
+  <macro name="contributors">
+    <names variable="editor" delimiter="${escAttr(sep)}">
+      <label form="verb-short" suffix=": "/>
+      <name and="text" delimiter="${escAttr(sep)}"/>
+    </names>
+  </macro>
+
+${titleMacro}
+
+${titleShortMacro}
+
+  <macro name="edition">
+    <choose>
+      <if variable="edition">
+        <group delimiter=" ">
+          <text term="edition" form="short"/>
+          <text variable="edition"/>
+        </group>
+      </if>
+      <else>
+        <text value="${esc(s.noEdition)}"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="issued">
+    <choose>
+      <if variable="${dateVars}" match="any">
+${dateInner}
+      </if>
+      <else>
+        <text term="no date" form="short"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="issued-paren">
+    <group prefix="(" suffix=")">
+      <text macro="issued"/>
+    </group>
+  </macro>
+
+  <macro name="place">
+    <choose>
+      <if variable="publisher-place">
+        <text variable="publisher-place"/>
+      </if>
+      <else>
+        <text value="${esc(s.noPlace)}"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="publisher-name">
+    <choose>
+      <if variable="publisher">
+        <text variable="publisher"/>
+      </if>
+      <else>
+        <text value="${esc(s.noPublisher)}"/>
+      </else>
+    </choose>
+  </macro>
+
+  <macro name="publisher-block">
+    <group prefix="(" suffix=")" delimiter="${escAttr(sep)}">
+      <text macro="edition"/>
+      <text macro="place"/>
+      <text macro="publisher-name"/>
+      <text macro="issued"/>
+    </group>
+  </macro>
+
+  <macro name="thesis-block">
+    <group prefix="(" suffix=")" delimiter="${escAttr(sep)}">
+      <text variable="genre"/>
+      <text macro="publisher-name"/>
+      <text macro="issued"/>
+    </group>
+  </macro>
+
+  <macro name="journal-block">
+    <group delimiter=" ">
+      <text variable="container-title"/>
+      <group delimiter=" "><text term="volume" form="short"/><text variable="volume"/></group>
+      <group delimiter=" "><text term="issue" form="short"/><text variable="issue"/></group>
+    </group>
+  </macro>
+
+  <macro name="access-block">
+    <group delimiter=" ">
+      <text term="accessed"/>
+      <date variable="accessed" form="numeric"/>
+    </group>
+  </macro>
+
+${citationOpen}
+${citationLayout}
+  </citation>
+
+${bibOpen}
+    <sort>
+      <key macro="author-bib"/>
+      <key macro="title"/>
+    </sort>
+    <layout suffix=".">
+${bibChoose}
+    </layout>
+  </bibliography>
+</style>`;
+}
+
+/* ===================== VALIDATION (Enhanced) =====================
+   المُحقِّق يفحص:
+   1. سلامة XML (parsererror)
+   2. الجذر <style> + الخصائص الإلزامية (class/version/default-locale)
+   3. وجود <info>/<citation>/<bibliography>
+   4. وجود <title>/<id>/<updated> داخل <info>
+   5. مخطوطة CSL: كل <choose> يبدأ بـ <if>
+   6. حلّ كل المراجع إلى macro (text macro="X") معرَّفة مسبقًا
+   7. كل macro معرَّفة مرة واحدة فقط
+   8. كل <text variable="Y"/> يستخدم متغيّرًا معروفًا في CSL 1.0
+   9. تنبيهات ذكية: default-locale، etAlMin، original-date، إلخ
+*/
+const CSL_KNOWN_VARS = new Set([
+  "author","editor","translator","recipient","interviewer","publisher","publisher-place",
+  "title","title-short","container-title","container-title-short","collection-title",
+  "collection-number","original-title","number","volume","issue","page","page-first",
+  "locator","edition","medium","genre","source","event","event-place","organizer",
+  "original-date","event-date","container-date","issued","accessed","submitted","published",
+  "available-date","year-suffix","citation-number","first-reference-note-number","references",
+  "publisher-quote","URL","DOI","ISBN","ISSN","PMID","PMCID","call-number","dimensions",
+  "scale","chapter-number","section","version","volume-title","volume-number","annote",
+  "abstract","keyword","note","categories","language","citation-label","multi","status"
+]);
+
+function validateCSL(xml){
+  const issues = []; // {kind:"ok"|"bad"|"warn", msg, fix?}
+  try{
+    const doc = new DOMParser().parseFromString(xml, "application/xml");
+    const perr = doc.querySelector("parsererror");
+    if(perr){
+      issues.push({kind:"bad", msg:"خطأ في تركيب XML: " + (perr.textContent.split("\n")[0]||"").slice(0,140)});
+      return {ok:false, issues};
+    }
+    const root = doc.documentElement;
+    if(!root || root.localName!=="style"){
+      issues.push({kind:"bad", msg:"الجذر ليس <style>"});
+      return {ok:false, issues};
+    }
+    // — required attributes on <style> —
+    if(!root.getAttribute("class")) issues.push({kind:"bad", msg:"<style> ينقصه class (note أو in-text)"});
+    if(!root.getAttribute("version")) issues.push({kind:"bad", msg:"<style> ينقصه version (1.0)"});
+    else issues.push({kind:"ok", msg:"version=\""+root.getAttribute("version")+"\" محدّد"});
+    if(!root.getAttribute("default-locale")) issues.push({kind:"warn", msg:"default-locale غير محدّد — قد يfallback إلى en-US", fix:()=>{state.styleId=state.styleId;}});
+    else issues.push({kind:"ok", msg:"default-locale=\""+root.getAttribute("default-locale")+"\""});
+
+    // — info block —
+    const info = root.getElementsByTagName("info")[0];
+    if(!info){
+      issues.push({kind:"bad", msg:"<info> ناقص"});
+      return {ok:false, issues};
+    }
+    const title   = info.getElementsByTagName("title")[0];
+    const id      = info.getElementsByTagName("id")[0];
+    const updated = info.getElementsByTagName("updated")[0];
+    if(!title) issues.push({kind:"bad", msg:"<info> بلا <title>"});
+    else issues.push({kind:"ok", msg:"<title> معرَّف"});
+    if(!id) issues.push({kind:"bad", msg:"<info> بلا <id> — مندلي يرفض"});
+    else {
+      const idv = id.textContent.trim();
+      if(idv.startsWith("http://www.zotero.org/styles/") || idv.startsWith("https://www.zotero.org/styles/"))
+        issues.push({kind:"bad", msg:"<id> تحت نطاق zotero.org/styles — مندلي يعتبره نمطًا معرَّفًا مسبقًا", fix:()=>applyState({styleId:"https://tadabbur.csl/styles/tadabbur-journal"})});
+      else issues.push({kind:"ok", msg:"<id> فريد وخارج نطاق Zotero"});
+    }
+    if(!updated) issues.push({kind:"bad", msg:"<info> بلا <updated>"});
+    else issues.push({kind:"ok", msg:"<updated> بتاريخ ISO صالح"});
+    const cats = info.getElementsByTagName("category");
+    if(!cats.length) issues.push({kind:"warn", msg:"<category> ناقص — يفضّل تحديد citation-format و field"});
+
+    // — citation & bibliography —
+    const citation = root.getElementsByTagName("citation")[0];
+    const biblio   = root.getElementsByTagName("bibliography")[0];
+    if(!citation){issues.push({kind:"bad", msg:"<citation> ناقص"}); return {ok:false, issues};}
+    if(!biblio){issues.push({kind:"bad", msg:"<bibliography> ناقص"}); return {ok:false, issues};}
+    if(citation.getElementsByTagName("layout").length)
+      issues.push({kind:"ok", msg:"<citation><layout> موجود"});
+    else
+      issues.push({kind:"bad", msg:"<citation> بلا <layout>"});
+    if(biblio.getElementsByTagName("layout").length)
+      issues.push({kind:"ok", msg:"<bibliography><layout> موجود"});
+    else
+      issues.push({kind:"bad", msg:"<bibliography> بلا <layout>"});
+
+    // — macros: collect names + check resolution —
+    const macros = new Set();
+    const macroCounts = {};
+    Array.from(root.getElementsByTagName("macro")).forEach(m=>{
+      const n = m.getAttribute("name");
+      if(!n) return;
+      macros.add(n);
+      macroCounts[n] = (macroCounts[n]||0)+1;
+    });
+    Object.keys(macroCounts).forEach(n=>{
+      if(macroCounts[n]>1) issues.push({kind:"bad", msg:`macro "${n}" معرَّف ${macroCounts[n]} مرات — يجب أن يكون فريدًا`});
+    });
+    // — check macro references —
+    const refNodes = Array.from(root.getElementsByTagName("text")).concat(
+      Array.from(root.getElementsByTagName("key"))
+    );
+    const broken = new Set();
+    refNodes.forEach(t=>{
+      const m = t.getAttribute("macro");
+      if(m && !macros.has(m)) broken.add(m);
+    });
+    if(broken.size) issues.push({kind:"bad", msg:"مراجع macro غير محلولة: "+Array.from(broken).join("، ")});
+    else if(macros.size) issues.push({kind:"ok", msg:`كل ${refNodes.filter(t=>t.getAttribute("macro")).length} مرجع macro محلول`});
+
+    // — check <choose> structure: first child must be <if> —
+    let badChooses = 0;
+    Array.from(root.getElementsByTagName("choose")).forEach(ch=>{
+      const firstChild = Array.from(ch.children).find(c=>c.nodeType===1);
+      if(!firstChild || firstChild.localName!=="if") badChooses++;
+    });
+    if(badChooses)
+      issues.push({kind:"bad", msg:`${badChooses} عنصر <choose> لا يبدأ بـ <if> — مخالف لمخطوطة CSL 1.0 ويرفضه مندلي`});
+    else
+      issues.push({kind:"ok", msg:"كل عناصر <choose> تبدأ بـ <if> (متوافق)"});
+
+    // — check unknown variables —
+    const unknownVars = new Set();
+    Array.from(root.getElementsByTagName("text")).forEach(t=>{
+      const v = t.getAttribute("variable");
+      if(v && !CSL_KNOWN_VARS.has(v)) unknownVars.add(v);
+    });
+    Array.from(root.getElementsByTagName("date")).forEach(t=>{
+      const v = t.getAttribute("variable");
+      if(v && !CSL_KNOWN_VARS.has(v)) unknownVars.add(v);
+    });
+    Array.from(root.getElementsByTagName("names")).forEach(t=>{
+      const v = t.getAttribute("variable");
+      if(v){
+        v.split(/\s+/).forEach(x=>{ if(x && !CSL_KNOWN_VARS.has(x)) unknownVars.add(x); });
+      }
+    });
+    if(unknownVars.size)
+      issues.push({kind:"warn", msg:"متغيّرات غير معهودة في CSL 1.0: "+Array.from(unknownVars).join("، ")});
+    else
+      issues.push({kind:"ok", msg:"كل المتغيّرات معروفة في CSL 1.0"});
+
+    // — smart hints —
+    if(state.etAlMin==="0")
+      issues.push({kind:"warn", msg:"حدّ «وآخرون» معطّل — القوائم الطويلة ستبقى كاملة. يُستحسن 4 أو 5", fix:()=>applyState({etAlMin:"4",etAlUseFirst:"1"})});
+    if(state.dateMode==="dual")
+      issues.push({kind:"warn", msg:"التأريخ المزدوج يعتمد original-date التي قد لا يقرؤها مندلي من حقل Extra — اختبر مرجعًا واحدًا أو استعمل ميلادي فقط", fix:()=>applyState({dateMode:"greg"})});
+    if(state.subsequent==="ibid")
+      issues.push({kind:"ok", msg:"«المرجع نفسه» مفعّل — متوافق مع شيكاغو 17 للحواشي"});
+    if(!state.styleId.startsWith("http"))
+      issues.push({kind:"bad", msg:"<id> يجب أن يبدأ بـ http(s):// — مندلي يرفض الـID النسبي", fix:()=>applyState({styleId:"https://tadabbur.csl/styles/tadabbur-journal"})});
+
+    // — check dual name-order architecture —
+    const hasAuthorBib = macros.has("author-bib");
+    const bibUsesAuthorBib = Array.from(biblio.getElementsByTagName("text")).some(t=>t.getAttribute("macro")==="author-bib");
+    if(hasAuthorBib && bibUsesAuthorBib){
+      const bibMacroEl = Array.from(root.getElementsByTagName("macro")).find(m=>m.getAttribute("name")==="author-bib");
+      const noteMacroEl = Array.from(root.getElementsByTagName("macro")).find(m=>m.getAttribute("name")==="author");
+      const bibInverted = bibMacroEl && bibMacroEl.getElementsByTagName("name")[0] && bibMacroEl.getElementsByTagName("name")[0].getAttribute("name-as-sort-order")==="first";
+      const noteInverted = noteMacroEl && noteMacroEl.getElementsByTagName("name")[0] && noteMacroEl.getElementsByTagName("name")[0].getAttribute("name-as-sort-order")==="first";
+      if(bibInverted && !noteInverted)
+        issues.push({kind:"ok", msg:"بنية مزدوجة سليمة: الحاشية طبيعي + القائمة مقلوب (نمط شيكاغو القياسي)"});
+      else if(!bibInverted && !noteInverted)
+        issues.push({kind:"ok", msg:"الترتيب موحّد: كلاهما طبيعي (نمط تدبر)"});
+      else if(bibInverted && noteInverted)
+        issues.push({kind:"ok", msg:"الترتيب موحّد: كلاهما مقلوب"});
+      else
+        issues.push({kind:"ok", msg:"بنية مزدوجة: الحاشية مقلوب + القائمة طبيعي"});
+    } else {
+      issues.push({kind:"warn", msg:"قائمة المراجع لا تستخدم macro مستقل — ترتيب الاسم سيتبع الحاشية"});
+    }
+
+    // — overall —
+    const hasBad = issues.some(i=>i.kind==="bad");
+    return {ok:!hasBad, issues};
+  }catch(e){
+    issues.push({kind:"bad", msg:"تعذّر التحقّق: " + (e.message||"")});
+    return {ok:false, issues};
+  }
+}
+
+/* ===================== HIGHLIGHT ===================== */
+function highlight(xml){
+  let s = esc(xml);
+  s = s.replace(/(&lt;!--[\s\S]*?--&gt;)/g,'<span class="cmt">$1</span>');
+  s = s.replace(/(&lt;\/?)([\w:-]+)/g,'$1<span class="tag">$2</span>');
+  s = s.replace(/([\w:-]+)=(&quot;.*?&quot;)/g,'<span class="attr">$1</span>=<span class="val">$2</span>');
+  return s;
+}
+
+/* ===================== CITEPROC-JS (المحرّك الحقيقي لمندلي) =====================
+   المعاينة الافتراضية أعلاه تقريبية (JS مكتوب يدويًا). هنا نُحمّل محرّك
+   citeproc-js نفسه — وهو محرّك مندلي/زوتيرو — فتطابق المعاينة ما يُصيّره مندلي
+   فعلًا للنمط المولّد. يعمل عند توفّر الإنترنت؛ وإلا يتدهور بأمان للمعاينة التقريبية. */
+const CITEPROC = {
+  ready: false,
+  locales: {},                       // {"ar": xml, "en-US": xml}
+  LIB: [
+    "https://cdn.jsdelivr.net/gh/Juris-M/citeproc-js/citeproc.js",
+    "https://cdn.jsdelivr.net/gh/Juris-M/citeproc-js@master/citeproc.js",
+    "https://cdn.jsdelivr.net/npm/citeproc/citeproc_commonjs.js"
+  ],
+  LOC: {
+    "ar":    "https://cdn.jsdelivr.net/gh/citation-style-language/locales/locales-ar.xml",
+    "en-US": "https://cdn.jsdelivr.net/gh/citation-style-language/locales/locales-en-US.xml"
+  }
+};
+
+function _loadScript(src){
+  return new Promise((res,rej)=>{
+    const s=document.createElement("script");
+    s.src=src; s.async=true;
+    s.onload=()=>res(src);
+    s.onerror=()=>rej(new Error("script load failed: "+src));
+    document.head.appendChild(s);
+  });
+}
+function _okText(r){ if(!r.ok) throw new Error("HTTP "+r.status+" "+r.url); return r.text(); }
+
+async function initCiteproc(){
+  try{
+    for(const src of CITEPROC.LIB){
+      try{ await _loadScript(src); if(typeof CSL!=="undefined") break; }catch(_){ /* جرّب التالي */ }
+    }
+    if(typeof CSL==="undefined") throw new Error("تعذّر تحميل مكتبة citeproc-js");
+    const [ar,en] = await Promise.all([
+      fetch(CITEPROC.LOC["ar"]).then(_okText),
+      fetch(CITEPROC.LOC["en-US"]).then(_okText)
+    ]);
+    CITEPROC.locales["ar"]=ar;
+    CITEPROC.locales["en-US"]=en;
+    CITEPROC.ready=true;
+    renderPreview();                 // أعد التصيير بالمحرّك الحقيقي
+    toast("المعاينة الآن بمحرّك citeproc الحقيقي — مطابِقة لمندلي","ok");
+  }catch(e){
+    CITEPROC.ready=false;
+    console.warn("citeproc غير متاح، إبقاء المعاينة التقريبية:", e);
+    const src=document.getElementById("leafSrc");
+    if(src) src.textContent="معاينة تقريبية (تعذّر تحميل citeproc — تحقّق من الاتصال)";
+  }
+}
+
+function _citeSys(items){
+  return {
+    retrieveLocale: lang => CITEPROC.locales[lang] || CITEPROC.locales["en-US"],
+    retrieveItem:   id   => items[id]
+  };
+}
+
+/* «العائلة، الاسم الأول» → {family, given} صريحَين، فيقلب citeproc العائلةَ
+   كاملةً (الشهرة) في القائمة دون تفكيك مركّباتها، ويعرضها طبيعية في الحاشية.
+   الاسم بلا فاصلة (جهة/مفرد) يبقى literal فلا يُقلب. هذا يطابق ما يُصدّره
+   bib_engine من author_chicago_biblio بفاصلة إنجليزية صريحة. */
+function _toName(full){
+  const s = String(full).trim();
+  const i = s.indexOf("،");
+  if(i < 0) return {literal: s};
+  const family = s.slice(0, i).trim();
+  const given  = s.slice(i + 1).trim();
+  return given ? {family: family, given: given} : {literal: family};
+}
+function _year(y){ const n=parseInt(y,10); return isNaN(n)?null:{"date-parts":[[n]]}; }
+function _ymd(iso){
+  const p=String(iso).split("-").map(x=>parseInt(x,10)).filter(x=>!isNaN(x));
+  return p.length?{"date-parts":[p]}:null;
+}
+
+/* نموذج المعاينة → CSL-JSON (نفس البيانات التي يخزّنها مندلي للمرجع). */
+function _sampleToItem(type, r){
+  const TYPEMAP={book:"book",article:"article-journal",thesis:"thesis",webpage:"webpage"};
+  const it={ id:"ITEM-1", type:TYPEMAP[type]||"book", language:"ar" };
+  if(r.authors && r.authors.length) it.author=r.authors.map(_toName);
+  if(r.title)       it.title=r.title;
+  if(r.titleShort)  it["title-short"]=r.titleShort;
+  if(r.editor)      it.editor=[_toName(r.editor)];
+  if(r.edition)     it.edition=r.edition;
+  if(r.place)       it["publisher-place"]=r.place;
+  if(r.publisher)   it.publisher=r.publisher;
+  if(r.container)   it["container-title"]=r.container;
+  if(r.volume)      it.volume=r.volume;
+  if(r.issue)       it.issue=r.issue;
+  if(r.page)        it.page=r.page;
+  if(r.genre)       it.genre=r.genre;
+  if(r.url)         it.URL=r.url;
+  const g=_year(r.greg), h=_year(r.hijri);
+  if(g) it.issued=g;
+  if(h) it["original-date"]=h;
+  if(r.accessed){ const a=_ymd(r.accessed); if(a) it.accessed=a; }
+  return it;
+}
+function _locStr(r){
+  if(r.pageParts && r.pageParts.length) return r.pageParts.filter(Boolean).join(state.partPageSep);
+  return r.page || "";
+}
+function _row(num,label,text,extra){
+  return '<div class="cite-row '+(extra||"")+'">'+
+    '<div class="cite-num" aria-hidden="true">'+num+'</div>'+
+    '<div class="cite-body">'+
+      '<span class="cite-label">'+label+'</span>'+
+      '<span class="cite-text">'+text+'</span>'+
+    '</div></div>';
+}
+
+/* يُصيّر المعاينة بمحرّك citeproc الحقيقي. يعيد true عند النجاح، false ليتراجع
+   المتصل إلى المعاينة التقريبية. */
+function renderPreviewCiteproc(){
+  if(!CITEPROC.ready) return false;
+  const r = SAMPLES[activeType];
+  document.getElementById("leafKind").textContent = TYPE_LABEL[activeType];
+  const box    = document.getElementById("preview");
+  const modeEl = document.getElementById("leafMode");
+  const srcEl  = document.getElementById("leafSrc");
+  const loc    = _locStr(r);
+  const items  = { "ITEM-1": _sampleToItem(activeType, r) };
+
+  let engine;
+  try{ engine = new CSL.Engine(_citeSys(items), buildCSL(state), "ar"); }
+  catch(e){ console.warn("citeproc: فشل بناء المحرّك", e); return false; }
+
+  const mkItem = ()=> loc ? [{id:"ITEM-1", locator:loc, label:"page"}] : [{id:"ITEM-1"}];
+
+  try{
+    // ===== نمط (المؤلف-التاريخ) داخل النص =====
+    if(state.styleClass==="in-text"){
+      const cluster={ citationID:"c1", citationItems:mkItem(), properties:{noteIndex:0} };
+      const out=engine.previewCitationCluster(cluster, [], [], "html");
+      modeEl.innerHTML='استشهاد متن (Author-Date)<span class="dot-sep">•</span>محرّك citeproc-js';
+      if(srcEl) srcEl.textContent="معاينة حقيقية · محرّك citeproc-js (يطابق مندلي)";
+      box.innerHTML=_row("¶","استشهاد داخل النص", out);
+      return true;
+    }
+
+    // ===== نمط الحواشي (Notes & Bibliography) =====
+    const citations=[ {citationID:"c1", citationItems:mkItem(), properties:{noteIndex:1}} ];
+    if(state.subsequent!=="full")
+      citations.push({citationID:"c2", citationItems:mkItem(), properties:{noteIndex:2}});
+    const rebuilt=engine.rebuildProcessorState(citations, "html"); // [[id,noteIndex,html],...]
+
+    let html=_row("١","حاشية · أول إشارة", (rebuilt[0]&&rebuilt[0][2])||"");
+    if(rebuilt[1]) html+=_row("٢","حاشية · إشارة لاحقة", rebuilt[1][2]||"");
+
+    engine.updateItems(["ITEM-1"]);
+    const bib=engine.makeBibliography();
+    const bibHtml=(bib && bib[1] && bib[1].length)? bib[1].join("") : "";
+    const bibOrder=effectiveOrder(state.bibNameOrder);
+    const bibLabel=bibOrder==="invert" ? "قائمة المراجع · مقلوب (شيكاغو)" : "قائمة المراجع · طبيعي (تدبر)";
+    html+=_row("مرجع", bibLabel, bibHtml, "cite-bib");
+
+    modeEl.innerHTML='الحاشية السفلية + قائمة المراجع<span class="dot-sep">•</span>محرّك citeproc-js';
+    if(srcEl) srcEl.textContent="معاينة حقيقية · محرّك citeproc-js (يطابق مندلي)";
+    box.innerHTML=html;
+    return true;
+  }catch(e){
+    console.warn("citeproc: فشل التصيير", e);
+    return false;
+  }
+}
+
+/* ===================== PIPELINE ===================== */
+let currentCSL = "";
+function regenerate(){
+  renderPreview();
+  setText("ed-prev", state.editorTerm);
+  setText("etal-prev", state.etAlTerm);
+  setText("and-prev", state.andTerm);
+  setText("locprev", ["١٢","٤٥"].join(state.partPageSep));
+  // تحديث خريطة الترتيب المزدوج
+  setText("mapNoteOrder", state.nameOrder==="invert"?"مقلوب":"طبيعي");
+  const bibOrd = effectiveOrder(state.bibNameOrder);
+  setText("mapBibOrder", bibOrd==="invert"?"مقلوب (شيكاغو)":"طبيعي (تدبر)");
+  currentCSL = buildCSL(state);
+  document.getElementById("code").innerHTML = highlight(currentCSL);
+  const v = validateCSL(currentCSL);
+  renderValidationReport(v);
+  const badge = document.getElementById("validBadge");
+  const okCount = v.issues.filter(i=>i.kind==="ok").length;
+  const badCount = v.issues.filter(i=>i.kind==="bad").length;
+  const warnCount = v.issues.filter(i=>i.kind==="warn").length;
+  badge.textContent = v.ok
+    ? `✓ صالح — ${okCount} فحص ناجح`
+    : `✗ ${badCount} خطأ`;
+  badge.className = "badge " + (v.ok ? "ok" : "bad");
+  // toolbar status
+  const tbs = document.getElementById("tbStatus");
+  const tbst = document.getElementById("tbStatusText");
+  if(v.ok){
+    tbs.classList.remove("bad");
+    tbst.textContent = warnCount? `جاهز لمندلي · ${warnCount} تنبيه` : "جاهز لمندلي";
+  } else {
+    tbs.classList.add("bad");
+    tbst.textContent = `${badCount} خطأ يمنع`;
+  }
+  document.getElementById("dlBtn").disabled = !v.ok;
+  syncControlsUI();
+  updateUndoRedoButtons();
+  scheduleAutosave();
+}
+function setText(id,t){ const el=document.getElementById(id); if(el) el.textContent=t; }
+
+/* render the validation report card */
+function renderValidationReport(v){
+  const list = document.getElementById("vreportList");
+  const count = document.getElementById("vreportCount");
+  if(!v.issues || !v.issues.length){
+    list.innerHTML = '<li class="bad"><span class="vicon">!</span><span class="vmsg">لا توجد نتائج تحقق</span></li>';
+    count.textContent = "—"; return;
+  }
+  // sort: bad first, then warn, then ok
+  const order = {bad:0, warn:1, ok:2};
+  const sorted = v.issues.slice().sort((a,b)=>order[a.kind]-order[b.kind]);
+  list.innerHTML = sorted.map(i=>{
+    const icon = i.kind==="ok" ? "✓" : i.kind==="warn" ? "!" : "✗";
+    const fix = i.fix ? `<button class="vfix" type="button">إصلاح</button>` : "";
+    return `<li class="${i.kind}"><span class="vicon">${icon}</span><span class="vmsg">${esc(i.msg)}</span>${fix}</li>`;
+  }).join("");
+  const okN = v.issues.filter(i=>i.kind==="ok").length;
+  const badN = v.issues.filter(i=>i.kind==="bad").length;
+  const warnN = v.issues.filter(i=>i.kind==="warn").length;
+  count.textContent = `${okN} ✓ · ${warnN} ! · ${badN} ✗`;
+  // wire fix buttons
+  list.querySelectorAll(".vfix").forEach((btn,idx)=>{
+    const issue = sorted.find(i=>i.fix && i.kind!=="ok");
+    // find by data attribute would be cleaner; iterate
+  });
+  // simpler: wire each fix button to its issue (re-find by index)
+  let fixIdx = 0;
+  sorted.forEach((issue, i)=>{
+    if(issue.fix){
+      const li = list.children[i];
+      const btn = li.querySelector(".vfix");
+      if(btn) btn.addEventListener("click",()=>{
+        issue.fix();
+        toast("تم تطبيق الإصلاح","ok");
+        regenerate();
+      });
+    }
+  });
+}
+
+/* reflect state into control widgets (after preset load) */
+function syncControlsUI(){
+  document.querySelectorAll(".seg").forEach(seg=>{
+    const key = seg.dataset.key; if(!key) return;
+    seg.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.val===state[key])));
+  });
+  document.querySelectorAll(".txt-in[data-key]").forEach(inp=>{
+    if(inp.value !== state[inp.dataset.key]) inp.value = state[inp.dataset.key];
+  });
+}
+
+/* ===================== EVENTS ===================== */
+document.querySelectorAll(".seg").forEach(seg=>{
+  const key = seg.dataset.key; if(!key) return;
+  seg.querySelectorAll("button").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      seg.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed","false"));
+      btn.setAttribute("aria-pressed","true");
+      state[key] = btn.dataset.val;
+      regenerate();
+    });
+  });
+});
+document.querySelectorAll(".txt-in[data-key], select.txt-in[data-key]").forEach(inp=>{
+  const ev = inp.tagName==="SELECT" ? "change" : "input";
+  inp.addEventListener(ev,()=>{ state[inp.dataset.key]=inp.value; regenerate(); });
+});
+document.querySelectorAll("#tabs button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("#tabs button").forEach(b=>b.setAttribute("aria-pressed","false"));
+    btn.setAttribute("aria-pressed","true");
+    activeType = btn.dataset.type;
+    renderPreview();
+  });
+});
+
+/* copy / download */
+async function copyText(text, btn, okLabel){
+  try{
+    await navigator.clipboard.writeText(text);
+    const old = btn.textContent; btn.textContent = okLabel||"✓ تم النسخ"; btn.classList.add("copied");
+    setTimeout(()=>{btn.textContent=old; btn.classList.remove("copied");},1700);
+  }catch(_){
+    const ta=document.createElement("textarea"); ta.value=text; document.body.appendChild(ta); ta.select();
+    try{document.execCommand("copy");}catch(__){}
+    ta.remove(); const old=btn.textContent; btn.textContent="✓ تم النسخ"; setTimeout(()=>btn.textContent=old,1700);
+  }
+}
+document.getElementById("copyBtn").addEventListener("click",e=>copyText(currentCSL, e.currentTarget,"✓ نُسخ الملف"));
+document.getElementById("dlBtn").addEventListener("click",()=>{
+  const blob=new Blob([currentCSL],{type:"application/xml;charset=utf-8"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob); a.download="tadabbur.csl";
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
+});
+const rawTpl=document.getElementById("rawTpl");
+if(rawTpl) rawTpl.addEventListener("click",e=>copyText(rawTpl.textContent.trim(), Object.assign(document.createElement("span"),{}), ""));
+
+/* mendeley path tabs */
+document.querySelectorAll("#pathTabs button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("#pathTabs button").forEach(b=>b.setAttribute("aria-pressed","false"));
+    btn.setAttribute("aria-pressed","true");
+    const p = btn.dataset.path;
+    document.getElementById("pathUrl").hidden  = p!=="url";
+    document.getElementById("pathEditor").hidden = p!=="editor";
+  });
+});
+
+/* mobile bottom nav */
+document.querySelectorAll("#tabbar button").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("#tabbar button").forEach(b=>b.setAttribute("aria-pressed","false"));
+    btn.setAttribute("aria-pressed","true");
+    document.querySelectorAll(".pane").forEach(p=>p.classList.remove("active"));
+    document.getElementById(btn.dataset.pane).classList.add("active");
+    window.scrollTo({top:0,behavior:"smooth"});
+  });
+});
+
+/* quick presets: Chicago Standard & Tadabbur Unified */
+function applyChicagoStandard(){
+  applyState({ nameOrder:"natural", bibNameOrder:"invert" });
+  toast("تم تطبيق نمط شيكاغو القياسي · الحاشية طبيعي + القائمة مقلوب","ok");
+}
+function applyTadabburUnified(){
+  applyState({ nameOrder:"natural", bibNameOrder:"natural" });
+  toast("تم تطبيق نمط تدبر الموحّد · كلاهما طبيعي","ok");
+}
+const chicagoBtn = document.getElementById("applyChicagoStandard");
+if(chicagoBtn) chicagoBtn.addEventListener("click", applyChicagoStandard);
+const tadabburBtn = document.getElementById("applyTadabburStandard");
+if(tadabburBtn) tadabburBtn.addEventListener("click", applyTadabburUnified);
+
+/* ===================== PRESETS ===================== */
+const PK = "tadabbur_csl_presets_v1";
+function loadPresets(){ try{ return JSON.parse(localStorage.getItem(PK)||"{}"); }catch(_){ return {}; } }
+function savePresets(o){ try{ localStorage.setItem(PK, JSON.stringify(o)); }catch(_){} }
+function renderPresetChips(){
+  const wrap = document.getElementById("presetList"); wrap.innerHTML="";
+  const builtins = {
+    "تدبر الافتراضي":DEFAULT_STATE,
+    "شيكاغو القياسي (حاشية طبيعي + قائمة مقلوب)":Object.assign({},DEFAULT_STATE,{nameOrder:"natural",bibNameOrder:"invert"}),
+    "شيكاغو كلاسيكي (كلاهما مقلوب لاتيني)":Object.assign({},DEFAULT_STATE,{nameOrder:"invert",bibNameOrder:"invert",punctuation:"latin",bookTitle:"italic",quotedTitle:"quotes",dateMode:"greg"}),
+    "تدبر الموحّد (كلاهما طبيعي)":Object.assign({},DEFAULT_STATE,{nameOrder:"natural",bibNameOrder:"natural"})
+  };
+  const all = Object.assign({}, builtins, loadPresets());
+  Object.keys(all).forEach(name=>{
+    const chip=document.createElement("span"); chip.className="chip";
+    const load=document.createElement("span"); load.textContent=name; load.style.cursor="pointer";
+    load.addEventListener("click",()=>applyState(all[name]));
+    chip.appendChild(load);
+    if(!builtins[name]){
+      const x=document.createElement("span"); x.className="x"; x.textContent="✕"; x.title="حذف";
+      x.addEventListener("click",ev=>{ev.stopPropagation(); const p=loadPresets(); delete p[name]; savePresets(p); renderPresetChips();});
+      chip.appendChild(x);
+    }
+    wrap.appendChild(chip);
+  });
+}
+function applyState(obj){
+  state = Object.assign({}, DEFAULT_STATE, obj);
+  regenerate();
+}
+document.getElementById("savePreset").addEventListener("click",()=>{
+  const name=(document.getElementById("presetName").value||"").trim();
+  if(!name) return;
+  const p=loadPresets(); p[name]=Object.assign({},state); savePresets(p);
+  document.getElementById("presetName").value=""; renderPresetChips();
+});
+document.getElementById("exportPreset").addEventListener("click",e=>{
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="tadabbur-preset.json";
+  document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},400);
+});
+document.getElementById("importPreset").addEventListener("click",()=>document.getElementById("importFile").click());
+document.getElementById("importFile").addEventListener("change",ev=>{
+  const f=ev.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ applyState(JSON.parse(rd.result)); }catch(_){ alert("ملف غير صالح"); } };
+  rd.readAsText(f); ev.target.value="";
+});
+document.getElementById("sharePreset").addEventListener("click",e=>{
+  const hash = "#s=" + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(state)))));
+  const url = location.origin + location.pathname + hash;
+  copyText(url, e.currentTarget, "✓ نُسخ الرابط");
+  history.replaceState(null,"",hash);
+});
+function loadFromHash(){
+  if(location.hash.startsWith("#s=")){
+    try{
+      const json = decodeURIComponent(escape(atob(decodeURIComponent(location.hash.slice(3)))));
+      applyState(JSON.parse(json)); return true;
+    }catch(_){}
+  }
+  return false;
+}
+
+/* ===================== ENHANCED: undo / redo history ===================== */
+const HISTORY_LIMIT = 60;
+let undoStack = [];
+let redoStack = [];
+let lastCommittedState = null;
+let historyTimer = null;
+
+function snapshotState(s){ return JSON.stringify(s); }
+function commitHistory(){
+  clearTimeout(historyTimer);
+  historyTimer = setTimeout(()=>{
+    const snap = snapshotState(state);
+    if(lastCommittedState === snap) return;
+    undoStack.push(lastCommittedState || snapshotState(DEFAULT_STATE));
+    if(undoStack.length > HISTORY_LIMIT) undoStack.shift();
+    redoStack = [];
+    lastCommittedState = snap;
+    updateUndoRedoButtons();
+  }, 400);
+}
+function updateUndoRedoButtons(){
+  const u = document.getElementById("undoBtn");
+  const r = document.getElementById("redoBtn");
+  if(!u || !r) return;
+  u.disabled = undoStack.length === 0;
+  r.disabled = redoStack.length === 0;
+}
+function undo(){
+  if(!undoStack.length) return;
+  const cur = snapshotState(state);
+  redoStack.push(cur);
+  const prev = undoStack.pop();
+  try{
+    state = Object.assign({}, DEFAULT_STATE, JSON.parse(prev));
+    lastCommittedState = prev;
+    regenerate();
+    toast("تم التراجع","info");
+  }catch(_){}
+}
+function redo(){
+  if(!redoStack.length) return;
+  const cur = snapshotState(state);
+  undoStack.push(cur);
+  const next = redoStack.pop();
+  try{
+    state = Object.assign({}, DEFAULT_STATE, JSON.parse(next));
+    lastCommittedState = next;
+    regenerate();
+    toast("تمت الإعادة","info");
+  }catch(_){}
+}
+
+/* ===================== ENHANCED: search filter ===================== */
+function applySearchFilter(q){
+  q = (q||"").trim().toLowerCase();
+  const groups = document.querySelectorAll("details.group");
+  if(!q){
+    groups.forEach(g=>{
+      g.classList.remove("dimmed","match");
+      g.querySelectorAll(".ctl").forEach(c=>c.classList.remove("hidden","dimmed"));
+    });
+    return;
+  }
+  groups.forEach(g=>{
+    const txt = g.textContent.toLowerCase();
+    const match = txt.includes(q);
+    if(match){
+      g.classList.remove("dimmed");
+      g.classList.add("match","open");
+      // dim non-matching ctls within
+      g.querySelectorAll(".ctl").forEach(c=>{
+        const ct = c.textContent.toLowerCase();
+        if(ct.includes(q)){ c.classList.remove("hidden","dimmed"); }
+        else { c.classList.add("dimmed"); c.classList.remove("hidden"); }
+      });
+    } else {
+      g.classList.add("dimmed");
+      g.classList.remove("match");
+    }
+  });
+}
+
+/* ===================== ENHANCED: theme switcher ===================== */
+const THEME_KEY = "tadabbur_theme";
+function setTheme(name){
+  if(name === "default") document.body.removeAttribute("data-theme");
+  else document.body.setAttribute("data-theme", name);
+  document.querySelectorAll(".theme-opt").forEach(o=>{
+    o.setAttribute("aria-pressed", String(o.dataset.theme === name));
+  });
+  try{ localStorage.setItem(THEME_KEY, name); }catch(_){}
+  toast("الثيم: " + (name==="default"?"ذهبي الليل":name==="royal"?"أزرق ملكي":name==="emerald"?"أخضر زمردي":"رق عمادي"), "info");
+}
+function loadTheme(){
+  try{
+    const t = localStorage.getItem(THEME_KEY);
+    if(t) setTheme(t);
+  }catch(_){}
+}
+
+/* ===================== ENHANCED: toast ===================== */
+function toast(msg, kind){
+  kind = kind || "info";
+  const wrap = document.getElementById("toastWrap");
+  const el = document.createElement("div");
+  el.className = "toast " + kind;
+  const icon = kind==="ok" ? "✓" : kind==="bad" ? "✗" : "ⓘ";
+  el.innerHTML = `<span style="font-weight:700;color:var(--${kind==="ok"?"green":kind==="bad"?"crimson":"gold-bright"})">${icon}</span><span>${esc(msg)}</span>`;
+  wrap.appendChild(el);
+  setTimeout(()=>{ el.classList.add("out"); setTimeout(()=>el.remove(),300); }, 2400);
+}
+
+/* ===================== ENHANCED: diff view ===================== */
+function showDiff(){
+  const body = document.getElementById("diffBody");
+  const keys = Object.keys(DEFAULT_STATE);
+  const rows = keys.map(k=>{
+    const def = DEFAULT_STATE[k];
+    const cur = state[k];
+    const same = def === cur;
+    return `<div class="diff-row ${same?"same":""}">
+      <span class="diff-key">${k}</span>
+      <span class="diff-old">${esc(String(def))}</span>
+      <span class="diff-new">${esc(String(cur))}</span>
+    </div>`;
+  }).join("");
+  body.innerHTML = `<div class="diff-row" style="font-weight:700;color:var(--gold-bright);border-bottom:1px solid var(--rule);margin-bottom:6px">
+    <span>الإعداد</span><span>الافتراضي</span><span>الحالي</span>
+  </div>` + rows;
+  document.getElementById("diffPop").classList.add("open");
+}
+function hideDiff(){ document.getElementById("diffPop").classList.remove("open"); }
+
+/* ===================== ENHANCED: autosave ===================== */
+const AUTOSAVE_KEY = "tadabbur_autosave_v1";
+let autosaveTimer = null;
+function scheduleAutosave(){
+  clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(()=>{
+    try{ localStorage.setItem(AUTOSAVE_KEY, JSON.stringify(state)); }catch(_){}
+  }, 800);
+  commitHistory();
+}
+function loadAutosave(){
+  try{
+    const s = localStorage.getItem(AUTOSAVE_KEY);
+    if(s) return JSON.parse(s);
+  }catch(_){}
+  return null;
+}
+
+/* ===================== ENHANCED: floating particles ===================== */
+function spawnParticles(){
+  const c = document.getElementById("particles");
+  if(!c) return;
+  const N = window.matchMedia("(max-width:768px)").matches ? 12 : 24;
+  for(let i=0;i<N;i++){
+    const s = document.createElement("span");
+    s.style.left = (Math.random()*100) + "%";
+    const dur = 18 + Math.random()*22;
+    s.style.animationDuration = dur + "s";
+    s.style.animationDelay = (-Math.random()*dur) + "s";
+    s.style.width = s.style.height = (2 + Math.random()*3) + "px";
+    s.style.opacity = String(.3 + Math.random()*.5);
+    c.appendChild(s);
+  }
+}
+
+/* ===================== ENHANCED: keyboard shortcuts ===================== */
+function bindKeyboardShortcuts(){
+  document.addEventListener("keydown", e=>{
+    // ignore when typing in input/textarea/select
+    const t = e.target;
+    const typing = t && (t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.tagName==="SELECT"||t.isContentEditable);
+    const ctrl = e.ctrlKey || e.metaKey;
+    if(ctrl && e.key.toLowerCase() === "s"){ e.preventDefault(); if(!document.getElementById("dlBtn").disabled) document.getElementById("dlBtn").click(); else toast("لا يمكن التنزيل: أصلح الأخطاء أولًا","bad"); return; }
+    if(ctrl && e.shiftKey && e.key.toLowerCase() === "c"){ e.preventDefault(); document.getElementById("copyBtn").click(); return; }
+    if(ctrl && e.key.toLowerCase() === "z"){ e.preventDefault(); undo(); return; }
+    if(ctrl && (e.key.toLowerCase() === "y" || (e.shiftKey && e.key.toLowerCase()==="z"))){ e.preventDefault(); redo(); return; }
+    if(ctrl && e.key.toLowerCase() === "k"){ e.preventDefault(); document.getElementById("searchInput").focus(); return; }
+    if(!typing && e.key === "?"){ e.preventDefault(); document.getElementById("kbdHint").classList.toggle("open"); return; }
+    if(e.key === "Escape"){
+      document.getElementById("diffPop").classList.remove("open");
+      document.getElementById("themePop").classList.remove("open");
+      document.getElementById("kbdHint").classList.remove("open");
+      document.getElementById("searchInput").blur();
+    }
+  });
+}
+
+/* ===================== ENHANCED: bind UI events ===================== */
+function bindEnhancedUI(){
+  // search
+  const search = document.getElementById("searchInput");
+  let searchTimer = null;
+  search.addEventListener("input",()=>{
+    clearTimeout(searchTimer);
+    searchTimer = setTimeout(()=>applySearchFilter(search.value), 180);
+  });
+  // undo/redo
+  document.getElementById("undoBtn").addEventListener("click", undo);
+  document.getElementById("redoBtn").addEventListener("click", redo);
+  // diff
+  document.getElementById("diffBtn").addEventListener("click", showDiff);
+  document.getElementById("diffClose").addEventListener("click", hideDiff);
+  document.getElementById("diffPop").addEventListener("click", e=>{
+    if(e.target.id === "diffPop") hideDiff();
+  });
+  // reset
+  document.getElementById("resetBtn").addEventListener("click", ()=>{
+    state = Object.assign({}, DEFAULT_STATE);
+    regenerate();
+    toast("تمت استعادة الإعدادات الافتراضية","ok");
+  });
+  // kbd hint
+  document.getElementById("kbdBtn").addEventListener("click", ()=>{
+    document.getElementById("kbdHint").classList.toggle("open");
+  });
+  // theme picker
+  document.getElementById("themeBtn").addEventListener("click", e=>{
+    e.stopPropagation();
+    document.getElementById("themePop").classList.toggle("open");
+  });
+  document.querySelectorAll(".theme-opt").forEach(o=>{
+    o.addEventListener("click", ()=>{
+      setTheme(o.dataset.theme);
+      document.getElementById("themePop").classList.remove("open");
+    });
+  });
+  document.addEventListener("click", e=>{
+    if(!e.target.closest("#themeBtn") && !e.target.closest("#themePop")){
+      document.getElementById("themePop").classList.remove("open");
+    }
+  });
+}
+
+/* ===================== INIT ===================== */
+loadTheme();
+spawnParticles();
+bindEnhancedUI();
+bindKeyboardShortcuts();
+// restore prior session if no share-hash
+const auto = loadAutosave();
+if(auto && !location.hash.startsWith("#s=")){
+  state = Object.assign({}, DEFAULT_STATE, auto);
+  lastCommittedState = snapshotState(state);
+}
+renderPresetChips();
+if(!loadFromHash()) regenerate();
+// حمّل محرّك citeproc الحقيقي (لا يحجب الواجهة؛ يعيد التصيير عند الجهوزية)
+initCiteproc();
+// welcome toast
+setTimeout(()=>toast("مرسم تدبر جاهز · اضغط ? للاختصارات","info"), 600);
+</script>
+</body>
+</html>

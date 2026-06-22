@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// أعضاء الفريق الذين يعملون على مراجعة وتدوين الأخطاء
+model Member {
+  id        String   @id @default(cuid())
+  name      String
+  role      String   @default("مراجع")
+  color     String   @default("#c9a24b") // لون تمييزي لكل عضو
+  initials  String   @default("")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reports        ErrorReport[]     @relation("ReportAuthor")
+  solvedReports  ErrorReport[]     @relation("ReportSolver")
+  comments       ReportComment[]
+}
+
+// أنواع البلاغات: خطأ في البيانات، خطأ في النمط، خطأ في إضافة مندلي، ملاحظة، مقترح، أخرى
+model ErrorReport {
+  id            String   @id @default(cuid())
+  // نوع البلاغ
+  type          String   // data | style | plugin | note | suggestion | other
+  // مستوى الخطورة
+  severity      String   @default("medium") // low | medium | high | critical
+  // عنوان مختصر
+  title         String
+  // الوصف التفصيلي
+  description   String
+  // الموقع / المرجع (مثلاً: اسم المصدر، رقم الصفحة، حقل مندلي)
+  location      String?
+  // رقم الصفحة (اختياري)
+  pageNumber    String?
+  // الحقل المتأثر في CSL/مندلي
+  fieldTag      String?
+  // الحالة
+  status        String   @default("open") // open | in_progress | resolved | closed
+  // الأولوية
+  priority      Int      @default(3) // 1 (الأعلى) - 5 (الأقل)
+
+  authorId      String
+  author        Member   @relation("ReportAuthor", fields: [authorId], references: [id])
+
+  // الحل المقترح وتفاصيله
+  solutionText  String?
+  solutionAuthorId String?
+  solutionAuthor Member? @relation("ReportSolver", fields: [solutionAuthorId], references: [id])
+  solutionAt    DateTime?
+
+  // التصنيف المخصص
+  tags          String?  // مفصولة بفواصل
+  // متى أُغلق
+  closedAt      DateTime?
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  comments      ReportComment[]
+
+  @@index([type])
+  @@index([status])
+  @@index([severity])
+  @@index([authorId])
+}
+
+// تعليقات / متابعة على البلاغ (لإثراء النقاش داخل الفريق)
+model ReportComment {
+  id        String   @id @default(cuid())
+  reportId  String
+  report    ErrorReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    Member   @relation(fields: [authorId], references: [id])
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([reportId])
+}
+
+// سجل نشاط الفريق (لإظهار آخر التحديثات على الداش بورد)
+model ActivityLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actorName String?
+  action    String   // created | updated | solved | closed | commented | member_added
+  targetType String? // report | member | comment
+  targetId  String?
+  meta      String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}
