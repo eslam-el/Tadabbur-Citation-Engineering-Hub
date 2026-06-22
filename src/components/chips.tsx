@@ -33,7 +33,7 @@ export function MemberAvatar({
         width: size,
         height: size,
         fontSize: size * 0.36,
-        background: color || "#c9a24b",
+        background: color || "var(--accent-gold)",
       }}
       title={name}
     >

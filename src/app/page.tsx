@@ -73,9 +73,9 @@ function AppInner() {
           <div
             className="mb-4 p-3 rounded-lg flex items-center gap-2 fade-up"
             style={{
-              background: "rgba(176,74,54,0.10)",
+              background: "var(--soft-crimson-bg)",
               border: "1px solid rgba(176,74,54,0.35)",
-              color: "var(--crimson-bright)",
+              color: "var(--accent-crimson)",
             }}
           >
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -86,7 +86,7 @@ function AppInner() {
               size="sm"
               variant="outline"
               onClick={() => setTab("members")}
-              className="border-[rgba(176,74,54,0.4)] text-[var(--crimson-bright)] hover:bg-[rgba(176,74,54,0.1)]"
+              className="border-[var(--accent-crimson)] text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]"
             >
               إدارة الأعضاء
             </Button>
@@ -111,7 +111,7 @@ function AppInner() {
               variant="ghost"
               size="sm"
               onClick={handleSeed}
-              className="gap-2 text-[var(--parch-dim)] hover:bg-[rgba(201,162,75,0.06)]"
+              className="gap-2 text-[var(--text-dim)] hover:bg-[var(--soft-gold-bg)]"
             >
               <Sparkles className="w-3.5 h-3.5" />
               إضافة بيانات تجريبية للاستعراض
@@ -123,7 +123,7 @@ function AppInner() {
       {/* تذييل */}
       <footer
         className="mt-auto py-4 px-4 text-center text-xs"
-        style={{ color: "var(--parch-dim)" }}
+        style={{ color: "var(--text-dim)" }}
       >
         <div className="gold-divider mb-4" />
         <span>
