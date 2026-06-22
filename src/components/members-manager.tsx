@@ -38,6 +38,9 @@ type Member = {
   _count?: { reports: number; solvedReports: number };
 };
 
+const INPUT_CLASS =
+  "bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] placeholder:text-[var(--text-dim)]";
+
 export function MembersManager() {
   const { current, setCurrent, refresh: refreshCtx } = useMember();
   const [members, setMembers] = useState<Member[]>([]);
@@ -87,17 +90,17 @@ export function MembersManager() {
             style={{
               width: 44,
               height: 44,
-              background: "rgba(201,162,75,0.12)",
-              color: "var(--gold-bright)",
+              background: "var(--soft-gold-bg)",
+              color: "var(--accent-gold-bright)",
             }}
           >
             <Users className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold m-0" style={{ color: "var(--parch)" }}>
+            <h2 className="text-lg font-bold m-0" style={{ color: "var(--text-strong)" }}>
               أعضاء الفريق
             </h2>
-            <p className="text-xs m-0" style={{ color: "var(--parch-dim)" }}>
+            <p className="text-xs m-0" style={{ color: "var(--text-dim)" }}>
               إدارة الأعضاء وأدوارهم. لون كل عضو يظهر في كل أنحاء المنصة.
             </p>
           </div>
@@ -106,8 +109,8 @@ export function MembersManager() {
           onClick={() => setAdding(true)}
           className="gap-2"
           style={{
-            background: "linear-gradient(180deg, var(--gold-bright), var(--gold))",
-            color: "#1a1408",
+            background: "linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold))",
+            color: "var(--primary-foreground)",
           }}
         >
           <UserPlus className="w-4 h-4" />
@@ -121,7 +124,7 @@ export function MembersManager() {
         </div>
       ) : members.length === 0 ? (
         <div className="panel p-8 text-center fade-up">
-          <p className="text-sm" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-sm" style={{ color: "var(--text-dim)" }}>
             لا يوجد أعضاء بعد. أضف أول عضو للبدء.
           </p>
         </div>
@@ -209,7 +212,7 @@ function MemberCard({
   return (
     <div
       className="panel p-4 fade-up glow-hover"
-      style={{ borderColor: isCurrent ? "rgba(201,162,75,0.5)" : undefined }}
+      style={{ borderColor: isCurrent ? "var(--accent-gold)" : undefined }}
     >
       <div className="flex items-start gap-3">
         <MemberAvatar name={member.name} color={member.color} initials={member.initials} size={48} />
@@ -218,10 +221,10 @@ function MemberCard({
             <Input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] text-sm h-8 mb-2"
+              className={`${INPUT_CLASS} text-sm h-8 mb-2`}
             />
           ) : (
-            <p className="text-sm font-bold m-0 truncate" style={{ color: "var(--parch)" }}>
+            <p className="text-sm font-bold m-0 truncate" style={{ color: "var(--text-strong)" }}>
               {member.name}
             </p>
           )}
@@ -230,21 +233,21 @@ function MemberCard({
               value={role}
               onChange={(e) => setRole(e.target.value)}
               placeholder="الدور"
-              className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] text-xs h-7"
+              className={`${INPUT_CLASS} text-xs h-7`}
             />
           ) : (
-            <p className="text-xs m-0" style={{ color: "var(--parch-dim)" }}>
+            <p className="text-xs m-0" style={{ color: "var(--text-dim)" }}>
               {member.role}
             </p>
           )}
-          <p className="text-xs mt-1 m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs mt-1 m-0" style={{ color: "var(--text-dim)" }}>
             انضم في {fmtDateTime(member.createdAt)}
           </p>
         </div>
         {isCurrent && (
           <span
             className="text-xs px-1.5 py-0.5 rounded"
-            style={{ background: "var(--gold)", color: "#1a1408" }}
+            style={{ background: "var(--accent-gold)", color: "var(--primary-foreground)" }}
           >
             أنت
           </span>
@@ -255,23 +258,23 @@ function MemberCard({
       <div className="grid grid-cols-2 gap-2 mt-3">
         <div
           className="p-2 rounded text-center"
-          style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(201,162,75,0.12)" }}
+          style={{ background: "var(--surface-2)", border: "1px solid var(--border-soft)" }}
         >
-          <p className="text-xs m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs m-0" style={{ color: "var(--text-dim)" }}>
             بلاغات مدوّنة
           </p>
-          <p className="text-lg font-bold m-0 tnum" style={{ color: "var(--gold-bright)" }}>
+          <p className="text-lg font-bold m-0 tnum" style={{ color: "var(--accent-gold-bright)" }}>
             {member._count?.reports || 0}
           </p>
         </div>
         <div
           className="p-2 rounded text-center"
-          style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(201,162,75,0.12)" }}
+          style={{ background: "var(--surface-2)", border: "1px solid var(--border-soft)" }}
         >
-          <p className="text-xs m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs m-0" style={{ color: "var(--text-dim)" }}>
             حلول مقدّمة
           </p>
-          <p className="text-lg font-bold m-0 tnum" style={{ color: "var(--green-bright)" }}>
+          <p className="text-lg font-bold m-0 tnum" style={{ color: "var(--accent-green)" }}>
             {member._count?.solvedReports || 0}
           </p>
         </div>
@@ -280,10 +283,10 @@ function MemberCard({
       {/* اللون */}
       {isEditing && (
         <div className="mt-3">
-          <Label className="text-xs mb-1.5 block" style={{ color: "var(--parch-dim)" }}>
+          <Label className="text-xs mb-1.5 block" style={{ color: "var(--text-dim)" }}>
             لون التمييز
           </Label>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {MEMBER_COLORS.map((c) => (
               <button
                 key={c}
@@ -291,10 +294,10 @@ function MemberCard({
                 onClick={() => setColor(c)}
                 className="rounded-full transition"
                 style={{
-                  width: 22,
-                  height: 22,
+                  width: 28,
+                  height: 28,
                   background: c,
-                  border: color === c ? "2px solid #fff" : "2px solid transparent",
+                  border: color === c ? "2px solid var(--text-strong)" : "2px solid transparent",
                 }}
               />
             ))}
@@ -311,7 +314,7 @@ function MemberCard({
               onClick={save}
               disabled={saving}
               className="gap-1.5 flex-1"
-              style={{ background: "var(--green)", color: "#0a1408" }}
+              style={{ background: "var(--accent-green)", color: "var(--primary-foreground)" }}
             >
               {saving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
               حفظ
@@ -320,7 +323,7 @@ function MemberCard({
               size="sm"
               variant="outline"
               onClick={onStopEdit}
-              className="border-[rgba(201,162,75,0.3)] text-[var(--parch)]"
+              className="border-[var(--border-soft)] text-[var(--text-strong)]"
             >
               <X className="w-3.5 h-3.5" />
             </Button>
@@ -332,7 +335,7 @@ function MemberCard({
                 size="sm"
                 variant="outline"
                 onClick={onSetCurrent}
-                className="gap-1.5 flex-1 border-[rgba(201,162,75,0.3)] text-[var(--parch)] hover:bg-[rgba(201,162,75,0.1)]"
+                className="gap-1.5 flex-1 border-[var(--border-soft)] text-[var(--text-strong)] hover:bg-[var(--soft-gold-bg)]"
               >
                 تعيين كعضوي
               </Button>
@@ -341,7 +344,7 @@ function MemberCard({
               size="sm"
               variant="ghost"
               onClick={onEdit}
-              className="text-[var(--parch-dim)] hover:bg-[rgba(201,162,75,0.08)]"
+              className="text-[var(--text-dim)] hover:bg-[var(--soft-gold-bg)]"
             >
               <Pencil className="w-3.5 h-3.5" />
             </Button>
@@ -349,7 +352,7 @@ function MemberCard({
               size="sm"
               variant="ghost"
               onClick={onDelete}
-              className="text-[var(--crimson-bright)] hover:bg-[rgba(176,74,54,0.1)]"
+              className="text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </Button>
@@ -405,12 +408,12 @@ function AddMemberDialog({
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="bg-[var(--ink-2)] border-[rgba(201,162,75,0.3)] text-[var(--parch)]">
+      <DialogContent className="bg-[var(--surface-1)] border-[var(--border-soft)] text-[var(--text-strong)]">
         <DialogHeader>
-          <DialogTitle className="font-display text-xl" style={{ color: "var(--gold-bright)" }}>
+          <DialogTitle className="font-display text-xl" style={{ color: "var(--accent-gold-bright)" }}>
             إضافة عضو جديد
           </DialogTitle>
-          <DialogDescription style={{ color: "var(--parch-dim)" }}>
+          <DialogDescription style={{ color: "var(--text-dim)" }}>
             سيظهر العضو في قائمة الفريق ويمكنه تسجيل البلاغات والحلول.
           </DialogDescription>
         </DialogHeader>
@@ -419,33 +422,33 @@ function AddMemberDialog({
           <div className="flex items-center gap-3">
             <MemberAvatar name={name || "؟"} color={color} initials={getInitials(name || "؟")} size={48} />
             <div className="flex-1">
-              <Label className="text-xs mb-1.5 block" style={{ color: "var(--gold-bright)" }}>
+              <Label className="text-xs mb-1.5 block" style={{ color: "var(--accent-gold-bright)" }}>
                 اسم العضو
               </Label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="مثال: أ. عبدالله"
-                className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)]"
+                className={INPUT_CLASS}
                 autoFocus
               />
             </div>
           </div>
 
           <div>
-            <Label className="text-xs mb-1.5 block" style={{ color: "var(--gold-bright)" }}>
+            <Label className="text-xs mb-1.5 block" style={{ color: "var(--accent-gold-bright)" }}>
               الدور
             </Label>
             <Input
               value={role}
               onChange={(e) => setRole(e.target.value)}
               placeholder="مثال: محقق / مراجع / مطوّر CSL"
-              className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)]"
+              className={INPUT_CLASS}
             />
           </div>
 
           <div>
-            <Label className="text-xs mb-1.5 block" style={{ color: "var(--gold-bright)" }}>
+            <Label className="text-xs mb-1.5 block" style={{ color: "var(--accent-gold-bright)" }}>
               لون التمييز
             </Label>
             <div className="flex flex-wrap gap-2">
@@ -459,7 +462,7 @@ function AddMemberDialog({
                     width: 28,
                     height: 28,
                     background: c,
-                    border: color === c ? "2px solid #fff" : "2px solid transparent",
+                    border: color === c ? "2px solid var(--text-strong)" : "2px solid transparent",
                   }}
                 />
               ))}
@@ -468,7 +471,7 @@ function AddMemberDialog({
         </div>
 
         <DialogFooter className="mt-3 gap-2">
-          <Button variant="outline" onClick={onClose} className="border-[rgba(201,162,75,0.3)] text-[var(--parch)]">
+          <Button variant="outline" onClick={onClose} className="border-[var(--border-soft)] text-[var(--text-strong)]">
             إلغاء
           </Button>
           <Button
@@ -476,8 +479,8 @@ function AddMemberDialog({
             disabled={saving}
             className="gap-2"
             style={{
-              background: "linear-gradient(180deg, var(--gold-bright), var(--gold))",
-              color: "#1a1408",
+              background: "linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold))",
+              color: "var(--primary-foreground)",
             }}
           >
             {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
