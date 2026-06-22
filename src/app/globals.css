@@ -48,62 +48,62 @@
 :root {
   --radius: 0.75rem;
 
-  /* ===== توكنات دلالية — الوضع الفاتح (ورقي فاتح) ===== */
-  --surface-1: #fbf7ee;
-  --surface-2: #f3ecdc;
-  --surface-3: #ece2cc;
-  --text-strong: #2a2113;
-  --text-dim: #6b5d3f;
-  --accent-gold: #9a7b2e;
-  --accent-gold-bright: #b8923a;
-  --accent-crimson: #b04a36;
-  --accent-green: #5f8a3e;
-  --accent-blue: #4a6d95;
-  --border-soft: rgba(139, 115, 48, 0.28);
-  --soft-gold-bg: rgba(154, 123, 46, 0.10);
-  --soft-crimson-bg: rgba(176, 74, 54, 0.10);
-  --shadow-md: 0 8px 30px rgba(80, 60, 20, 0.10);
+  /* ===== توكنات دلالية — الوضع الفاتح (تباين محسّن) ===== */
+  --surface-1: #fffdf7;
+  --surface-2: #f4ecd9;
+  --surface-3: #e7dabd;
+  --text-strong: #211a0c;
+  --text-dim: #4d4129;
+  --accent-gold: #7e6320;
+  --accent-gold-bright: #82600f;
+  --accent-crimson: #9c3621;
+  --accent-green: #496f2b;
+  --accent-blue: #3a587e;
+  --border-soft: rgba(116, 92, 33, 0.50);
+  --soft-gold-bg: rgba(150, 118, 40, 0.16);
+  --soft-crimson-bg: rgba(176, 74, 54, 0.14);
+  --shadow-md: 0 10px 28px rgba(64, 47, 14, 0.18);
 
   /* أسماء قديمة (توافق) تشير لقيم الوضع الفاتح */
-  --ink: #f7f1e3; --ink-2: #fbf7ee; --ink-3: #f3ecdc; --ink-4: #ece2cc;
-  --gold: #9a7b2e; --gold-bright: #b8923a; --gold-dim: #8b7330;
-  --parch: #2a2113; --parch-dim: #6b5d3f;
-  --crimson: #b04a36; --crimson-bright: #b04a36;
-  --green: #5f8a3e; --green-bright: #5f8a3e; --blue-soft: #4a6d95;
+  --ink: #ece2ca; --ink-2: #fffdf7; --ink-3: #f4ecd9; --ink-4: #e7dabd;
+  --gold: #7e6320; --gold-bright: #82600f; --gold-dim: #8b7330;
+  --parch: #211a0c; --parch-dim: #4d4129;
+  --crimson: #9c3621; --crimson-bright: #9c3621;
+  --green: #496f2b; --green-bright: #496f2b; --blue-soft: #3a587e;
 
   /* shadcn — فاتح */
-  --background: #f7f1e3;
-  --foreground: #2a2113;
-  --card: #fbf7ee;
-  --card-foreground: #2a2113;
-  --popover: #fbf7ee;
-  --popover-foreground: #2a2113;
-  --primary: #9a7b2e;
-  --primary-foreground: #fbf7ee;
-  --secondary: #ece2cc;
-  --secondary-foreground: #2a2113;
-  --muted: #ece2cc;
-  --muted-foreground: #6b5d3f;
-  --accent: #f3ecdc;
-  --accent-foreground: #7a5f1f;
-  --destructive: #b04a36;
+  --background: #ece2ca;
+  --foreground: #211a0c;
+  --card: #fffdf7;
+  --card-foreground: #211a0c;
+  --popover: #fffdf7;
+  --popover-foreground: #211a0c;
+  --primary: #7e6320;
+  --primary-foreground: #fffdf7;
+  --secondary: #e7dabd;
+  --secondary-foreground: #211a0c;
+  --muted: #e7dabd;
+  --muted-foreground: #4d4129;
+  --accent: #f4ecd9;
+  --accent-foreground: #6a5015;
+  --destructive: #9c3621;
   --destructive-foreground: #fbe9d8;
-  --border: rgba(139, 115, 48, 0.28);
-  --input: rgba(139, 115, 48, 0.24);
-  --ring: #9a7b2e;
-  --chart-1: #9a7b2e;
-  --chart-2: #b04a36;
-  --chart-3: #5f8a3e;
-  --chart-4: #4a6d95;
-  --chart-5: #b8923a;
-  --sidebar: #fbf7ee;
-  --sidebar-foreground: #2a2113;
-  --sidebar-primary: #9a7b2e;
-  --sidebar-primary-foreground: #fbf7ee;
-  --sidebar-accent: #f3ecdc;
-  --sidebar-accent-foreground: #7a5f1f;
-  --sidebar-border: rgba(139, 115, 48, 0.28);
-  --sidebar-ring: #9a7b2e;
+  --border: rgba(116, 92, 33, 0.50);
+  --input: rgba(116, 92, 33, 0.42);
+  --ring: #7e6320;
+  --chart-1: #7e6320;
+  --chart-2: #9c3621;
+  --chart-3: #496f2b;
+  --chart-4: #3a587e;
+  --chart-5: #82600f;
+  --sidebar: #fffdf7;
+  --sidebar-foreground: #211a0c;
+  --sidebar-primary: #7e6320;
+  --sidebar-primary-foreground: #fffdf7;
+  --sidebar-accent: #f4ecd9;
+  --sidebar-accent-foreground: #6a5015;
+  --sidebar-border: rgba(116, 92, 33, 0.50);
+  --sidebar-ring: #7e6320;
 }
 
 .dark {
