@@ -6,7 +6,7 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-tajawal), "Tajawal", system-ui, sans-serif;
+  --font-sans: var(--font-plex-arabic), "IBM Plex Sans Arabic", system-ui, sans-serif;
   --font-serif: var(--font-alexandria), "Alexandria", sans-serif;
   --font-mono: var(--font-jetbrains), "JetBrains Mono", monospace;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -123,6 +123,10 @@
     background-attachment: fixed;
     color: var(--foreground);
     font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.7;
+    letter-spacing: 0;
   }
 }
 

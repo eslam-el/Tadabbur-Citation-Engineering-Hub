@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
-import { Tajawal, Alexandria, JetBrains_Mono } from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Alexandria, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 
-const tajawal = Tajawal({
-  variable: "--font-tajawal",
+const ibmPlexArabic = IBM_Plex_Sans_Arabic({
+  variable: "--font-plex-arabic",
   subsets: ["arabic", "latin"],
-  weight: ["300", "400", "500", "700", "800"],
+  weight: ["300", "400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -49,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
-        className={`${tajawal.variable} ${alexandria.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground`}
+        className={`${ibmPlexArabic.variable} ${alexandria.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground`}
       >
         {children}
         <Toaster />
