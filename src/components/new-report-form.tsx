@@ -182,7 +182,7 @@ export function NewReportForm({
                     >
                       {t.label}
                     </p>
-                    <p className="text-[11px] mt-0.5 leading-snug m-0" style={{ color: "var(--parch-dim)" }}>
+                    <p className="text-xs mt-0.5 leading-snug m-0" style={{ color: "var(--parch-dim)" }}>
                       {t.desc}
                     </p>
                   </div>

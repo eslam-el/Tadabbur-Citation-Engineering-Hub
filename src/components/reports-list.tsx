@@ -240,7 +240,7 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
                     <StatusChip status={r.status} />
                     {r.solutionText && (
                       <span
-                        className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded"
+                        className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded"
                         style={{ background: "rgba(127,170,90,0.12)", color: "var(--green-bright)" }}
                       >
                         <CheckCircle2 className="w-3 h-3" /> له حل
@@ -248,13 +248,13 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
                     )}
                     {r.comments.length > 0 && (
                       <span
-                        className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded"
+                        className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded"
                         style={{ background: "rgba(107,141,181,0.12)", color: "var(--blue-soft)" }}
                       >
                         <MessageSquare className="w-3 h-3" /> {r.comments.length}
                       </span>
                     )}
-                    <span className="text-[10px] mr-auto" style={{ color: "var(--parch-dim)" }}>
+                    <span className="text-xs mr-auto" style={{ color: "var(--parch-dim)" }}>
                       #{r.id.slice(-6).toUpperCase()} · {fmtRelative(r.createdAt)}
                     </span>
                   </div>
@@ -265,7 +265,7 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
                     {r.description}
                   </p>
                   {(r.location || r.fieldTag || r.pageNumber) && (
-                    <div className="flex flex-wrap gap-2 mt-2 text-[10px]" style={{ color: "var(--parch-dim)" }}>
+                    <div className="flex flex-wrap gap-2 mt-2 text-xs" style={{ color: "var(--parch-dim)" }}>
                       {r.location && <span>📍 {r.location}</span>}
                       {r.fieldTag && <span>🏷 {r.fieldTag}</span>}
                       {r.pageNumber && <span>📄 {r.pageNumber}</span>}
@@ -459,7 +459,7 @@ function ReportDialog({
             <SeverityChip severity={report.severity} />
             <StatusChip status={report.status} />
             <span
-              className="text-[11px] px-2 py-0.5 rounded"
+              className="text-xs px-2 py-0.5 rounded"
               style={{ background: "rgba(201,162,75,0.1)", color: "var(--gold-bright)" }}
             >
               الأولوية: {PRIORITY_LIST.find((p) => p.value === report.priority)?.label || report.priority}
@@ -538,7 +538,7 @@ function ReportDialog({
                 الحل المقترح / الإجراء المتخذ
               </p>
               {report.solutionAt && (
-                <span className="text-[10px]" style={{ color: "var(--parch-dim)" }}>
+                <span className="text-xs" style={{ color: "var(--parch-dim)" }}>
                   آخر تحديث: {fmtDateTime(report.solutionAt)}
                 </span>
               )}
@@ -619,7 +619,7 @@ function ReportDialog({
                         <span className="text-xs font-bold" style={{ color: "var(--parch)" }}>
                           {c.author.name}
                         </span>
-                        <span className="text-[10px]" style={{ color: "var(--parch-dim)" }}>
+                        <span className="text-xs" style={{ color: "var(--parch-dim)" }}>
                           {fmtRelative(c.createdAt)}
                         </span>
                       </div>
@@ -676,7 +676,7 @@ function Detail({
       className="p-2.5 rounded-lg"
       style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(201,162,75,0.12)" }}
     >
-      <p className="text-[10px] mb-0.5" style={{ color: "var(--parch-dim)" }}>
+      <p className="text-xs mb-0.5" style={{ color: "var(--parch-dim)" }}>
         {label}
       </p>
       <p

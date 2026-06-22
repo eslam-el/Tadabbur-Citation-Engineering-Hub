@@ -317,7 +317,7 @@ export function Dashboard({
                     </span>
                     <span className="tnum font-bold" style={{ color: "var(--gold-bright)" }}>
                       {d.value}
-                      <span className="text-[10px] text-[var(--parch-dim)] mr-1">
+                      <span className="text-xs text-[var(--parch-dim)] mr-1">
                         ({total > 0 ? Math.round((d.value / total) * 100) : 0}%)
                       </span>
                     </span>
@@ -612,7 +612,7 @@ export function Dashboard({
                     <p className="text-xs mt-0.5 m-0 line-clamp-2" style={{ color: "var(--parch-dim)" }}>
                       {r.description}
                     </p>
-                    <div className="flex items-center justify-between mt-2 text-[10px]" style={{ color: "var(--parch-dim)" }}>
+                    <div className="flex items-center justify-between mt-2 text-xs" style={{ color: "var(--parch-dim)" }}>
                       <span>{r.author?.name}</span>
                       <span>{fmtRelative(r.createdAt)}</span>
                     </div>
@@ -653,7 +653,7 @@ export function Dashboard({
                       <span className="font-bold">{a.actorName || "النظام"}</span>{" "}
                       {actionLabel(a.action)}
                     </p>
-                    <p className="m-0 mt-0.5 text-[10px]" style={{ color: "var(--parch-dim)" }}>
+                    <p className="m-0 mt-0.5 text-xs" style={{ color: "var(--parch-dim)" }}>
                       {fmtRelative(a.createdAt)} · {fmtDateTime(a.createdAt)}
                     </p>
                   </div>

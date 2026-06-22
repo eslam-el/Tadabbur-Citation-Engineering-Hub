@@ -47,7 +47,7 @@ export function TypeChip({ type, withLabel = true }: { type: ErrorType; withLabe
   if (!t) return null;
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-semibold whitespace-nowrap"
+      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold whitespace-nowrap"
       style={{ color: t.color, background: t.bg, border: `1px solid ${t.color}33` }}
       title={t.desc}
     >
@@ -65,7 +65,7 @@ export function SeverityChip({ severity }: { severity: Severity }) {
   if (!s) return null;
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-semibold whitespace-nowrap"
+      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold whitespace-nowrap"
       style={{ color: s.color, background: s.bg, border: `1px solid ${s.color}33` }}
     >
       {s.label}
@@ -78,7 +78,7 @@ export function StatusChip({ status }: { status: ReportStatus }) {
   if (!s) return null;
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-xs font-semibold whitespace-nowrap"
+      className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-semibold whitespace-nowrap"
       style={{ color: s.color, background: s.bg, border: `1px solid ${s.color}33` }}
     >
       <span

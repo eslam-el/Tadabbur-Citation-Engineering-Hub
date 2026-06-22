@@ -122,9 +122,10 @@ function AppInner() {
 
       {/* تذييل */}
       <footer
-        className="mt-auto py-4 px-4 text-center text-[11px]"
-        style={{ borderTop: "1px solid rgba(201,162,75,0.18)", color: "var(--parch-dim)" }}
+        className="mt-auto py-4 px-4 text-center text-xs"
+        style={{ color: "var(--parch-dim)" }}
       >
+        <div className="gold-divider mb-4" />
         <span>
           منصة تتبّع أخطاء فريق مرسم تدبر — بُنيت لمشروع CSL Studio
         </span>

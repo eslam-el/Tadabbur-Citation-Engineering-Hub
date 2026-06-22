@@ -51,14 +51,14 @@ export function Header({
             <span className="font-display text-2xl leading-none" style={{ color: "var(--gold-bright)" }}>
               مرسم
             </span>
-            <span className="text-[10px] tracking-[3px] mt-1" style={{ color: "var(--parch-dim)" }}>
+            <span className="text-xs tracking-[3px] mt-1" style={{ color: "var(--parch-dim)" }}>
               TADABBUR
             </span>
           </div>
 
           <div className="min-w-0">
             <p
-              className="text-[11px] tracking-[3px] font-semibold uppercase mb-1.5"
+              className="text-xs tracking-widest font-semibold uppercase mb-1.5"
               style={{ color: "var(--crimson)" }}
             >
               TADABBUR · CSL STUDIO
@@ -191,7 +191,7 @@ export function Header({
               />
               <div className="leading-tight">
                 <p className="text-xs font-semibold text-[var(--parch)]">{current.name}</p>
-                <p className="text-[10px] text-[var(--parch-dim)]">{current.role}</p>
+                <p className="text-xs text-[var(--parch-dim)]">{current.role}</p>
               </div>
             </div>
           ) : (
@@ -221,15 +221,18 @@ export function Header({
           <button
             key={t.id}
             onClick={() => onTabChange(t.id)}
-            className="px-4 py-2 rounded-md text-sm font-semibold transition whitespace-nowrap"
+            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all duration-200 whitespace-nowrap relative`}
             style={{
               background:
-                activeTab === t.id ? "rgba(201,162,75,0.16)" : "transparent",
+                activeTab === t.id ? "rgba(201,162,75,0.14)" : "transparent",
               color: activeTab === t.id ? "var(--gold-bright)" : "var(--parch-dim)",
               border:
                 activeTab === t.id
-                  ? "1px solid rgba(201,162,75,0.4)"
+                  ? "1px solid rgba(201,162,75,0.38)"
                   : "1px solid transparent",
+              boxShadow: activeTab === t.id
+                ? "0 2px 12px rgba(201,162,75,0.08)"
+                : "none",
             }}
           >
             {t.label}

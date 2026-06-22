@@ -1,27 +1,27 @@
 import type { Metadata } from "next";
-import { Cairo, Amiri, IBM_Plex_Mono } from "next/font/google";
+import { Tajawal, Alexandria, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
 
-const cairo = Cairo({
-  variable: "--font-cairo",
+const tajawal = Tajawal({
+  variable: "--font-tajawal",
   subsets: ["arabic", "latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500", "700", "800"],
   display: "swap",
 });
 
-const amiri = Amiri({
-  variable: "--font-amiri",
+const alexandria = Alexandria({
+  variable: "--font-alexandria",
   subsets: ["arabic", "latin"],
-  weight: ["400", "700"],
+  weight: ["300", "400", "500", "600", "700", "800"],
   display: "swap",
 });
 
-const ibmMono = IBM_Plex_Mono({
-  variable: "--font-ibm-mono",
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -49,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
-        className={`${cairo.variable} ${amiri.variable} ${ibmMono.variable} antialiased bg-background text-foreground`}
+        className={`${tajawal.variable} ${alexandria.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground`}
       >
         {children}
         <Toaster />

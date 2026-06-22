@@ -190,9 +190,11 @@ export async function GET(req: NextRequest) {
     }
 
     const buf = XLSX.write(wb, { type: "buffer", bookType: "xlsx" }) as Buffer;
+    // تحويل Buffer إلى Uint8Array ليتوافق مع نوع جسم NextResponse (BodyInit)
+    const body = new Uint8Array(buf);
 
     const filename = `tadabbur-errors-${new Date().toISOString().slice(0, 10)}.xlsx`;
-    return new NextResponse(buf, {
+    return new NextResponse(body, {
       status: 200,
       headers: {
         "Content-Type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

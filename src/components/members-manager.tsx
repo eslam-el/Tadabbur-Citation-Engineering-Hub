@@ -237,13 +237,13 @@ function MemberCard({
               {member.role}
             </p>
           )}
-          <p className="text-[10px] mt-1 m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs mt-1 m-0" style={{ color: "var(--parch-dim)" }}>
             انضم في {fmtDateTime(member.createdAt)}
           </p>
         </div>
         {isCurrent && (
           <span
-            className="text-[10px] px-1.5 py-0.5 rounded"
+            className="text-xs px-1.5 py-0.5 rounded"
             style={{ background: "var(--gold)", color: "#1a1408" }}
           >
             أنت
@@ -257,7 +257,7 @@ function MemberCard({
           className="p-2 rounded text-center"
           style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(201,162,75,0.12)" }}
         >
-          <p className="text-[10px] m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs m-0" style={{ color: "var(--parch-dim)" }}>
             بلاغات مدوّنة
           </p>
           <p className="text-lg font-bold m-0 tnum" style={{ color: "var(--gold-bright)" }}>
@@ -268,7 +268,7 @@ function MemberCard({
           className="p-2 rounded text-center"
           style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(201,162,75,0.12)" }}
         >
-          <p className="text-[10px] m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs m-0" style={{ color: "var(--parch-dim)" }}>
             حلول مقدّمة
           </p>
           <p className="text-lg font-bold m-0 tnum" style={{ color: "var(--green-bright)" }}>
@@ -280,7 +280,7 @@ function MemberCard({
       {/* اللون */}
       {isEditing && (
         <div className="mt-3">
-          <Label className="text-[10px] mb-1.5 block" style={{ color: "var(--parch-dim)" }}>
+          <Label className="text-xs mb-1.5 block" style={{ color: "var(--parch-dim)" }}>
             لون التمييز
           </Label>
           <div className="flex flex-wrap gap-1.5">

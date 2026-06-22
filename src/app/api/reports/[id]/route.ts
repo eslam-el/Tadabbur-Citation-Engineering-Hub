@@ -34,7 +34,7 @@ export async function PATCH(
     const body = await req.json();
     const data: Record<string, unknown> = {};
 
-    const allowed: (keyof typeof body)[] = [
+    const allowed = [
       "type",
       "severity",
       "title",
@@ -45,7 +45,7 @@ export async function PATCH(
       "status",
       "priority",
       "tags",
-    ];
+    ] as const;
 
     for (const k of allowed) {
       if (k in body) data[k] = body[k];
