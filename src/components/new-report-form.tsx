@@ -40,6 +40,9 @@ const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   MoreHorizontal,
 };
 
+const FIELD_CLASS =
+  "bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] placeholder:text-[var(--text-dim)] focus-visible:border-[var(--accent-gold)] focus-visible:ring-[var(--accent-gold)]/40";
+
 export function NewReportForm({
   onCreated,
   onGoToReports,
@@ -114,14 +117,14 @@ export function NewReportForm({
 
   return (
     <div className="panel fade-up">
-      <div className="p-5 md:p-6 border-b border-[rgba(201,162,75,0.18)] flex items-center justify-between gap-3">
+      <div className="p-5 md:p-6 border-b border-[var(--border-soft)] flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <Sparkles className="w-5 h-5" style={{ color: "var(--gold-bright)" }} />
+          <Sparkles className="w-5 h-5" style={{ color: "var(--accent-gold-bright)" }} />
           <div>
-            <h2 className="text-lg font-bold m-0" style={{ color: "var(--parch)" }}>
+            <h2 className="text-lg font-bold m-0" style={{ color: "var(--text-strong)" }}>
               تدوين بلاغ / ملاحظة / مقترح
             </h2>
-            <p className="text-xs mt-1 m-0" style={{ color: "var(--parch-dim)" }}>
+            <p className="text-xs mt-1 m-0" style={{ color: "var(--text-dim)" }}>
               اختر النوع بدقة ليسهل تصنيفه لاحقًا في الإحصائيات وملف Excel.
             </p>
           </div>
@@ -129,14 +132,14 @@ export function NewReportForm({
         <Button
           variant="outline"
           onClick={onGoToReports}
-          className="border-[rgba(201,162,75,0.3)] text-[var(--parch-dim)] hover:bg-[rgba(201,162,75,0.08)]"
+          className="border-[var(--border-soft)] text-[var(--text-dim)] hover:bg-[var(--soft-gold-bg)]"
         >
           عودة للسجل
         </Button>
       </div>
 
       {!current && (
-        <div className="m-5 p-4 rounded-lg border border-dashed border-[var(--crimson)] bg-[rgba(176,74,54,0.08)] text-sm" style={{ color: "var(--crimson-bright)" }}>
+        <div className="m-5 p-4 rounded-lg border border-dashed border-[var(--accent-crimson)] bg-[var(--soft-crimson-bg)] text-sm" style={{ color: "var(--accent-crimson)" }}>
           ⚠ يجب اختيار عضويتك من زر «الفريق» أعلى الصفحة قبل التدوين.
         </div>
       )}
@@ -144,7 +147,7 @@ export function NewReportForm({
       <form onSubmit={handleSubmit} className="p-5 md:p-6 space-y-5">
         {/* نوع البلاغ: بطاقات اختيار */}
         <div>
-          <Label className="text-[var(--gold)] font-semibold mb-3 block">
+          <Label className="text-[var(--accent-gold)] font-semibold mb-3 block">
             نوع البلاغ
           </Label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
@@ -156,12 +159,12 @@ export function NewReportForm({
                   type="button"
                   key={t.value}
                   onClick={() => setType(t.value)}
-                  className="flex items-start gap-2.5 p-3 rounded-lg text-right transition glow-hover"
+                  className="flex items-start gap-2.5 p-3 rounded-lg text-start transition glow-hover"
                   style={{
-                    background: active ? t.bg : "rgba(255,255,255,0.02)",
+                    background: active ? t.bg : "var(--surface-2)",
                     border: active
                       ? `1px solid ${t.color}`
-                      : "1px solid rgba(201,162,75,0.15)",
+                      : "1px solid var(--border-soft)",
                   }}
                 >
                   <span
@@ -170,7 +173,7 @@ export function NewReportForm({
                       width: 32,
                       height: 32,
                       background: t.color,
-                      color: "#1a1408",
+                      color: "var(--primary-foreground)",
                     }}
                   >
                     <Icon className="w-4 h-4" />
@@ -178,11 +181,11 @@ export function NewReportForm({
                   <div className="flex-1 min-w-0">
                     <p
                       className="text-sm font-bold m-0"
-                      style={{ color: active ? t.color : "var(--parch)" }}
+                      style={{ color: active ? t.color : "var(--text-strong)" }}
                     >
                       {t.label}
                     </p>
-                    <p className="text-xs mt-0.5 leading-snug m-0" style={{ color: "var(--parch-dim)" }}>
+                    <p className="text-xs mt-0.5 leading-snug m-0" style={{ color: "var(--text-dim)" }}>
                       {t.desc}
                     </p>
                   </div>
@@ -194,37 +197,37 @@ export function NewReportForm({
 
         {/* العنوان */}
         <div>
-          <Label htmlFor="title" className="text-[var(--gold)] font-semibold mb-2 block">
-            عنوان البلاغ <span style={{ color: "var(--crimson-bright)" }}>*</span>
+          <Label htmlFor="title" className="text-[var(--accent-gold)] font-semibold mb-2 block">
+            عنوان البلاغ <span style={{ color: "var(--accent-crimson)" }}>*</span>
           </Label>
           <Input
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="مثال: خطأ في اسم المؤلف لمصدر «تفسير الطبري»"
-            className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] placeholder:text-[var(--parch-dim)] focus-visible:border-[var(--gold)]"
+            className={FIELD_CLASS}
             maxLength={200}
           />
         </div>
 
         {/* الوصف */}
         <div>
-          <Label htmlFor="description" className="text-[var(--gold)] font-semibold mb-2 block">
-            الوصف التفصيلي <span style={{ color: "var(--crimson-bright)" }}>*</span>
+          <Label htmlFor="description" className="text-[var(--accent-gold)] font-semibold mb-2 block">
+            الوصف التفصيلي <span style={{ color: "var(--accent-crimson)" }}>*</span>
           </Label>
           <Textarea
             id="description"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="اشرح الخطأ بالتفصيل: ما الذي حدث؟ ما الذي كان متوقعًا؟ أي خطوات لإعادة إنتاج المشكلة؟"
-            className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] placeholder:text-[var(--parch-dim)] focus-visible:border-[var(--gold)] min-h-[120px]"
+            className={`${FIELD_CLASS} min-h-[120px]`}
           />
         </div>
 
         {/* الموقع + الصفحة */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="location" className="text-[var(--gold)] font-semibold mb-2 block">
+            <Label htmlFor="location" className="text-[var(--accent-gold)] font-semibold mb-2 block">
               الموقع / المرجع
             </Label>
             <Input
@@ -232,11 +235,11 @@ export function NewReportForm({
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder="مثال: تفسير الطبري — الجزء 3 / ملف tadabbur-apa.csl"
-              className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] placeholder:text-[var(--parch-dim)] focus-visible:border-[var(--gold)]"
+              className={FIELD_CLASS}
             />
           </div>
           <div>
-            <Label htmlFor="pageNumber" className="text-[var(--gold)] font-semibold mb-2 block">
+            <Label htmlFor="pageNumber" className="text-[var(--accent-gold)] font-semibold mb-2 block">
               رقم الصفحة / الموقع
             </Label>
             <Input
@@ -244,7 +247,7 @@ export function NewReportForm({
               value={pageNumber}
               onChange={(e) => setPageNumber(e.target.value)}
               placeholder="مثال: 12 / bibliography > layout"
-              className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] placeholder:text-[var(--parch-dim)] focus-visible:border-[var(--gold)]"
+              className={FIELD_CLASS}
             />
           </div>
         </div>
@@ -252,7 +255,7 @@ export function NewReportForm({
         {/* حقل CSL / مندلي + الوسوم */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <Label htmlFor="fieldTag" className="text-[var(--gold)] font-semibold mb-2 block">
+            <Label htmlFor="fieldTag" className="text-[var(--accent-gold)] font-semibold mb-2 block">
               الحقل المتأثر (CSL / مندلي)
             </Label>
             <Input
@@ -260,11 +263,11 @@ export function NewReportForm({
               value={fieldTag}
               onChange={(e) => setFieldTag(e.target.value)}
               placeholder="مثال: author / issued / bibliography layout"
-              className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] placeholder:text-[var(--parch-dim)] focus-visible:border-[var(--gold)]"
+              className={FIELD_CLASS}
             />
           </div>
           <div>
-            <Label htmlFor="tags" className="text-[var(--gold)] font-semibold mb-2 block">
+            <Label htmlFor="tags" className="text-[var(--accent-gold)] font-semibold mb-2 block">
               وسوم (مفصولة بفواصل)
             </Label>
             <Input
@@ -272,7 +275,7 @@ export function NewReportForm({
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               placeholder="مثال: APA, ترقيم, وورد"
-              className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] placeholder:text-[var(--parch-dim)] focus-visible:border-[var(--gold)]"
+              className={FIELD_CLASS}
             />
           </div>
         </div>
@@ -280,7 +283,7 @@ export function NewReportForm({
         {/* الخطورة والأولوية */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <Label className="text-[var(--gold)] font-semibold mb-2 block">
+            <Label className="text-[var(--accent-gold)] font-semibold mb-2 block">
               مستوى الخطورة
             </Label>
             <div className="grid grid-cols-4 gap-2">
@@ -293,11 +296,11 @@ export function NewReportForm({
                     onClick={() => setSeverity(s.value)}
                     className="px-2 py-2.5 rounded-md text-sm font-semibold transition"
                     style={{
-                      background: active ? s.bg : "rgba(255,255,255,0.02)",
-                      color: active ? s.color : "var(--parch-dim)",
+                      background: active ? s.bg : "var(--surface-2)",
+                      color: active ? s.color : "var(--text-dim)",
                       border: active
                         ? `1px solid ${s.color}`
-                        : "1px solid rgba(201,162,75,0.15)",
+                        : "1px solid var(--border-soft)",
                     }}
                   >
                     {s.label}
@@ -307,16 +310,16 @@ export function NewReportForm({
             </div>
           </div>
           <div>
-            <Label className="text-[var(--gold)] font-semibold mb-2 block">
+            <Label className="text-[var(--accent-gold)] font-semibold mb-2 block">
               الأولوية
             </Label>
             <Select value={String(priority)} onValueChange={(v) => setPriority(Number(v))}>
-              <SelectTrigger className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)]">
+              <SelectTrigger className="bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)]">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-[var(--ink-2)] border-[rgba(201,162,75,0.3)] text-[var(--parch)]">
+              <SelectContent className="bg-[var(--surface-1)] border-[var(--border-soft)] text-[var(--text-strong)]">
                 {PRIORITY_LIST.map((p) => (
-                  <SelectItem key={p.value} value={String(p.value)} className="focus:bg-[rgba(201,162,75,0.15)]">
+                  <SelectItem key={p.value} value={String(p.value)} className="focus:bg-[var(--soft-gold-bg)]">
                     {p.label}
                   </SelectItem>
                 ))}
@@ -325,12 +328,12 @@ export function NewReportForm({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[rgba(201,162,75,0.18)]">
-          <p className="text-xs" style={{ color: "var(--parch-dim)" }}>
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[var(--border-soft)]">
+          <p className="text-xs" style={{ color: "var(--text-dim)" }}>
             {current ? (
               <>
                 سيُسجَّل البلاغ باسم{" "}
-                <span className="font-bold" style={{ color: "var(--gold-bright)" }}>
+                <span className="font-bold" style={{ color: "var(--accent-gold-bright)" }}>
                   {current.name}
                 </span>{" "}
                 مع طابع زمني تلقائي.
@@ -344,8 +347,8 @@ export function NewReportForm({
             disabled={submitting || !current}
             className="gap-2 px-6"
             style={{
-              background: "linear-gradient(180deg, var(--gold-bright), var(--gold))",
-              color: "#1a1408",
+              background: "linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold))",
+              color: "var(--primary-foreground)",
             }}
           >
             <Sparkles className="w-4 h-4" />
