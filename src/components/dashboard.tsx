@@ -43,7 +43,6 @@ import {
   SEVERITIES,
   STATUSES,
 } from "@/lib/constants";
-import { toast } from "sonner";
 
 type Stats = {
   total: number;
@@ -165,6 +164,14 @@ export function Dashboard({
     label: t.date.slice(5), // MM-DD
   }));
 
+  const tooltipStyle = {
+    background: "var(--surface-2)",
+    border: "1px solid var(--border-soft)",
+    borderRadius: 8,
+    color: "var(--text-strong)",
+    fontSize: 12,
+  } as const;
+
   return (
     <div className="space-y-5">
       {/* شريط الإجراءات العلوي */}
@@ -175,17 +182,17 @@ export function Dashboard({
             style={{
               width: 44,
               height: 44,
-              background: "rgba(201,162,75,0.12)",
-              color: "var(--gold-bright)",
+              background: "var(--soft-gold-bg)",
+              color: "var(--accent-gold-bright)",
             }}
           >
             <TrendingUp className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-lg font-bold m-0" style={{ color: "var(--parch)" }}>
+            <h2 className="text-lg font-bold m-0" style={{ color: "var(--text-strong)" }}>
               لوحة القيادة
             </h2>
-            <p className="text-xs m-0" style={{ color: "var(--parch-dim)" }}>
+            <p className="text-xs m-0" style={{ color: "var(--text-dim)" }}>
               تحديث تلقائي كل 15 ثانية — آخر تحديث: {fmtRelative(new Date())}
             </p>
           </div>
@@ -194,7 +201,7 @@ export function Dashboard({
           <Button
             variant="outline"
             onClick={refresh}
-            className="gap-2 border-[rgba(201,162,75,0.3)] text-[var(--parch)] hover:bg-[rgba(201,162,75,0.1)]"
+            className="gap-2 border-[var(--border-soft)] text-[var(--text-strong)] hover:bg-[var(--soft-gold-bg)]"
             size="sm"
           >
             <RefreshCw className="w-4 h-4" />
@@ -205,7 +212,7 @@ export function Dashboard({
             disabled={exporting}
             variant="outline"
             size="sm"
-            className="gap-2 border-[rgba(201,162,75,0.3)] text-[var(--parch)] hover:bg-[rgba(201,162,75,0.1)]"
+            className="gap-2 border-[var(--border-soft)] text-[var(--text-strong)] hover:bg-[var(--soft-gold-bg)]"
           >
             <FileSpreadsheet className="w-4 h-4" />
             تصدير الإحصائيات
@@ -216,8 +223,8 @@ export function Dashboard({
             size="sm"
             className="gap-2"
             style={{
-              background: "linear-gradient(180deg, var(--gold-bright), var(--gold))",
-              color: "#1a1408",
+              background: "linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold))",
+              color: "var(--primary-foreground)",
             }}
           >
             <Download className="w-4 h-4" />
@@ -232,31 +239,31 @@ export function Dashboard({
           icon={<ActivityIcon className="w-5 h-5" />}
           label="إجمالي البلاغات"
           value={total}
-          color="var(--gold-bright)"
-          bg="rgba(201,162,75,0.12)"
+          color="var(--accent-gold-bright)"
+          bg="var(--soft-gold-bg)"
         />
         <KpiCard
           icon={<Circle className="w-5 h-5" />}
           label="مفتوح"
           value={openCount}
-          color="var(--crimson-bright)"
-          bg="rgba(176,74,54,0.14)"
+          color="var(--accent-crimson)"
+          bg="var(--soft-crimson-bg)"
           sub={total > 0 ? `${Math.round((openCount / total) * 100)}%` : "0%"}
         />
         <KpiCard
           icon={<Timer className="w-5 h-5" />}
           label="قيد المعالجة"
           value={inProgressCount}
-          color="var(--gold-bright)"
-          bg="rgba(201,162,75,0.14)"
+          color="var(--accent-gold-bright)"
+          bg="var(--soft-gold-bg)"
           sub={total > 0 ? `${Math.round((inProgressCount / total) * 100)}%` : "0%"}
         />
         <KpiCard
           icon={<CheckCircle2 className="w-5 h-5" />}
           label="تم الحل"
           value={resolvedCount}
-          color="var(--green-bright)"
-          bg="rgba(127,170,90,0.14)"
+          color="var(--accent-green)"
+          bg="color-mix(in srgb, var(--accent-green) 16%, transparent)"
           sub={`${resolveRate}%`}
         />
       </div>
@@ -264,10 +271,10 @@ export function Dashboard({
       {/* صف الرسوم: الأنواع + الخطورة */}
       <div className="grid md:grid-cols-2 gap-4">
         <div className="panel p-5 fade-up">
-          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--gold-bright)" }}>
+          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--accent-gold-bright)" }}>
             توزيع البلاغات حسب النوع
           </h3>
-          <p className="text-xs mb-4 m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs mb-4 m-0" style={{ color: "var(--text-dim)" }}>
             نسبة كل نوع من إجمالي البلاغات
           </p>
           {total === 0 ? (
@@ -284,21 +291,13 @@ export function Dashboard({
                       innerRadius={45}
                       outerRadius={85}
                       paddingAngle={2}
-                      stroke="var(--ink)"
+                      stroke="var(--surface-1)"
                     >
                       {typeData.map((d, i) => (
                         <Cell key={i} fill={d.color} />
                       ))}
                     </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        background: "var(--ink-3)",
-                        border: "1px solid rgba(201,162,75,0.3)",
-                        borderRadius: 8,
-                        color: "var(--parch)",
-                        fontSize: 12,
-                      }}
-                    />
+                    <Tooltip contentStyle={tooltipStyle} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -308,16 +307,16 @@ export function Dashboard({
                     key={d.key}
                     className="flex items-center justify-between text-xs"
                   >
-                    <span className="flex items-center gap-1.5" style={{ color: "var(--parch)" }}>
+                    <span className="flex items-center gap-1.5" style={{ color: "var(--text-strong)" }}>
                       <span
                         className="inline-block w-2.5 h-2.5 rounded-sm"
                         style={{ background: d.color }}
                       />
                       {d.name}
                     </span>
-                    <span className="tnum font-bold" style={{ color: "var(--gold-bright)" }}>
+                    <span className="tnum font-bold" style={{ color: "var(--accent-gold-bright)" }}>
                       {d.value}
-                      <span className="text-xs text-[var(--parch-dim)] mr-1">
+                      <span className="text-xs text-[var(--text-dim)] ms-1">
                         ({total > 0 ? Math.round((d.value / total) * 100) : 0}%)
                       </span>
                     </span>
@@ -329,10 +328,10 @@ export function Dashboard({
         </div>
 
         <div className="panel p-5 fade-up">
-          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--gold-bright)" }}>
+          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--accent-gold-bright)" }}>
             توزيع البلاغات حسب الخطورة
           </h3>
-          <p className="text-xs mb-4 m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs mb-4 m-0" style={{ color: "var(--text-dim)" }}>
             عدد البلاغات لكل مستوى خطورة
           </p>
           {total === 0 ? (
@@ -340,27 +339,22 @@ export function Dashboard({
           ) : (
             <div style={{ height: 220 }}>
               <ResponsiveContainer>
-                <BarChart data={severityData} layout="vertical" margin={{ right: 12, left: 8, top: 4, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(201,162,75,0.1)" horizontal={false} />
-                  <XAxis type="number" stroke="var(--parch-dim)" fontSize={11} />
+                <BarChart data={severityData} layout="vertical" margin={{ right: 8, left: 12, top: 4, bottom: 4 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-soft)" horizontal={false} />
+                  <XAxis type="number" stroke="var(--text-dim)" fontSize={11} reversed />
                   <YAxis
                     type="category"
                     dataKey="name"
-                    stroke="var(--parch-dim)"
+                    stroke="var(--text-dim)"
                     fontSize={11}
                     width={70}
+                    orientation="right"
                   />
                   <Tooltip
-                    cursor={{ fill: "rgba(201,162,75,0.06)" }}
-                    contentStyle={{
-                      background: "var(--ink-3)",
-                      border: "1px solid rgba(201,162,75,0.3)",
-                      borderRadius: 8,
-                      color: "var(--parch)",
-                      fontSize: 12,
-                    }}
+                    cursor={{ fill: "var(--soft-gold-bg)" }}
+                    contentStyle={tooltipStyle}
                   />
-                  <Bar dataKey="value" radius={[0, 6, 6, 0]}>
+                  <Bar dataKey="value" radius={[6, 0, 0, 6]}>
                     {severityData.map((d, i) => (
                       <Cell key={i} fill={d.color} />
                     ))}
@@ -375,10 +369,10 @@ export function Dashboard({
       {/* اتجاه زمني + الحالات */}
       <div className="grid md:grid-cols-3 gap-4">
         <div className="panel p-5 md:col-span-2 fade-up">
-          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--gold-bright)" }}>
+          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--accent-gold-bright)" }}>
             اتجاه البلاغات — آخر 14 يومًا
           </h3>
-          <p className="text-xs mb-4 m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs mb-4 m-0" style={{ color: "var(--text-dim)" }}>
             البلاغات الجديدة مقابل المحلولة يوميًا
           </p>
           {total === 0 ? (
@@ -386,35 +380,27 @@ export function Dashboard({
           ) : (
             <div style={{ height: 220 }}>
               <ResponsiveContainer>
-                <LineChart data={trendData} margin={{ right: 8, left: 0, top: 4, bottom: 4 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(201,162,75,0.1)" />
-                  <XAxis dataKey="label" stroke="var(--parch-dim)" fontSize={10} />
-                  <YAxis stroke="var(--parch-dim)" fontSize={10} allowDecimals={false} />
-                  <Tooltip
-                    contentStyle={{
-                      background: "var(--ink-3)",
-                      border: "1px solid rgba(201,162,75,0.3)",
-                      borderRadius: 8,
-                      color: "var(--parch)",
-                      fontSize: 12,
-                    }}
-                  />
+                <LineChart data={trendData} margin={{ right: 0, left: 8, top: 4, bottom: 4 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-soft)" />
+                  <XAxis dataKey="label" stroke="var(--text-dim)" fontSize={10} reversed />
+                  <YAxis stroke="var(--text-dim)" fontSize={10} allowDecimals={false} orientation="right" />
+                  <Tooltip contentStyle={tooltipStyle} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
                   <Line
                     type="monotone"
                     dataKey="count"
                     name="بلاغات جديدة"
-                    stroke="var(--gold-bright)"
+                    stroke="var(--accent-gold-bright)"
                     strokeWidth={2.5}
-                    dot={{ r: 2, fill: "var(--gold-bright)" }}
+                    dot={{ r: 2, fill: "var(--accent-gold-bright)" }}
                   />
                   <Line
                     type="monotone"
                     dataKey="resolved"
                     name="محلولة"
-                    stroke="var(--green-bright)"
+                    stroke="var(--accent-green)"
                     strokeWidth={2.5}
-                    dot={{ r: 2, fill: "var(--green-bright)" }}
+                    dot={{ r: 2, fill: "var(--accent-green)" }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -423,10 +409,10 @@ export function Dashboard({
         </div>
 
         <div className="panel p-5 fade-up">
-          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--gold-bright)" }}>
+          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--accent-gold-bright)" }}>
             حالات البلاغات
           </h3>
-          <p className="text-xs mb-4 m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs mb-4 m-0" style={{ color: "var(--text-dim)" }}>
             التوزيع الحالي للحالات
           </p>
           {total === 0 ? (
@@ -442,11 +428,11 @@ export function Dashboard({
                         <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: s.color }} />
                         {s.name}
                       </span>
-                      <span className="tnum font-bold" style={{ color: "var(--parch)" }}>
+                      <span className="tnum font-bold" style={{ color: "var(--text-strong)" }}>
                         {s.value} · {pct.toFixed(1)}%
                       </span>
                     </div>
-                    <div className="h-2 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.04)" }}>
+                    <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--surface-3)" }}>
                       <div
                         className="h-full rounded-full transition-all"
                         style={{ width: `${pct}%`, background: s.color }}
@@ -460,12 +446,12 @@ export function Dashboard({
                 <div
                   className="mt-3 p-3 rounded-lg flex items-start gap-2"
                   style={{
-                    background: "rgba(176,74,54,0.10)",
+                    background: "var(--soft-crimson-bg)",
                     border: "1px solid rgba(176,74,54,0.35)",
                   }}
                 >
-                  <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: "var(--crimson-bright)" }} />
-                  <p className="text-xs m-0" style={{ color: "var(--crimson-bright)" }}>
+                  <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" style={{ color: "var(--accent-crimson)" }} />
+                  <p className="text-xs m-0" style={{ color: "var(--accent-crimson)" }}>
                     يوجد <strong>{criticalCount}</strong> بلاغ حرج يتطلب اهتمامًا فوريًا.
                   </p>
                 </div>
@@ -478,10 +464,10 @@ export function Dashboard({
       {/* أداء الأعضاء */}
       <div className="grid md:grid-cols-2 gap-4">
         <div className="panel p-5 fade-up">
-          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--gold-bright)" }}>
+          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--accent-gold-bright)" }}>
             الأكثر تدوينًا
           </h3>
-          <p className="text-xs mb-4 m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs mb-4 m-0" style={{ color: "var(--text-dim)" }}>
             ترتيب أعضاء الفريق حسب عدد البلاغات
           </p>
           {stats.authorStats.length === 0 ? (
@@ -496,20 +482,20 @@ export function Dashboard({
                   const pct = (a.reportsCount / max) * 100;
                   return (
                     <div key={a.memberId} className="flex items-center gap-3">
-                      <span className="text-xs font-bold w-4" style={{ color: "var(--parch-dim)" }}>
+                      <span className="text-xs font-bold w-4" style={{ color: "var(--text-dim)" }}>
                         {i + 1}
                       </span>
                       <MemberAvatar name={a.name} color={a.color} initials={a.initials} size={28} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold truncate" style={{ color: "var(--parch)" }}>
+                          <span className="text-xs font-semibold truncate" style={{ color: "var(--text-strong)" }}>
                             {a.name}
                           </span>
-                          <span className="tnum text-xs font-bold" style={{ color: "var(--gold-bright)" }}>
+                          <span className="tnum text-xs font-bold" style={{ color: "var(--accent-gold-bright)" }}>
                             {a.reportsCount}
                           </span>
                         </div>
-                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.04)" }}>
+                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--surface-3)" }}>
                           <div
                             className="h-full rounded-full"
                             style={{ width: `${pct}%`, background: a.color }}
@@ -524,10 +510,10 @@ export function Dashboard({
         </div>
 
         <div className="panel p-5 fade-up">
-          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--gold-bright)" }}>
+          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--accent-gold-bright)" }}>
             الأكثر حلًّا
           </h3>
-          <p className="text-xs mb-4 m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs mb-4 m-0" style={{ color: "var(--text-dim)" }}>
             ترتيب أعضاء الفريق حسب عدد الحلول المقدّمة
           </p>
           {stats.solverStats.length === 0 ? (
@@ -542,23 +528,23 @@ export function Dashboard({
                   const pct = (s.solvedCount / max) * 100;
                   return (
                     <div key={s.memberId} className="flex items-center gap-3">
-                      <span className="text-xs font-bold w-4" style={{ color: "var(--parch-dim)" }}>
+                      <span className="text-xs font-bold w-4" style={{ color: "var(--text-dim)" }}>
                         {i + 1}
                       </span>
                       <MemberAvatar name={s.name} color={s.color} initials={s.initials} size={28} />
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold truncate" style={{ color: "var(--parch)" }}>
+                          <span className="text-xs font-semibold truncate" style={{ color: "var(--text-strong)" }}>
                             {s.name}
                           </span>
-                          <span className="tnum text-xs font-bold" style={{ color: "var(--green-bright)" }}>
+                          <span className="tnum text-xs font-bold" style={{ color: "var(--accent-green)" }}>
                             {s.solvedCount}
                           </span>
                         </div>
-                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.04)" }}>
+                        <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--surface-3)" }}>
                           <div
                             className="h-full rounded-full"
-                            style={{ width: `${pct}%`, background: "var(--green)" }}
+                            style={{ width: `${pct}%`, background: "var(--accent-green)" }}
                           />
                         </div>
                       </div>
@@ -573,23 +559,23 @@ export function Dashboard({
       {/* آخر البلاغات + النشاط */}
       <div className="grid md:grid-cols-3 gap-4">
         <div className="panel p-5 md:col-span-2 fade-up">
-          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--gold-bright)" }}>
+          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--accent-gold-bright)" }}>
             آخر البلاغات
           </h3>
-          <p className="text-xs mb-4 m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs mb-4 m-0" style={{ color: "var(--text-dim)" }}>
             أحدث 8 بلاغات في النظام
           </p>
           {stats.recentReports.length === 0 ? (
             <EmptyList text="لا توجد بلاغات بعد." />
           ) : (
-            <div className="space-y-2 max-h-[420px] overflow-y-auto pl-1">
+            <div className="space-y-2 max-h-[420px] overflow-y-auto pe-1">
               {stats.recentReports.map((r) => (
                 <div
                   key={r.id}
                   className="p-3 rounded-lg flex items-start gap-3"
                   style={{
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px solid rgba(201,162,75,0.12)",
+                    background: "var(--surface-2)",
+                    border: "1px solid var(--border-soft)",
                   }}
                 >
                   <div className="flex flex-col items-center gap-1.5 flex-shrink-0">
@@ -606,13 +592,13 @@ export function Dashboard({
                       <SeverityChip severity={r.severity} />
                       <StatusChip status={r.status} />
                     </div>
-                    <p className="text-sm font-semibold m-0 truncate" style={{ color: "var(--parch)" }}>
+                    <p className="text-sm font-semibold m-0 truncate" style={{ color: "var(--text-strong)" }}>
                       {r.title}
                     </p>
-                    <p className="text-xs mt-0.5 m-0 line-clamp-2" style={{ color: "var(--parch-dim)" }}>
+                    <p className="text-xs mt-0.5 m-0 line-clamp-2" style={{ color: "var(--text-dim)" }}>
                       {r.description}
                     </p>
-                    <div className="flex items-center justify-between mt-2 text-xs" style={{ color: "var(--parch-dim)" }}>
+                    <div className="flex items-center justify-between mt-2 text-xs" style={{ color: "var(--text-dim)" }}>
                       <span>{r.author?.name}</span>
                       <span>{fmtRelative(r.createdAt)}</span>
                     </div>
@@ -624,16 +610,16 @@ export function Dashboard({
         </div>
 
         <div className="panel p-5 fade-up">
-          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--gold-bright)" }}>
+          <h3 className="text-sm font-bold mb-1 m-0" style={{ color: "var(--accent-gold-bright)" }}>
             سجل النشاط
           </h3>
-          <p className="text-xs mb-4 m-0" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-xs mb-4 m-0" style={{ color: "var(--text-dim)" }}>
             آخر تحركات الفريق
           </p>
           {stats.activity.length === 0 ? (
             <EmptyList text="لا يوجد نشاط بعد." />
           ) : (
-            <div className="space-y-3 max-h-[420px] overflow-y-auto pl-1">
+            <div className="space-y-3 max-h-[420px] overflow-y-auto pe-1">
               {stats.activity.map((a) => (
                 <div key={a.id} className="flex items-start gap-2.5 text-xs">
                   <span
@@ -641,7 +627,7 @@ export function Dashboard({
                     style={{
                       width: 24,
                       height: 24,
-                      background: actionColor(a.action) + "22",
+                      background: `color-mix(in srgb, ${actionColor(a.action)} 14%, transparent)`,
                       color: actionColor(a.action),
                       fontSize: 11,
                     }}
@@ -649,11 +635,11 @@ export function Dashboard({
                     {actionIcon(a.action)}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <p className="m-0" style={{ color: "var(--parch)" }}>
+                    <p className="m-0" style={{ color: "var(--text-strong)" }}>
                       <span className="font-bold">{a.actorName || "النظام"}</span>{" "}
                       {actionLabel(a.action)}
                     </p>
-                    <p className="m-0 mt-0.5 text-xs" style={{ color: "var(--parch-dim)" }}>
+                    <p className="m-0 mt-0.5 text-xs" style={{ color: "var(--text-dim)" }}>
                       {fmtRelative(a.createdAt)} · {fmtDateTime(a.createdAt)}
                     </p>
                   </div>
@@ -692,12 +678,12 @@ function KpiCard({
           {icon}
         </span>
         {sub && (
-          <span className="tnum text-xs font-bold" style={{ color: "var(--parch-dim)" }}>
+          <span className="tnum text-xs font-bold" style={{ color: "var(--text-dim)" }}>
             {sub}
           </span>
         )}
       </div>
-      <p className="text-xs m-0 mb-1" style={{ color: "var(--parch-dim)" }}>
+      <p className="text-xs m-0 mb-1" style={{ color: "var(--text-dim)" }}>
         {label}
       </p>
       <p className="text-3xl font-bold m-0 tnum" style={{ color }}>
@@ -713,9 +699,9 @@ function EmptyChart() {
       className="flex items-center justify-center rounded-lg"
       style={{
         height: 220,
-        background: "rgba(255,255,255,0.02)",
-        border: "1px dashed rgba(201,162,75,0.18)",
-        color: "var(--parch-dim)",
+        background: "var(--surface-2)",
+        border: "1px dashed var(--border-soft)",
+        color: "var(--text-dim)",
         fontSize: 13,
       }}
     >
@@ -729,9 +715,9 @@ function EmptyList({ text }: { text: string }) {
     <div
       className="flex items-center justify-center p-6 rounded-lg text-center text-xs"
       style={{
-        background: "rgba(255,255,255,0.02)",
-        border: "1px dashed rgba(201,162,75,0.18)",
-        color: "var(--parch-dim)",
+        background: "var(--surface-2)",
+        border: "1px dashed var(--border-soft)",
+        color: "var(--text-dim)",
       }}
     >
       {text}
@@ -761,17 +747,17 @@ function actionLabel(a: string): string {
 function actionColor(a: string): string {
   switch (a) {
     case "created":
-      return "var(--crimson-bright)";
+      return "var(--accent-crimson)";
     case "solved":
     case "closed":
-      return "var(--green-bright)";
+      return "var(--accent-green)";
     case "updated":
     case "commented":
-      return "var(--gold-bright)";
+      return "var(--accent-gold-bright)";
     case "member_added":
-      return "var(--blue-soft)";
+      return "var(--accent-blue)";
     default:
-      return "var(--parch-dim)";
+      return "var(--text-dim)";
   }
 }
 
