@@ -44,11 +44,70 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* ثيم "مرسم تدبر" — داكن مع لمسات ذهبية ومحمرة */
+/* ثيم "مرسم تدبر" — :root الوضع الفاتح، .dark الوضع الداكن */
 :root {
   --radius: 0.75rem;
 
-  /* الخلفية والألوان الأساسية */
+  /* ===== توكنات دلالية — الوضع الفاتح (ورقي فاتح) ===== */
+  --surface-1: #fbf7ee;
+  --surface-2: #f3ecdc;
+  --surface-3: #ece2cc;
+  --text-strong: #2a2113;
+  --text-dim: #6b5d3f;
+  --accent-gold: #9a7b2e;
+  --accent-gold-bright: #b8923a;
+  --accent-crimson: #b04a36;
+  --accent-green: #5f8a3e;
+  --accent-blue: #4a6d95;
+  --border-soft: rgba(139, 115, 48, 0.28);
+  --soft-gold-bg: rgba(154, 123, 46, 0.10);
+  --soft-crimson-bg: rgba(176, 74, 54, 0.10);
+  --shadow-md: 0 8px 30px rgba(80, 60, 20, 0.10);
+
+  /* أسماء قديمة (توافق) تشير لقيم الوضع الفاتح */
+  --ink: #f7f1e3; --ink-2: #fbf7ee; --ink-3: #f3ecdc; --ink-4: #ece2cc;
+  --gold: #9a7b2e; --gold-bright: #b8923a; --gold-dim: #8b7330;
+  --parch: #2a2113; --parch-dim: #6b5d3f;
+  --crimson: #b04a36; --crimson-bright: #b04a36;
+  --green: #5f8a3e; --green-bright: #5f8a3e; --blue-soft: #4a6d95;
+
+  /* shadcn — فاتح */
+  --background: #f7f1e3;
+  --foreground: #2a2113;
+  --card: #fbf7ee;
+  --card-foreground: #2a2113;
+  --popover: #fbf7ee;
+  --popover-foreground: #2a2113;
+  --primary: #9a7b2e;
+  --primary-foreground: #fbf7ee;
+  --secondary: #ece2cc;
+  --secondary-foreground: #2a2113;
+  --muted: #ece2cc;
+  --muted-foreground: #6b5d3f;
+  --accent: #f3ecdc;
+  --accent-foreground: #7a5f1f;
+  --destructive: #b04a36;
+  --destructive-foreground: #fbe9d8;
+  --border: rgba(139, 115, 48, 0.28);
+  --input: rgba(139, 115, 48, 0.24);
+  --ring: #9a7b2e;
+  --chart-1: #9a7b2e;
+  --chart-2: #b04a36;
+  --chart-3: #5f8a3e;
+  --chart-4: #4a6d95;
+  --chart-5: #b8923a;
+  --sidebar: #fbf7ee;
+  --sidebar-foreground: #2a2113;
+  --sidebar-primary: #9a7b2e;
+  --sidebar-primary-foreground: #fbf7ee;
+  --sidebar-accent: #f3ecdc;
+  --sidebar-accent-foreground: #7a5f1f;
+  --sidebar-border: rgba(139, 115, 48, 0.28);
+  --sidebar-ring: #9a7b2e;
+}
+
+.dark {
+  /* ===== الوضع الداكن — الهوية الأصلية ===== */
   --ink: #100d09;
   --ink-2: #19140d;
   --ink-3: #241d12;
@@ -66,41 +125,47 @@
   --green-bright: #9bc872;
   --blue-soft: #6b8db5;
 
-  /* shadcn映射 */
+  /* توكنات دلالية — داكن */
+  --surface-1: #19140d;
+  --surface-2: #241d12;
+  --surface-3: #2c2417;
+  --text-strong: #e9e0cd;
+  --text-dim: #b0a489;
+  --accent-gold: #c9a24b;
+  --accent-gold-bright: #e3c168;
+  --accent-crimson: #d96a4f;
+  --accent-green: #9bc872;
+  --accent-blue: #6b8db5;
+  --border-soft: rgba(201, 162, 75, 0.22);
+  --soft-gold-bg: rgba(201, 162, 75, 0.06);
+  --soft-crimson-bg: rgba(176, 74, 54, 0.10);
+  --shadow-md: 0 18px 50px rgba(0, 0, 0, 0.55);
+
+  /* shadcn — داكن */
   --background: #100d09;
   --foreground: #e9e0cd;
-
   --card: #19140d;
   --card-foreground: #e9e0cd;
-
   --popover: #19140d;
   --popover-foreground: #e9e0cd;
-
   --primary: #c9a24b;
   --primary-foreground: #1a1408;
-
   --secondary: #241d12;
   --secondary-foreground: #e9e0cd;
-
   --muted: #241d12;
   --muted-foreground: #b0a489;
-
   --accent: #2c2417;
   --accent-foreground: #e3c168;
-
   --destructive: #b04a36;
   --destructive-foreground: #fbe9d8;
-
   --border: rgba(201, 162, 75, 0.22);
   --input: rgba(201, 162, 75, 0.18);
   --ring: #c9a24b;
-
-  --chart-1: #c9a24b; /* gold */
-  --chart-2: #b04a36; /* crimson */
-  --chart-3: #7faa5a; /* green */
-  --chart-4: #6b8db5; /* blue */
-  --chart-5: #e3c168; /* bright gold */
-
+  --chart-1: #c9a24b;
+  --chart-2: #b04a36;
+  --chart-3: #7faa5a;
+  --chart-4: #6b8db5;
+  --chart-5: #e3c168;
   --sidebar: #19140d;
   --sidebar-foreground: #e9e0cd;
   --sidebar-primary: #c9a24b;
@@ -262,6 +327,17 @@
 /* فاصل ذهبي متدرج */
 .gold-divider {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(201,162,75,0.4) 50%, transparent);
+  background: linear-gradient(90deg, transparent, var(--accent-gold) 50%, transparent);
+  opacity: 0.45;
   border: none;
+}
+
+/* احترام تفضيل تقليل الحركة */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
