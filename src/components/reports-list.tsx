@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState, useCallback, useMemo } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Search,
   Filter,
-  Download,
   Plus,
   Trash2,
   MessageSquare,
@@ -15,7 +14,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -35,9 +33,6 @@ import {
   ERROR_TYPE_LIST,
   SEVERITY_LIST,
   STATUS_LIST,
-  ERROR_TYPES,
-  SEVERITIES,
-  STATUSES,
   PRIORITY_LIST,
   type ErrorType,
   type Severity,
@@ -135,13 +130,13 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
       {/* شريط الفلاتر */}
       <div className="panel p-4 md:p-5 fade-up">
         <div className="flex flex-wrap items-center gap-3 mb-3">
-          <Filter className="w-4 h-4" style={{ color: "var(--gold-bright)" }} />
-          <h3 className="text-sm font-bold m-0" style={{ color: "var(--gold-bright)" }}>
+          <Filter className="w-4 h-4" style={{ color: "var(--accent-gold-bright)" }} />
+          <h3 className="text-sm font-bold m-0" style={{ color: "var(--accent-gold-bright)" }}>
             فلترة السجل
           </h3>
           <span
             className="text-xs px-2 py-0.5 rounded-full"
-            style={{ background: "rgba(201,162,75,0.16)", color: "var(--gold-bright)" }}
+            style={{ background: "var(--soft-gold-bg)", color: "var(--accent-gold-bright)" }}
           >
             {reports.length} بلاغ
           </span>
@@ -150,7 +145,7 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
             variant="outline"
             size="sm"
             onClick={refresh}
-            className="gap-2 border-[rgba(201,162,75,0.3)] text-[var(--parch)] hover:bg-[rgba(201,162,75,0.1)]"
+            className="gap-2 border-[var(--border-soft)] text-[var(--text-strong)] hover:bg-[var(--soft-gold-bg)]"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             تحديث
@@ -160,8 +155,8 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
             onClick={onNew}
             className="gap-2"
             style={{
-              background: "linear-gradient(180deg, var(--gold-bright), var(--gold))",
-              color: "#1a1408",
+              background: "linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold))",
+              color: "var(--primary-foreground)",
             }}
           >
             <Plus className="w-4 h-4" />
@@ -172,14 +167,14 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2.5">
           <div className="col-span-2 md:col-span-1 relative">
             <Search
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4"
-              style={{ color: "var(--parch-dim)" }}
+              className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4"
+              style={{ color: "var(--text-dim)" }}
             />
             <Input
               value={filters.q}
               onChange={(e) => setFilters((f) => ({ ...f, q: e.target.value }))}
               placeholder="بحث في العنوان والوصف…"
-              className="pr-9 bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] placeholder:text-[var(--parch-dim)]"
+              className="ps-9 bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] placeholder:text-[var(--text-dim)]"
             />
           </div>
 
@@ -213,7 +208,7 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
         </div>
       ) : reports.length === 0 ? (
         <div className="panel p-8 text-center fade-up">
-          <p className="text-sm" style={{ color: "var(--parch-dim)" }}>
+          <p className="text-sm" style={{ color: "var(--text-dim)" }}>
             لا توجد بلاغات مطابقة. جرّب تعديل الفلاتر أو أنشئ بلاغًا جديدًا.
           </p>
         </div>
@@ -223,7 +218,7 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
             <button
               key={r.id}
               onClick={() => setSelected(r)}
-              className="panel p-4 text-right fade-up glow-hover"
+              className="panel p-4 text-start fade-up glow-hover"
               style={{ opacity: r.status === "closed" ? 0.7 : 1 }}
             >
               <div className="flex items-start gap-3">
@@ -241,7 +236,7 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
                     {r.solutionText && (
                       <span
                         className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded"
-                        style={{ background: "rgba(127,170,90,0.12)", color: "var(--green-bright)" }}
+                        style={{ background: "color-mix(in srgb, var(--accent-green) 14%, transparent)", color: "var(--accent-green)" }}
                       >
                         <CheckCircle2 className="w-3 h-3" /> له حل
                       </span>
@@ -249,23 +244,23 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
                     {r.comments.length > 0 && (
                       <span
                         className="inline-flex items-center gap-1 text-xs px-1.5 py-0.5 rounded"
-                        style={{ background: "rgba(107,141,181,0.12)", color: "var(--blue-soft)" }}
+                        style={{ background: "color-mix(in srgb, var(--accent-blue) 14%, transparent)", color: "var(--accent-blue)" }}
                       >
                         <MessageSquare className="w-3 h-3" /> {r.comments.length}
                       </span>
                     )}
-                    <span className="text-xs mr-auto" style={{ color: "var(--parch-dim)" }}>
+                    <span className="text-xs ms-auto" style={{ color: "var(--text-dim)" }}>
                       #{r.id.slice(-6).toUpperCase()} · {fmtRelative(r.createdAt)}
                     </span>
                   </div>
-                  <h4 className="text-sm font-bold m-0 mb-1 truncate" style={{ color: "var(--parch)" }}>
+                  <h4 className="text-sm font-bold m-0 mb-1 truncate" style={{ color: "var(--text-strong)" }}>
                     {r.title}
                   </h4>
-                  <p className="text-xs m-0 line-clamp-2" style={{ color: "var(--parch-dim)" }}>
+                  <p className="text-xs m-0 line-clamp-2" style={{ color: "var(--text-dim)" }}>
                     {r.description}
                   </p>
                   {(r.location || r.fieldTag || r.pageNumber) && (
-                    <div className="flex flex-wrap gap-2 mt-2 text-xs" style={{ color: "var(--parch-dim)" }}>
+                    <div className="flex flex-wrap gap-2 mt-2 text-xs" style={{ color: "var(--text-dim)" }}>
                       {r.location && <span>📍 {r.location}</span>}
                       {r.fieldTag && <span>🏷 {r.fieldTag}</span>}
                       {r.pageNumber && <span>📄 {r.pageNumber}</span>}
@@ -303,12 +298,12 @@ function FilterSelect({
 }) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] text-xs h-10">
+      <SelectTrigger className="bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] text-xs h-10">
         <SelectValue />
       </SelectTrigger>
-      <SelectContent className="bg-[var(--ink-2)] border-[rgba(201,162,75,0.3)] text-[var(--parch)]">
+      <SelectContent className="bg-[var(--surface-1)] border-[var(--border-soft)] text-[var(--text-strong)]">
         {options.map((o) => (
-          <SelectItem key={o.value} value={o.value} className="focus:bg-[rgba(201,162,75,0.15)] text-xs">
+          <SelectItem key={o.value} value={o.value} className="focus:bg-[var(--soft-gold-bg)] text-xs">
             {o.label}
           </SelectItem>
         ))}
@@ -420,7 +415,7 @@ function ReportDialog({
 
   return (
     <Dialog open={!!report} onOpenChange={(o) => !o && onClose()}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-[var(--ink-2)] border-[rgba(201,162,75,0.3)] text-[var(--parch)]">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto bg-[var(--surface-1)] border-[var(--border-soft)] text-[var(--text-strong)]">
         <DialogHeader>
           <div className="flex items-start gap-3">
             <MemberAvatar
@@ -430,10 +425,10 @@ function ReportDialog({
               size={44}
             />
             <div className="flex-1 min-w-0">
-              <DialogTitle className="font-display text-xl" style={{ color: "var(--parch)" }}>
+              <DialogTitle className="font-display text-xl" style={{ color: "var(--text-strong)" }}>
                 {report.title}
               </DialogTitle>
-              <DialogDescription className="text-xs" style={{ color: "var(--parch-dim)" }}>
+              <DialogDescription className="text-xs" style={{ color: "var(--text-dim)" }}>
                 <span>#{report.id.slice(-6).toUpperCase()}</span>
                 <span className="mx-2">·</span>
                 <span>بواسطة {report.author.name} ({report.author.role})</span>
@@ -445,7 +440,7 @@ function ReportDialog({
               variant="ghost"
               size="sm"
               onClick={() => onDelete(report.id)}
-              className="text-[var(--crimson-bright)] hover:bg-[rgba(176,74,54,0.1)]"
+              className="text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]"
             >
               <Trash2 className="w-4 h-4" />
             </Button>
@@ -460,7 +455,7 @@ function ReportDialog({
             <StatusChip status={report.status} />
             <span
               className="text-xs px-2 py-0.5 rounded"
-              style={{ background: "rgba(201,162,75,0.1)", color: "var(--gold-bright)" }}
+              style={{ background: "var(--soft-gold-bg)", color: "var(--accent-gold-bright)" }}
             >
               الأولوية: {PRIORITY_LIST.find((p) => p.value === report.priority)?.label || report.priority}
             </span>
@@ -468,15 +463,15 @@ function ReportDialog({
 
           {/* الوصف */}
           <div>
-            <p className="text-xs font-bold mb-1.5" style={{ color: "var(--gold-bright)" }}>
+            <p className="text-xs font-bold mb-1.5" style={{ color: "var(--accent-gold-bright)" }}>
               الوصف
             </p>
             <div
               className="p-3 rounded-lg text-sm leading-relaxed whitespace-pre-wrap"
               style={{
-                background: "rgba(255,255,255,0.03)",
-                border: "1px solid rgba(201,162,75,0.15)",
-                color: "var(--parch)",
+                background: "var(--surface-2)",
+                border: "1px solid var(--border-soft)",
+                color: "var(--text-strong)",
               }}
             >
               {report.description}
@@ -505,7 +500,7 @@ function ReportDialog({
 
           {/* تغيير الحالة */}
           <div>
-            <p className="text-xs font-bold mb-2" style={{ color: "var(--gold-bright)" }}>
+            <p className="text-xs font-bold mb-2" style={{ color: "var(--accent-gold-bright)" }}>
               تغيير الحالة بسرعة
             </p>
             <div className="flex flex-wrap gap-2">
@@ -517,11 +512,11 @@ function ReportDialog({
                     onClick={() => updateStatus(s.value)}
                     className="px-3 py-1.5 rounded-md text-xs font-semibold transition"
                     style={{
-                      background: active ? s.bg : "rgba(255,255,255,0.02)",
-                      color: active ? s.color : "var(--parch-dim)",
+                      background: active ? s.bg : "var(--surface-2)",
+                      color: active ? s.color : "var(--text-dim)",
                       border: active
                         ? `1px solid ${s.color}`
-                        : "1px solid rgba(201,162,75,0.15)",
+                        : "1px solid var(--border-soft)",
                     }}
                   >
                     {s.label}
@@ -534,11 +529,11 @@ function ReportDialog({
           {/* الحل المقترح */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-bold m-0" style={{ color: "var(--gold-bright)" }}>
+              <p className="text-xs font-bold m-0" style={{ color: "var(--accent-gold-bright)" }}>
                 الحل المقترح / الإجراء المتخذ
               </p>
               {report.solutionAt && (
-                <span className="text-xs" style={{ color: "var(--parch-dim)" }}>
+                <span className="text-xs" style={{ color: "var(--text-dim)" }}>
                   آخر تحديث: {fmtDateTime(report.solutionAt)}
                 </span>
               )}
@@ -547,16 +542,16 @@ function ReportDialog({
               value={solutionText}
               onChange={(e) => setSolutionText(e.target.value)}
               placeholder="اكتب الحل أو الإجراء المتخذ لحل البلاغ…"
-              className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] placeholder:text-[var(--parch-dim)] focus-visible:border-[var(--gold)] min-h-[100px]"
+              className="bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] placeholder:text-[var(--text-dim)] focus-visible:border-[var(--accent-gold)] focus-visible:ring-[var(--accent-gold)]/40 min-h-[100px]"
             />
             <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
               <Select value={solutionAuthorId} onValueChange={setSolutionAuthorId}>
-                <SelectTrigger className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] text-xs">
+                <SelectTrigger className="bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] text-xs">
                   <SelectValue placeholder="صاحب الحل" />
                 </SelectTrigger>
-                <SelectContent className="bg-[var(--ink-2)] border-[rgba(201,162,75,0.3)] text-[var(--parch)]">
+                <SelectContent className="bg-[var(--surface-1)] border-[var(--border-soft)] text-[var(--text-strong)]">
                   {members.map((m) => (
-                    <SelectItem key={m.id} value={m.id} className="focus:bg-[rgba(201,162,75,0.15)]">
+                    <SelectItem key={m.id} value={m.id} className="focus:bg-[var(--soft-gold-bg)]">
                       {m.name}
                     </SelectItem>
                   ))}
@@ -566,15 +561,15 @@ function ReportDialog({
                 value={newStatus}
                 onValueChange={(v) => setNewStatus(v as ReportStatus | "none")}
               >
-                <SelectTrigger className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] text-xs">
+                <SelectTrigger className="bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] text-xs">
                   <SelectValue placeholder="تغيير الحالة (اختياري)" />
                 </SelectTrigger>
-                <SelectContent className="bg-[var(--ink-2)] border-[rgba(201,162,75,0.3)] text-[var(--parch)]">
-                  <SelectItem value="none" className="focus:bg-[rgba(201,162,75,0.15)]">
+                <SelectContent className="bg-[var(--surface-1)] border-[var(--border-soft)] text-[var(--text-strong)]">
+                  <SelectItem value="none" className="focus:bg-[var(--soft-gold-bg)]">
                     بدون تغيير
                   </SelectItem>
                   {STATUS_LIST.map((s) => (
-                    <SelectItem key={s.value} value={s.value} className="focus:bg-[rgba(201,162,75,0.15)]">
+                    <SelectItem key={s.value} value={s.value} className="focus:bg-[var(--soft-gold-bg)]">
                       {s.label}
                     </SelectItem>
                   ))}
@@ -585,8 +580,8 @@ function ReportDialog({
                 disabled={savingSolution}
                 className="gap-2"
                 style={{
-                  background: "linear-gradient(180deg, var(--green-bright), var(--green))",
-                  color: "#0a1408",
+                  background: "linear-gradient(180deg, var(--accent-green), var(--accent-green))",
+                  color: "var(--primary-foreground)",
                 }}
               >
                 {savingSolution ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
@@ -597,16 +592,16 @@ function ReportDialog({
 
           {/* التعليقات */}
           <div>
-            <p className="text-xs font-bold mb-2" style={{ color: "var(--gold-bright)" }}>
+            <p className="text-xs font-bold mb-2" style={{ color: "var(--accent-gold-bright)" }}>
               التعليقات والمتابعة ({report.comments.length})
             </p>
             {report.comments.length > 0 && (
-              <div className="space-y-2 mb-3 max-h-60 overflow-y-auto pl-1">
+              <div className="space-y-2 mb-3 max-h-60 overflow-y-auto pe-1">
                 {report.comments.map((c) => (
                   <div
                     key={c.id}
                     className="flex items-start gap-2.5 p-2.5 rounded-lg"
-                    style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(201,162,75,0.12)" }}
+                    style={{ background: "var(--surface-2)", border: "1px solid var(--border-soft)" }}
                   >
                     <MemberAvatar
                       name={c.author.name}
@@ -616,14 +611,14 @@ function ReportDialog({
                     />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-0.5">
-                        <span className="text-xs font-bold" style={{ color: "var(--parch)" }}>
+                        <span className="text-xs font-bold" style={{ color: "var(--text-strong)" }}>
                           {c.author.name}
                         </span>
-                        <span className="text-xs" style={{ color: "var(--parch-dim)" }}>
+                        <span className="text-xs" style={{ color: "var(--text-dim)" }}>
                           {fmtRelative(c.createdAt)}
                         </span>
                       </div>
-                      <p className="text-xs m-0 whitespace-pre-wrap" style={{ color: "var(--parch)" }}>
+                      <p className="text-xs m-0 whitespace-pre-wrap" style={{ color: "var(--text-strong)" }}>
                         {c.body}
                       </p>
                     </div>
@@ -637,7 +632,7 @@ function ReportDialog({
                 onChange={(e) => setComment(e.target.value)}
                 placeholder={current ? "أضف تعليقًا…" : "اختر عضويتك أولًا"}
                 disabled={!current}
-                className="bg-[var(--ink-3)] border-[rgba(201,162,75,0.22)] text-[var(--parch)] placeholder:text-[var(--parch-dim)]"
+                className="bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] placeholder:text-[var(--text-dim)]"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey) {
                     e.preventDefault();
@@ -649,7 +644,7 @@ function ReportDialog({
                 onClick={addComment}
                 disabled={savingComment || !current}
                 variant="outline"
-                className="gap-2 border-[rgba(201,162,75,0.3)] text-[var(--parch)] hover:bg-[rgba(201,162,75,0.1)]"
+                className="gap-2 border-[var(--border-soft)] text-[var(--text-strong)] hover:bg-[var(--soft-gold-bg)]"
               >
                 {savingComment ? <Loader2 className="w-4 h-4 animate-spin" /> : <MessageSquare className="w-4 h-4" />}
                 إرسال
@@ -674,14 +669,14 @@ function Detail({
   return (
     <div
       className="p-2.5 rounded-lg"
-      style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(201,162,75,0.12)" }}
+      style={{ background: "var(--surface-2)", border: "1px solid var(--border-soft)" }}
     >
-      <p className="text-xs mb-0.5" style={{ color: "var(--parch-dim)" }}>
+      <p className="text-xs mb-0.5" style={{ color: "var(--text-dim)" }}>
         {label}
       </p>
       <p
         className={`text-xs m-0 font-semibold ${mono ? "tnum" : ""}`}
-        style={{ color: "var(--parch)", wordBreak: "break-word" }}
+        style={{ color: "var(--text-strong)", wordBreak: "break-word" }}
       >
         {value}
       </p>
