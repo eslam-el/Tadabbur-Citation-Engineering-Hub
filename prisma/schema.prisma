@@ -18,6 +18,13 @@ model Member {
   color     String   @default("#c9a24b") // لون تمييزي لكل عضو
   initials  String   @default("")
   active    Boolean  @default(true)
+
+  email       String?  @unique             // بريد جوجل — فريد. NULL = حساب تجريبي/قديم
+  accessLevel String   @default("USER")     // "USER" | "ADMIN"
+  status      String   @default("PENDING")  // "PENDING" | "ACTIVE"
+  image       String?                       // صورة جوجل (اختياري)
+  seeded      Boolean  @default(false)      // true لسجلات البذر
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
