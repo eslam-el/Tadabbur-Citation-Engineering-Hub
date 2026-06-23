@@ -1,19 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { MemberAvatar } from "@/components/chips";
 import { useMember } from "@/lib/member-context";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import { Plus, UserPlus, Users } from "lucide-react";
+import { signOut } from "next-auth/react";
+import { Users, LogOut } from "lucide-react";
 
 export function Header({
   onAddMember,
@@ -24,8 +16,7 @@ export function Header({
   activeTab: string;
   onTabChange: (t: string) => void;
 }) {
-  const { current, members, setCurrent } = useMember();
-  const [open, setOpen] = useState(false);
+  const { current, members, isAdmin } = useMember();
 
   return (
     <header className="panel gold-rule mb-6 fade-up">
@@ -67,140 +58,53 @@ export function Header({
           </div>
         </div>
 
-        {/* أدوات: تبديل الثيم + العضو الحالي */}
+        {/* أدوات: تبديل الثيم + هوية المستخدم */}
         <div className="flex items-center gap-3 flex-wrap">
           <ThemeToggle />
 
-          <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="outline"
-                className="gap-2 border-[var(--border-soft)] text-[var(--text-strong)] hover:bg-[var(--soft-gold-bg)]"
-              >
-                <Users className="w-4 h-4" />
-                <span className="text-sm">الفريق</span>
-                <span
-                  className="inline-flex items-center justify-center rounded-full text-xs font-bold"
-                  style={{
-                    minWidth: 22,
-                    height: 22,
-                    padding: "0 6px",
-                    background: "var(--soft-gold-bg)",
-                    color: "var(--accent-gold-bright)",
-                  }}
-                >
-                  {members.length}
-                </span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent
-              side="left"
-              className="w-[340px] sm:w-[400px] bg-[var(--surface-1)] text-[var(--text-strong)] border-[var(--border-soft)]"
-            >
-              <SheetHeader>
-                <SheetTitle className="font-display text-xl text-[var(--accent-gold-bright)]">
-                  أعضاء الفريق
-                </SheetTitle>
-                <SheetDescription className="text-[var(--text-dim)]">
-                  اختر نفسك للبدء في التدوين. يمكن إضافة عضو جديد أيضًا.
-                </SheetDescription>
-              </SheetHeader>
-
-              <div className="mt-5 space-y-2">
-                {members.length === 0 && (
-                  <div className="text-sm text-[var(--text-dim)] p-4 rounded-lg border border-dashed border-[var(--border-soft)]">
-                    لا يوجد أعضاء بعد. أضف أول عضو للبدء.
-                  </div>
-                )}
-                {members.map((m) => (
-                  <button
-                    key={m.id}
-                    onClick={() => {
-                      setCurrent(m);
-                      setOpen(false);
-                    }}
-                    className="w-full flex items-center gap-3 p-3 rounded-lg text-start transition glow-hover"
-                    style={{
-                      background:
-                        current?.id === m.id ? "var(--soft-gold-bg)" : "transparent",
-                      border:
-                        current?.id === m.id
-                          ? "1px solid var(--accent-gold)"
-                          : "1px solid var(--border-soft)",
-                    }}
-                  >
-                    <MemberAvatar
-                      name={m.name}
-                      color={m.color}
-                      initials={m.initials}
-                      size={40}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-[var(--text-strong)] truncate">
-                        {m.name}
-                      </p>
-                      <p className="text-xs text-[var(--text-dim)] truncate">
-                        {m.role}
-                      </p>
-                    </div>
-                    {current?.id === m.id && (
-                      <span
-                        className="text-xs px-2 py-0.5 rounded"
-                        style={{ background: "var(--accent-gold)", color: "var(--primary-foreground)" }}
-                      >
-                        أنت
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-
-              <div className="mt-5">
-                <Button
-                  onClick={() => {
-                    setOpen(false);
-                    onAddMember();
-                  }}
-                  className="w-full gap-2"
-                  style={{
-                    background: "linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold))",
-                    color: "var(--primary-foreground)",
-                  }}
-                >
-                  <UserPlus className="w-4 h-4" />
-                  إضافة عضو جديد
-                </Button>
-              </div>
-            </SheetContent>
-          </Sheet>
-
-          {/* بطاقة العضو الحالي */}
-          {current ? (
-            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg" style={{ background: "var(--soft-gold-bg)", border: "1px solid var(--border-soft)" }}>
-              <MemberAvatar
-                name={current.name}
-                color={current.color}
-                initials={current.initials}
-                size={32}
-              />
-              <div className="leading-tight">
-                <p className="text-xs font-semibold text-[var(--text-strong)]">{current.name}</p>
-                <p className="text-xs text-[var(--text-dim)]">{current.role}</p>
-              </div>
-            </div>
-          ) : (
+          {isAdmin && (
             <Button
-              onClick={onAddMember}
-              className="gap-2"
-              style={{
-                background: "linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold))",
-                color: "var(--primary-foreground)",
-              }}
+              variant="outline"
+              onClick={() => onTabChange("members")}
+              className="gap-2 border-[var(--border-soft)] text-[var(--text-strong)] hover:bg-[var(--soft-gold-bg)]"
             >
-              <Plus className="w-4 h-4" />
-              اختر عضويتك
+              <Users className="w-4 h-4" />
+              <span className="text-sm">الفريق</span>
+              <span
+                className="inline-flex items-center justify-center rounded-full text-xs font-bold"
+                style={{
+                  minWidth: 22,
+                  height: 22,
+                  padding: "0 6px",
+                  background: "var(--soft-gold-bg)",
+                  color: "var(--accent-gold-bright)",
+                }}
+              >
+                {members.length}
+              </span>
             </Button>
           )}
+
+          {current && (
+            <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-lg" style={{ background: "var(--soft-gold-bg)", border: "1px solid var(--border-soft)" }}>
+              <MemberAvatar name={current.name} color={current.color} initials={current.initials} size={32} />
+              <div className="leading-tight">
+                <p className="text-xs font-semibold text-[var(--text-strong)]">{current.name}</p>
+                {current.role && <p className="text-xs text-[var(--text-dim)]">{current.role}</p>}
+              </div>
+            </div>
+          )}
+
+          <Button
+            variant="ghost"
+            size="icon"
+            aria-label="تسجيل الخروج"
+            title="تسجيل الخروج"
+            onClick={() => signOut({ callbackUrl: "/login" })}
+            className="text-[var(--text-dim)] hover:text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]"
+          >
+            <LogOut className="w-4 h-4" />
+          </Button>
         </div>
       </div>
 
