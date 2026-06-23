@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireActive } from "@/lib/api-guard";
 
 // POST /api/reports/[id]/comments — إضافة تعليق على البلاغ
 export async function POST(
@@ -7,12 +8,15 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const { id } = await params;
     const body = await req.json();
-    const authorId = body?.authorId;
+    const authorId = gate.user.memberId;
     const bodyText = (body?.body || "").trim();
 
-    if (!authorId || !bodyText) {
+    if (!bodyText) {
       return NextResponse.json(
         { error: "missing_fields" },
         { status: 400 }
