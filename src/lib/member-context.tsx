@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { useSession } from "next-auth/react";
 
 export type CurrentMember = {
   id: string;
@@ -14,31 +15,35 @@ type Ctx = {
   current: CurrentMember | null;
   members: CurrentMember[];
   loading: boolean;
+  isAdmin: boolean;
   refresh: () => Promise<void>;
-  setCurrent: (m: CurrentMember | null) => void;
 };
 
 const MemberCtx = createContext<Ctx>({
   current: null,
   members: [],
   loading: true,
+  isAdmin: false,
   refresh: async () => {},
-  setCurrent: () => {},
 });
 
-const LS_KEY = "tadabbur:currentMemberId";
-
 export function MemberProvider({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
   const [members, setMembers] = useState<CurrentMember[]>([]);
-  const [current, setCurrentState] = useState<CurrentMember | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const memberId = session?.user?.memberId;
+  const isAdmin = session?.user?.accessLevel === "ADMIN" && session?.user?.status === "ACTIVE";
 
   const refresh = useCallback(async () => {
     try {
       const res = await fetch("/api/members");
-      if (!res.ok) throw new Error("fetch failed");
+      if (!res.ok) {
+        setMembers([]);
+        return;
+      }
       const data = await res.json();
-      const list: CurrentMember[] = (data?.members || []).map((m: any) => ({
+      const list: CurrentMember[] = (data?.members || []).map((m: { id: string; name: string; role: string; color: string; initials?: string }) => ({
         id: m.id,
         name: m.name,
         role: m.role,
@@ -46,14 +51,6 @@ export function MemberProvider({ children }: { children: React.ReactNode }) {
         initials: m.initials || m.name?.slice(0, 2) || "؟",
       }));
       setMembers(list);
-
-      // استعادة العضو الحالي من localStorage
-      const savedId =
-        typeof window !== "undefined" ? localStorage.getItem(LS_KEY) : null;
-      if (savedId) {
-        const found = list.find((m) => m.id === savedId) || null;
-        setCurrentState(found);
-      }
     } catch (e) {
       console.error("MemberProvider refresh", e);
     } finally {
@@ -62,19 +59,23 @@ export function MemberProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    refresh();
-  }, [refresh]);
+    if (status !== "loading") refresh();
+  }, [status, refresh]);
 
-  const setCurrent = useCallback((m: CurrentMember | null) => {
-    setCurrentState(m);
-    if (typeof window !== "undefined") {
-      if (m) localStorage.setItem(LS_KEY, m.id);
-      else localStorage.removeItem(LS_KEY);
-    }
-  }, []);
+  const current: CurrentMember | null =
+    members.find((m) => m.id === memberId) ??
+    (memberId
+      ? {
+          id: memberId,
+          name: session?.user?.name ?? "",
+          role: "",
+          color: "#c9a24b",
+          initials: (session?.user?.name ?? "؟").slice(0, 2),
+        }
+      : null);
 
   return (
-    <MemberCtx.Provider value={{ current, members, loading, refresh, setCurrent }}>
+    <MemberCtx.Provider value={{ current, members, loading, isAdmin, refresh }}>
       {children}
     </MemberCtx.Provider>
   );
