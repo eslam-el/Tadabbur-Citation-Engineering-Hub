@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireActive } from "@/lib/api-guard";
 
 // GET /api/members — قائمة الأعضاء
 export async function GET() {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const members = await db.member.findMany({
       orderBy: { createdAt: "asc" },
       include: {

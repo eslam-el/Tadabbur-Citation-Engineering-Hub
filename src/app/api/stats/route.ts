@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireActive } from "@/lib/api-guard";
 
 // GET /api/stats — تجميع إحصائيات شاملة للوحة القيادة
 export async function GET() {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const [
       total,
       byType,

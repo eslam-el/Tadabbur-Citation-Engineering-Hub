@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireActive } from "@/lib/api-guard";
 
 // GET /api/reports — قائمة البلاغات مع فلاتر اختيارية
 export async function GET(req: NextRequest) {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const url = new URL(req.url);
     const type = url.searchParams.get("type");
     const status = url.searchParams.get("status");
