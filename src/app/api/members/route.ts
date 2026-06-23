@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { requireActive } from "@/lib/api-guard";
+import { requireActive, requireAdmin } from "@/lib/api-guard";
 
 // GET /api/members — قائمة الأعضاء
 export async function GET() {
@@ -26,6 +26,9 @@ export async function GET() {
 // POST /api/members — إنشاء عضو
 export async function POST(req: NextRequest) {
   try {
+    const gate = await requireAdmin();
+    if (!gate.ok) return gate.res;
+
     const body = await req.json();
     const name = (body?.name || "").trim();
     const role = (body?.role || "مراجع").trim() || "مراجع";
