@@ -29,7 +29,6 @@ export async function PATCH(
     // المسمّى الوظيفي والتفعيل: للمدير فقط.
     if (admin) {
       if (typeof body?.role === "string") data.role = body.role.trim();
-      if (typeof body?.active === "boolean") data.active = body.active;
     }
 
     const member = await db.member.update({ where: { id }, data });
