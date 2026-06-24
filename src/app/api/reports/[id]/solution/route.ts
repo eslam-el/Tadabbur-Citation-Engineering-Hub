@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireActive } from "@/lib/api-guard";
 
 // POST /api/reports/[id]/solution — تسجيل أو تحديث الحل المقترح
 // الحقول: solutionText, solutionAuthorId, status?
@@ -8,11 +9,14 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const { id } = await params;
     const body = await req.json();
 
     const solutionText = (body?.solutionText || "").trim();
-    const solutionAuthorId = body?.solutionAuthorId;
+    const solutionAuthorId = gate.user.memberId;
     const newStatus = body?.status; // اختياري: resolved / in_progress / closed
 
     if (!solutionText) {
@@ -23,9 +27,7 @@ export async function POST(
       solutionText,
       solutionAt: new Date(),
     };
-    if (solutionAuthorId) {
-      data.solutionAuthorId = solutionAuthorId;
-    }
+    data.solutionAuthorId = solutionAuthorId;
     if (newStatus) {
       data.status = newStatus;
     }

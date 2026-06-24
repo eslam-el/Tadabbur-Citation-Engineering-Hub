@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireActive } from "@/lib/api-guard";
 
 // GET /api/reports — قائمة البلاغات مع فلاتر اختيارية
 export async function GET(req: NextRequest) {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const url = new URL(req.url);
     const type = url.searchParams.get("type");
     const status = url.searchParams.get("status");
@@ -47,6 +51,9 @@ export async function GET(req: NextRequest) {
 // POST /api/reports — إنشاء بلاغ جديد
 export async function POST(req: NextRequest) {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const body = await req.json();
 
     const type = body?.type;
@@ -56,13 +63,13 @@ export async function POST(req: NextRequest) {
     const location = (body?.location || "").trim() || null;
     const pageNumber = (body?.pageNumber || "").trim() || null;
     const fieldTag = (body?.fieldTag || "").trim() || null;
-    const authorId = body?.authorId;
+    const authorId = gate.user.memberId;
     const tags = body?.tags ? String(body.tags).trim() : null;
     const priority = Number.isFinite(body?.priority) ? Number(body.priority) : 3;
 
-    if (!type || !title || !description || !authorId) {
+    if (!type || !title || !description) {
       return NextResponse.json(
-        { error: "missing_fields", fields: { type, title, description, authorId } },
+        { error: "missing_fields", fields: { type, title, description } },
         { status: 400 }
       );
     }

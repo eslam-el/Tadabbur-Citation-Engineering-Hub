@@ -8,12 +8,12 @@ import { NewReportForm } from "@/components/new-report-form";
 import { ReportsList } from "@/components/reports-list";
 import { MembersManager } from "@/components/members-manager";
 import { Button } from "@/components/ui/button";
-import { Sparkles, AlertCircle, Download } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 function AppInner() {
   const [tab, setTab] = useState("dashboard");
-  const { current, members, loading } = useMember();
+  const { isAdmin } = useMember();
   const [exporting, setExporting] = useState(false);
 
   const handleExport = useCallback(
@@ -68,31 +68,6 @@ function AppInner() {
           onAddMember={() => setTab("members")}
         />
 
-        {/* تنبيه عند عدم اختيار عضو */}
-        {!loading && !current && members.length > 0 && tab !== "members" && (
-          <div
-            className="mb-4 p-3 rounded-lg flex items-center gap-2 fade-up"
-            style={{
-              background: "var(--soft-crimson-bg)",
-              border: "1px solid rgba(176,74,54,0.35)",
-              color: "var(--accent-crimson)",
-            }}
-          >
-            <AlertCircle className="w-4 h-4 flex-shrink-0" />
-            <p className="text-sm m-0 flex-1">
-              اختر عضويتك من زر «الفريق» أعلى الصفحة لتتمكن من تسجيل البلاغات والحلول.
-            </p>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => setTab("members")}
-              className="border-[var(--accent-crimson)] text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]"
-            >
-              إدارة الأعضاء
-            </Button>
-          </div>
-        )}
-
         {/* محتوى التبويب */}
         {tab === "dashboard" && <Dashboard onExport={handleExport} exporting={exporting} />}
         {tab === "new" && (
@@ -105,7 +80,7 @@ function AppInner() {
         {tab === "members" && <MembersManager />}
 
         {/* زر بيانات تجريبية — يظهر فقط في لوحة القيادة عند عدم وجود بيانات */}
-        {tab === "dashboard" && (
+        {tab === "dashboard" && isAdmin && (
           <div className="mt-6 text-center">
             <Button
               variant="ghost"

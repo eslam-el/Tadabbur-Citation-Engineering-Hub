@@ -1,15 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import {
-  UserPlus,
-  Trash2,
-  Pencil,
-  Check,
-  X,
-  Users,
-  Loader2,
-} from "lucide-react";
+import { UserPlus, Trash2, Pencil, Check, X, Users, Loader2, ShieldCheck, ShieldAlert, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -34,6 +26,9 @@ type Member = {
   color: string;
   initials: string;
   active: boolean;
+  email: string | null;
+  accessLevel: string;
+  status: string;
   createdAt: string;
   _count?: { reports: number; solvedReports: number };
 };
@@ -42,7 +37,7 @@ const INPUT_CLASS =
   "bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] placeholder:text-[var(--text-dim)]";
 
 export function MembersManager() {
-  const { current, setCurrent, refresh: refreshCtx } = useMember();
+  const { current, isAdmin, refresh: refreshCtx } = useMember();
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
@@ -67,12 +62,13 @@ export function MembersManager() {
 
   const onDelete = async (id: string) => {
     if (id === current?.id) {
-      toast.error("لا يمكنك حذف نفسك أثناء استخدامك للحساب.");
+      toast.error("لا يمكنك حذف حسابك أثناء استخدامه.");
       return;
     }
-    if (!confirm("هل تريد حذف هذا العضو؟ سيتم الاحتفاظ ببلاغاته.")) return;
+    if (!confirm("هل تريد حذف هذا العضو؟ ستُحذف بلاغاته وتعليقاته معه نهائيًا.")) return;
     try {
-      await fetch(`/api/members/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/members/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
       toast.success("تم حذف العضو.");
       refresh();
       refreshCtx();
@@ -80,6 +76,52 @@ export function MembersManager() {
       toast.error("تعذّر الحذف.");
     }
   };
+
+  const approve = async (id: string) => {
+    try {
+      const res = await fetch(`/api/members/${id}/approve`, { method: "PATCH" });
+      if (!res.ok) throw new Error();
+      toast.success("تم اعتماد العضو.");
+      refresh();
+      refreshCtx();
+    } catch {
+      toast.error("تعذّر الاعتماد.");
+    }
+  };
+
+  const setAccess = async (id: string, accessLevel: "USER" | "ADMIN") => {
+    try {
+      const res = await fetch(`/api/members/${id}/access`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accessLevel }),
+      });
+      if (!res.ok) throw new Error();
+      toast.success(accessLevel === "ADMIN" ? "تمت الترقية إلى مدير." : "تم الخفض إلى مستخدم.");
+      refresh();
+      refreshCtx();
+    } catch {
+      toast.error("تعذّر تغيير الصلاحية.");
+    }
+  };
+
+  const deleteDemo = async () => {
+    if (!confirm("سيتم حذف جميع الأعضاء التجريبيين (بلا بريد) وبلاغاتهم نهائيًا. متابعة؟")) return;
+    try {
+      const res = await fetch("/api/members/demo", { method: "DELETE" });
+      const data = await res.json();
+      if (!res.ok) throw new Error();
+      toast.success(`تم حذف ${data.members} عضوًا تجريبيًا و${data.reports} بلاغًا.`);
+      refresh();
+      refreshCtx();
+    } catch {
+      toast.error("تعذّر حذف البيانات التجريبية.");
+    }
+  };
+
+  const pending = members.filter((m) => m.status === "PENDING");
+  const activeMembers = members.filter((m) => m.status !== "PENDING");
+  const hasDemo = members.some((m) => !m.email);
 
   return (
     <div className="space-y-4">
@@ -105,18 +147,65 @@ export function MembersManager() {
             </p>
           </div>
         </div>
-        <Button
-          onClick={() => setAdding(true)}
-          className="gap-2"
-          style={{
-            background: "linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold))",
-            color: "var(--primary-foreground)",
-          }}
-        >
-          <UserPlus className="w-4 h-4" />
-          إضافة عضو
-        </Button>
+        {isAdmin && (
+          <Button
+            onClick={() => setAdding(true)}
+            className="gap-2"
+            style={{
+              background: "linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold))",
+              color: "var(--primary-foreground)",
+            }}
+          >
+            <UserPlus className="w-4 h-4" />
+            إضافة عضو
+          </Button>
+        )}
       </div>
+
+      {isAdmin && hasDemo && (
+        <div className="panel p-4 fade-up flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm" style={{ color: "var(--text-dim)" }}>
+            <Sparkles className="w-4 h-4" style={{ color: "var(--accent-gold-bright)" }} />
+            يوجد أعضاء/بيانات تجريبية. يمكنك حذفها لتفادي الالتباس بالبيانات الحقيقية.
+          </div>
+          <Button
+            onClick={deleteDemo}
+            variant="outline"
+            className="gap-2 border-[var(--accent-crimson)] text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]"
+          >
+            <Trash2 className="w-4 h-4" />
+            حذف البيانات التجريبية
+          </Button>
+        </div>
+      )}
+
+      {isAdmin && pending.length > 0 && (
+        <div className="panel p-4 fade-up">
+          <div className="flex items-center gap-2 mb-3">
+            <Clock className="w-4 h-4" style={{ color: "var(--accent-gold-bright)" }} />
+            <h3 className="text-sm font-bold m-0" style={{ color: "var(--text-strong)" }}>
+              بانتظار الموافقة ({pending.length})
+            </h3>
+          </div>
+          <div className="space-y-2">
+            {pending.map((m) => (
+              <div key={m.id} className="flex items-center gap-3 p-2 rounded-lg" style={{ background: "var(--surface-2)", border: "1px solid var(--border-soft)" }}>
+                <MemberAvatar name={m.name} color={m.color} initials={m.initials} size={36} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold m-0 truncate" style={{ color: "var(--text-strong)" }}>{m.name}</p>
+                  <p className="text-xs m-0 truncate" style={{ color: "var(--text-dim)" }}>{m.email}</p>
+                </div>
+                <Button size="sm" onClick={() => approve(m.id)} className="gap-1.5" style={{ background: "var(--accent-green)", color: "var(--primary-foreground)" }}>
+                  <Check className="w-3.5 h-3.5" /> اعتماد
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => onDelete(m.id)} className="text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]">
+                  <X className="w-3.5 h-3.5" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {loading ? (
         <div className="panel p-8">
@@ -130,27 +219,25 @@ export function MembersManager() {
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {members.map((m) => {
-            const isCurrent = m.id === current?.id;
-            const isEditing = editingId === m.id;
-            return (
+          {activeMembers.map((m) => (
               <MemberCard
                 key={m.id}
                 member={m}
-                isCurrent={isCurrent}
-                isEditing={isEditing}
+                isCurrent={m.id === current?.id}
+                isAdmin={isAdmin}
+                isEditing={editingId === m.id}
                 onEdit={() => setEditingId(m.id)}
                 onStopEdit={() => setEditingId(null)}
                 onDelete={() => onDelete(m.id)}
-                onSetCurrent={() => setCurrent({ id: m.id, name: m.name, role: m.role, color: m.color, initials: m.initials })}
+                onPromote={() => setAccess(m.id, "ADMIN")}
+                onDemote={() => setAccess(m.id, "USER")}
                 onUpdated={() => {
                   setEditingId(null);
                   refresh();
                   refreshCtx();
                 }}
               />
-            );
-          })}
+          ))}
         </div>
       )}
 
@@ -170,20 +257,24 @@ export function MembersManager() {
 function MemberCard({
   member,
   isCurrent,
+  isAdmin,
   isEditing,
   onEdit,
   onStopEdit,
   onDelete,
-  onSetCurrent,
+  onPromote,
+  onDemote,
   onUpdated,
 }: {
   member: Member;
   isCurrent: boolean;
+  isAdmin: boolean;
   isEditing: boolean;
   onEdit: () => void;
   onStopEdit: () => void;
   onDelete: () => void;
-  onSetCurrent: () => void;
+  onPromote: () => void;
+  onDemote: () => void;
   onUpdated: () => void;
 }) {
   const [name, setName] = useState(member.name);
@@ -250,6 +341,11 @@ function MemberCard({
             style={{ background: "var(--accent-gold)", color: "var(--primary-foreground)" }}
           >
             أنت
+          </span>
+        )}
+        {member.accessLevel === "ADMIN" && (
+          <span className="text-xs px-1.5 py-0.5 rounded inline-flex items-center gap-1" style={{ background: "var(--soft-gold-bg)", color: "var(--accent-gold-bright)" }}>
+            <ShieldCheck className="w-3 h-3" /> مدير
           </span>
         )}
       </div>
@@ -330,32 +426,30 @@ function MemberCard({
           </>
         ) : (
           <>
-            {!isCurrent && (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={onSetCurrent}
-                className="gap-1.5 flex-1 border-[var(--border-soft)] text-[var(--text-strong)] hover:bg-[var(--soft-gold-bg)]"
-              >
-                تعيين كعضوي
-              </Button>
-            )}
             <Button
               size="sm"
-              variant="ghost"
+              variant="outline"
               onClick={onEdit}
-              className="text-[var(--text-dim)] hover:bg-[var(--soft-gold-bg)]"
+              className="gap-1.5 flex-1 border-[var(--border-soft)] text-[var(--text-strong)] hover:bg-[var(--soft-gold-bg)]"
             >
-              <Pencil className="w-3.5 h-3.5" />
+              <Pencil className="w-3.5 h-3.5" /> تعديل
             </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              onClick={onDelete}
-              className="text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </Button>
+            {isAdmin && !isCurrent && (
+              <>
+                {member.accessLevel === "ADMIN" ? (
+                  <Button size="sm" variant="ghost" onClick={onDemote} title="خفض إلى مستخدم" className="text-[var(--text-dim)] hover:bg-[var(--soft-gold-bg)]">
+                    <ShieldAlert className="w-3.5 h-3.5" />
+                  </Button>
+                ) : (
+                  <Button size="sm" variant="ghost" onClick={onPromote} title="ترقية إلى مدير" className="text-[var(--text-dim)] hover:bg-[var(--soft-gold-bg)]">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                  </Button>
+                )}
+                <Button size="sm" variant="ghost" onClick={onDelete} className="text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </Button>
+              </>
+            )}
           </>
         )}
       </div>

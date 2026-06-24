@@ -1,22 +1,26 @@
 import { NextResponse } from "next/server";
+import { requireAdmin } from "@/lib/api-guard";
 import { db } from "@/lib/db";
 
 // POST /api/seed — يزرع بيانات تجريبية لتسهيل التجربة الأولى
 export async function POST() {
   try {
+    const gate = await requireAdmin();
+    if (!gate.ok) return gate.res;
+
     const existing = await db.member.count();
     if (existing > 0) {
       return NextResponse.json({ ok: true, skipped: true, message: "already_seeded" });
     }
 
     const m1 = await db.member.create({
-      data: { name: "أ. عبدالله", role: "محقق", color: "#c9a24b", initials: "ع" },
+      data: { name: "أ. عبدالله", role: "محقق", color: "#c9a24b", initials: "ع", seeded: true },
     });
     const m2 = await db.member.create({
-      data: { name: "أ. مريم", role: "مراجعة لغوية", color: "#b04a36", initials: "م" },
+      data: { name: "أ. مريم", role: "مراجعة لغوية", color: "#b04a36", initials: "م", seeded: true },
     });
     const m3 = await db.member.create({
-      data: { name: "أ. يوسف", role: "مطوّر CSL", color: "#7faa5a", initials: "ي" },
+      data: { name: "أ. يوسف", role: "مطوّر CSL", color: "#7faa5a", initials: "ي", seeded: true },
     });
 
     const samples: Array<{

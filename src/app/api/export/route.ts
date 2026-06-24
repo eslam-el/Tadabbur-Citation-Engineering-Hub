@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import * as XLSX from "xlsx";
 import { db } from "@/lib/db";
 import { ERROR_TYPES, SEVERITIES, STATUSES } from "@/lib/constants";
+import { requireActive } from "@/lib/api-guard";
 
 // GET /api/export?scope=all|reports|stats  — يصدّر ملف Excel منظّم
 export async function GET(req: NextRequest) {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const url = new URL(req.url);
     const scope = url.searchParams.get("scope") || "all";
 

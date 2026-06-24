@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { requireActive } from "@/lib/api-guard";
 
 // GET /api/reports/[id]
 export async function GET(
@@ -7,6 +8,9 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const { id } = await params;
     const report = await db.errorReport.findUnique({
       where: { id },
@@ -30,6 +34,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const { id } = await params;
     const body = await req.json();
     const data: Record<string, unknown> = {};
@@ -70,8 +77,8 @@ export async function PATCH(
 
     await db.activityLog.create({
       data: {
-        actorId: body?.actorId || null,
-        actorName: body?.actorName || null,
+        actorId: gate.user.memberId,
+        actorName: gate.user.name ?? null,
         action: "updated",
         targetType: "report",
         targetId: id,
@@ -88,17 +95,19 @@ export async function PATCH(
 
 // DELETE /api/reports/[id]
 export async function DELETE(
-  req: NextRequest,
+  _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const gate = await requireActive();
+    if (!gate.ok) return gate.res;
+
     const { id } = await params;
-    const body = await req.json().catch(() => ({}));
     await db.errorReport.delete({ where: { id } });
     await db.activityLog.create({
       data: {
-        actorId: body?.actorId || null,
-        actorName: body?.actorName || null,
+        actorId: gate.user.memberId,
+        actorName: gate.user.name ?? null,
         action: "deleted",
         targetType: "report",
         targetId: id,
