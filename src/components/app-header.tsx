@@ -38,21 +38,31 @@ export function Header({
     <header className="panel gold-rule mb-6 fade-up">
       <div className="flex flex-wrap items-end justify-between gap-4 p-5 md:p-6">
         <div className="flex items-center gap-4 min-w-0">
-          {/* طابع دائري */}
+          {/* طابع دائري — بوحدة rem ليتناسب ويتمدد مع حجم الخط */}
           <div
-            className="hidden sm:flex flex-col items-center justify-center rounded-full"
+            className="hidden sm:flex flex-col items-center justify-center rounded-full shrink-0"
             style={{
-              width: 88,
-              height: 88,
+              width: "5.75rem",
+              height: "5.75rem",
               border: "1px solid var(--border-soft)",
               background: "var(--soft-gold-bg)",
-              color: "var(--accent-gold)",
             }}
           >
-            <span className="font-display text-2xl leading-none" style={{ color: "var(--accent-gold-bright)" }}>
+            <span
+              className="font-display leading-none"
+              style={{ fontSize: "1.5rem", color: "var(--accent-gold-bright)" }}
+            >
               مرسم
             </span>
-            <span className="text-xs tracking-[3px] mt-1" style={{ color: "var(--text-dim)" }}>
+            <span
+              style={{
+                fontSize: "0.6rem",
+                letterSpacing: "0.2em",
+                textIndent: "0.2em",
+                marginTop: "0.4rem",
+                color: "var(--text-dim)",
+              }}
+            >
               TADABBUR
             </span>
           </div>
