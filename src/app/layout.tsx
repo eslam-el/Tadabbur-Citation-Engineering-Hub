@@ -49,10 +49,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" className="dark" suppressHydrationWarning>
-      <body
-        className={`${ibmPlexArabic.variable} ${alexandria.variable} ${jetbrainsMono.variable} antialiased bg-background text-foreground`}
-      >
+    <html
+      lang="ar"
+      dir="rtl"
+      className={`dark ${ibmPlexArabic.variable} ${alexandria.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="antialiased bg-background text-foreground">
         <SessionProvider>
           <ThemeProvider
             attribute="class"
