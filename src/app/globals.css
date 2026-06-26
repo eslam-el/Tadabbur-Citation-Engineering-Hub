@@ -108,15 +108,15 @@
 
 .dark {
   /* ===== الوضع الداكن — الهوية الأصلية (تباين ألطف للعين) ===== */
-  --ink: #15110b;
-  --ink-2: #1c1710;
-  --ink-3: #251f14;
-  --ink-4: #2e2618;
+  --ink: #1b1610;
+  --ink-2: #221c14;
+  --ink-3: #2a2318;
+  --ink-4: #322a1c;
 
   --gold: #c9a24b;
   --gold-bright: #e3c168;
   --gold-dim: #8b7330;
-  --parch: #d9cfba;
+  --parch: #cec5b0;
   --parch-dim: #a99e83;
 
   --crimson: #b04a36;
@@ -126,10 +126,10 @@
   --blue-soft: #6b8db5;
 
   /* توكنات دلالية — داكن */
-  --surface-1: #1c1710;
-  --surface-2: #251f14;
-  --surface-3: #2e2618;
-  --text-strong: #d9cfba;
+  --surface-1: #221c14;
+  --surface-2: #2a2318;
+  --surface-3: #322a1c;
+  --text-strong: #cec5b0;
   --text-dim: #a99e83;
   --accent-gold: #c9a24b;
   --accent-gold-bright: #e3c168;
@@ -142,19 +142,19 @@
   --shadow-md: 0 18px 50px rgba(0, 0, 0, 0.55);
 
   /* shadcn — داكن */
-  --background: #15110b;
-  --foreground: #d9cfba;
-  --card: #1c1710;
-  --card-foreground: #d9cfba;
-  --popover: #1c1710;
-  --popover-foreground: #d9cfba;
+  --background: #1b1610;
+  --foreground: #cec5b0;
+  --card: #221c14;
+  --card-foreground: #cec5b0;
+  --popover: #221c14;
+  --popover-foreground: #cec5b0;
   --primary: #c9a24b;
   --primary-foreground: #1a1408;
-  --secondary: #251f14;
-  --secondary-foreground: #d9cfba;
-  --muted: #251f14;
+  --secondary: #2a2318;
+  --secondary-foreground: #cec5b0;
+  --muted: #2a2318;
   --muted-foreground: #a99e83;
-  --accent: #2e2618;
+  --accent: #322a1c;
   --accent-foreground: #e3c168;
   --destructive: #b04a36;
   --destructive-foreground: #fbe9d8;
@@ -166,11 +166,11 @@
   --chart-3: #7faa5a;
   --chart-4: #6b8db5;
   --chart-5: #e3c168;
-  --sidebar: #1c1710;
-  --sidebar-foreground: #d9cfba;
+  --sidebar: #221c14;
+  --sidebar-foreground: #cec5b0;
   --sidebar-primary: #c9a24b;
   --sidebar-primary-foreground: #1a1408;
-  --sidebar-accent: #251f14;
+  --sidebar-accent: #2a2318;
   --sidebar-accent-foreground: #e3c168;
   --sidebar-border: rgba(201, 162, 75, 0.22);
   --sidebar-ring: #c9a24b;
