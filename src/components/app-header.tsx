@@ -4,8 +4,23 @@ import { MemberAvatar } from "@/components/chips";
 import { useMember } from "@/lib/member-context";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
-import { Users, LogOut } from "lucide-react";
+import {
+  Users,
+  LogOut,
+  LayoutDashboard,
+  FilePlus2,
+  ClipboardList,
+  type LucideIcon,
+} from "lucide-react";
+
+const TABS: { id: string; label: string; icon: LucideIcon }[] = [
+  { id: "dashboard", label: "لوحة القيادة", icon: LayoutDashboard },
+  { id: "new", label: "بلاغ جديد", icon: FilePlus2 },
+  { id: "reports", label: "سجل البلاغات", icon: ClipboardList },
+  { id: "members", label: "أعضاء الفريق", icon: Users },
+];
 
 export function Header({
   onAddMember,
@@ -108,39 +123,56 @@ export function Header({
         </div>
       </div>
 
-      {/* شريط التبويبات */}
-      <nav className="flex flex-wrap gap-1 px-3 md:px-5 pb-3 -mt-1">
-        {[
-          { id: "dashboard", label: "لوحة القيادة" },
-          { id: "new", label: "بلاغ جديد" },
-          { id: "reports", label: "سجل البلاغات" },
-          { id: "members", label: "أعضاء الفريق" },
-        ].map((t) => (
-          <button
-            key={t.id}
-            onClick={() => onTabChange(t.id)}
-            className="px-4 py-2 rounded-md text-sm font-semibold transition-all duration-200 whitespace-nowrap relative"
-            style={{
-              background:
-                activeTab === t.id ? "var(--soft-gold-bg)" : "transparent",
-              color: activeTab === t.id ? "var(--accent-gold-bright)" : "var(--text-dim)",
-              border:
-                activeTab === t.id
-                  ? "1px solid var(--border-soft)"
-                  : "1px solid transparent",
-            }}
-          >
-            {t.label}
-            <span
-              className="absolute inset-x-3 bottom-0.5 h-0.5 rounded-full transition-all duration-300"
-              style={{
-                background: "var(--accent-gold-bright)",
-                opacity: activeTab === t.id ? 1 : 0,
-                transform: activeTab === t.id ? "scaleX(1)" : "scaleX(0)",
-              }}
-            />
-          </button>
-        ))}
+      {/* شريط التبويبات — تحكّم مقسّم احترافي */}
+      <nav
+        className="px-4 md:px-6 pt-3 pb-5"
+        style={{ borderTop: "1px solid var(--border-soft)" }}
+      >
+        <div
+          role="tablist"
+          aria-label="أقسام المنصة"
+          className="inline-flex items-center gap-1 p-1.5 rounded-2xl max-w-full overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{
+            background: "var(--surface-2)",
+            border: "1px solid var(--border-soft)",
+            boxShadow: "inset 0 1px 3px rgba(0,0,0,0.28)",
+          }}
+        >
+          {TABS.map((t) => {
+            const active = activeTab === t.id;
+            const Icon = t.icon;
+            return (
+              <button
+                key={t.id}
+                role="tab"
+                aria-selected={active}
+                onClick={() => onTabChange(t.id)}
+                className={cn(
+                  "inline-flex items-center gap-2 px-3.5 md:px-4 py-2 rounded-xl text-[13px] md:text-sm font-bold tracking-tight whitespace-nowrap transition-all duration-200 outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent-gold)]/50",
+                  !active &&
+                    "text-[var(--text-dim)] hover:text-[var(--accent-gold-bright)] hover:bg-[var(--soft-gold-bg)]"
+                )}
+                style={
+                  active
+                    ? {
+                        background:
+                          "linear-gradient(180deg, var(--accent-gold-bright), var(--accent-gold))",
+                        color: "var(--primary-foreground)",
+                        boxShadow:
+                          "0 2px 12px rgba(201,162,75,0.28), inset 0 1px 0 rgba(255,255,255,0.18)",
+                      }
+                    : undefined
+                }
+              >
+                <Icon
+                  className="w-[17px] h-[17px] md:w-[18px] md:h-[18px] shrink-0"
+                  style={{ opacity: active ? 1 : 0.8 }}
+                />
+                <span>{t.label}</span>
+              </button>
+            );
+          })}
+        </div>
       </nav>
     </header>
   );
