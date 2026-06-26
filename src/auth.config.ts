@@ -13,12 +13,18 @@ export const authConfig = {
   pages: { signIn: "/login" },
   callbacks: {
     // يُنسخ الـ claims من user (الذي ملأه signIn في auth.ts) إلى التوكن مرة واحدة عند الدخول.
-    jwt({ token, user }) {
+    // وعند trigger=update تُحدَّث الحالة/الصلاحية في التوكن (مثلاً بعد اعتماد المدير) دون إعادة دخول.
+    jwt({ token, user, trigger, session }) {
       if (user) {
         const u = user as { memberId?: string; accessLevel?: string; status?: string };
         if (u.memberId) token.memberId = u.memberId;
         if (u.accessLevel) token.accessLevel = u.accessLevel;
         if (u.status) token.status = u.status;
+      }
+      if (trigger === "update" && session) {
+        const s = session as { status?: string; accessLevel?: string };
+        if (s.status) token.status = s.status;
+        if (s.accessLevel) token.accessLevel = s.accessLevel;
       }
       return token;
     },

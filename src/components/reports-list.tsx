@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef, type Dispatch, type SetStateAction } from "react";
 import {
   Search,
   Filter,
@@ -10,6 +10,11 @@ import {
   CheckCircle2,
   Loader2,
   RefreshCw,
+  Pencil,
+  X,
+  Check,
+  ChevronDown,
+  Quote,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +33,11 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 import { MemberAvatar, TypeChip, SeverityChip, StatusChip } from "@/components/chips";
 import {
   ERROR_TYPE_LIST,
@@ -69,10 +79,31 @@ type Report = {
     createdAt: string;
     author: { id: string; name: string; color: string; initials: string };
   }[];
+  examples: Example[];
+};
+
+type Example = {
+  id: string;
+  body: string;
+  createdAt: string;
+  updatedAt: string;
+  author: { id: string; name: string; color: string; initials: string };
+};
+
+type EditState = {
+  title: string;
+  description: string;
+  type: ErrorType;
+  severity: Severity;
+  priority: number;
+  location: string;
+  pageNumber: string;
+  fieldTag: string;
+  tags: string;
 };
 
 export function ReportsList({ onNew }: { onNew: () => void }) {
-  const { current, members } = useMember();
+  const { current, members, isAdmin } = useMember();
   const [reports, setReports] = useState<Report[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
@@ -107,6 +138,11 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
   useEffect(() => {
     refresh();
   }, [refresh]);
+
+  const updateReportExamples = useCallback((reportId: string, examples: Example[]) => {
+    setReports((rs) => rs.map((r) => (r.id === reportId ? { ...r, examples } : r)));
+    setSelected((s) => (s && s.id === reportId ? { ...s, examples } : s));
+  }, []);
 
   const onDelete = async (id: string) => {
     if (!confirm("هل أنت متأكد من حذف هذا البلاغ؟ لا يمكن التراجع.")) return;
@@ -215,13 +251,24 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
       ) : (
         <div className="grid gap-2.5">
           {reports.map((r) => (
-            <button
+            <div
               key={r.id}
-              onClick={() => setSelected(r)}
-              className="panel p-4 text-start fade-up glow-hover"
+              className="panel fade-up glow-hover overflow-hidden"
               style={{ opacity: r.status === "closed" ? 0.7 : 1 }}
             >
-              <div className="flex items-start gap-3">
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelected(r)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelected(r);
+                  }
+                }}
+                className="block w-full p-4 text-start cursor-pointer"
+              >
+                <div className="flex items-start gap-3">
                 <MemberAvatar
                   name={r.author.name}
                   color={r.author.color}
@@ -266,9 +313,11 @@ export function ReportsList({ onNew }: { onNew: () => void }) {
                       {r.pageNumber && <span>📄 {r.pageNumber}</span>}
                     </div>
                   )}
+                  </div>
                 </div>
               </div>
-            </button>
+              <ExamplesSection report={r} onExamplesChange={updateReportExamples} />
+            </div>
           ))}
         </div>
       )}
@@ -323,23 +372,88 @@ function ReportDialog({
   onUpdate: (r: Report) => void;
   onDelete: (id: string) => void;
 }) {
-  const { current, members } = useMember();
+  const { current, members, isAdmin } = useMember();
   const [solutionText, setSolutionText] = useState("");
   const [solutionAuthorId, setSolutionAuthorId] = useState<string>("");
   const [comment, setComment] = useState("");
   const [newStatus, setNewStatus] = useState<ReportStatus | "none">("none");
   const [savingSolution, setSavingSolution] = useState(false);
   const [savingComment, setSavingComment] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [savingEdit, setSavingEdit] = useState(false);
+  const [edit, setEdit] = useState<EditState>({
+    title: "",
+    description: "",
+    type: "data",
+    severity: "medium",
+    priority: 3,
+    location: "",
+    pageNumber: "",
+    fieldTag: "",
+    tags: "",
+  });
 
   useEffect(() => {
     if (report) {
       setSolutionText(report.solutionText || "");
       setSolutionAuthorId(report.solutionAuthorId || current?.id || "");
       setNewStatus("none");
+      setEditing(false);
+      setEdit({
+        title: report.title,
+        description: report.description,
+        type: report.type,
+        severity: report.severity,
+        priority: report.priority,
+        location: report.location || "",
+        pageNumber: report.pageNumber || "",
+        fieldTag: report.fieldTag || "",
+        tags: report.tags || "",
+      });
     }
   }, [report, current]);
 
   if (!report) return null;
+
+  const canManage = !!current && (current.id === report.authorId || isAdmin);
+
+  const saveEdit = async () => {
+    if (!edit.title.trim() || !edit.description.trim()) {
+      toast.error("العنوان والوصف مطلوبان.");
+      return;
+    }
+    setSavingEdit(true);
+    try {
+      const res = await fetch(`/api/reports/${report.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: edit.title.trim(),
+          description: edit.description.trim(),
+          type: edit.type,
+          severity: edit.severity,
+          priority: Number(edit.priority),
+          location: edit.location.trim() || null,
+          pageNumber: edit.pageNumber.trim() || null,
+          fieldTag: edit.fieldTag.trim() || null,
+          tags: edit.tags.trim() || null,
+        }),
+      });
+      if (res.status === 403) {
+        toast.error("لا تملك صلاحية تعديل هذا البلاغ.");
+        return;
+      }
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      onUpdate(data.report);
+      setEditing(false);
+      toast.success("تم تحديث البلاغ.");
+    } catch {
+      toast.error("تعذّر حفظ التعديلات.");
+    } finally {
+      setSavingEdit(false);
+    }
+  };
 
   const saveSolution = async () => {
     if (!solutionText.trim()) {
@@ -436,18 +550,42 @@ function ReportDialog({
                 <span>{fmtDateTime(report.createdAt)}</span>
               </DialogDescription>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onDelete(report.id)}
-              className="text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]"
-            >
-              <Trash2 className="w-4 h-4" />
-            </Button>
+            {canManage && (
+              <div className="flex items-center gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setEditing((v) => !v)}
+                  title={editing ? "إلغاء التعديل" : "تعديل البلاغ"}
+                  className="text-[var(--accent-gold-bright)] hover:bg-[var(--soft-gold-bg)]"
+                >
+                  {editing ? <X className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onDelete(report.id)}
+                  title="حذف البلاغ"
+                  className="text-[var(--accent-crimson)] hover:bg-[var(--soft-crimson-bg)]"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
           </div>
         </DialogHeader>
 
         <div className="space-y-5 mt-3">
+          {editing ? (
+            <ReportEditForm
+              edit={edit}
+              setEdit={setEdit}
+              onSave={saveEdit}
+              onCancel={() => setEditing(false)}
+              saving={savingEdit}
+            />
+          ) : (
+          <>
           {/* الشارات */}
           <div className="flex flex-wrap items-center gap-2">
             <TypeChip type={report.type} />
@@ -497,6 +635,8 @@ function ReportDialog({
               <Detail label="تاريخ الإغلاق" value={fmtDateTime(report.closedAt)} />
             )}
           </div>
+          </>
+          )}
 
           {/* تغيير الحالة */}
           <div>
@@ -681,5 +821,397 @@ function Detail({
         {value}
       </p>
     </div>
+  );
+}
+
+// حقل نصي ذكي يتمدد رأسيًا تلقائيًا مع المحتوى (سطر أو فقرة).
+function AutoTextarea({
+  value,
+  onChange,
+  placeholder,
+  autoFocus,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  autoFocus?: boolean;
+}) {
+  const ref = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 360) + "px";
+  }, [value]);
+  return (
+    <textarea
+      ref={ref}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      autoFocus={autoFocus}
+      rows={1}
+      className="w-full resize-none overflow-y-auto rounded-md px-3 py-2 text-sm leading-relaxed bg-[var(--surface-2)] border border-[var(--border-soft)] text-[var(--text-strong)] placeholder:text-[var(--text-dim)] outline-none transition focus-visible:border-[var(--accent-gold)] focus-visible:ring-2 focus-visible:ring-[var(--accent-gold)]/30"
+    />
+  );
+}
+
+// نموذج تعديل البلاغ الأساسي (داخل نافذة العرض، لصاحب البلاغ أو المدير).
+function ReportEditForm({
+  edit,
+  setEdit,
+  onSave,
+  onCancel,
+  saving,
+}: {
+  edit: EditState;
+  setEdit: Dispatch<SetStateAction<EditState>>;
+  onSave: () => void;
+  onCancel: () => void;
+  saving: boolean;
+}) {
+  const set = <K extends keyof EditState>(k: K, v: EditState[K]) =>
+    setEdit((e) => ({ ...e, [k]: v }));
+  const fieldCls =
+    "bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] placeholder:text-[var(--text-dim)]";
+  const triggerCls =
+    "bg-[var(--surface-2)] border-[var(--border-soft)] text-[var(--text-strong)] text-xs";
+  const contentCls =
+    "bg-[var(--surface-1)] border-[var(--border-soft)] text-[var(--text-strong)]";
+
+  return (
+    <div className="space-y-3">
+      <div>
+        <label className="text-xs font-bold mb-1.5 block" style={{ color: "var(--accent-gold-bright)" }}>
+          العنوان
+        </label>
+        <Input value={edit.title} onChange={(e) => set("title", e.target.value)} className={fieldCls} />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <Select value={edit.type} onValueChange={(v) => set("type", v as ErrorType)}>
+          <SelectTrigger className={triggerCls}>
+            <SelectValue placeholder="النوع" />
+          </SelectTrigger>
+          <SelectContent className={contentCls}>
+            {ERROR_TYPE_LIST.map((t) => (
+              <SelectItem key={t.value} value={t.value} className="focus:bg-[var(--soft-gold-bg)] text-xs">
+                {t.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={edit.severity} onValueChange={(v) => set("severity", v as Severity)}>
+          <SelectTrigger className={triggerCls}>
+            <SelectValue placeholder="الخطورة" />
+          </SelectTrigger>
+          <SelectContent className={contentCls}>
+            {SEVERITY_LIST.map((s) => (
+              <SelectItem key={s.value} value={s.value} className="focus:bg-[var(--soft-gold-bg)] text-xs">
+                {s.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={String(edit.priority)} onValueChange={(v) => set("priority", Number(v))}>
+          <SelectTrigger className={triggerCls}>
+            <SelectValue placeholder="الأولوية" />
+          </SelectTrigger>
+          <SelectContent className={contentCls}>
+            {PRIORITY_LIST.map((p) => (
+              <SelectItem key={p.value} value={String(p.value)} className="focus:bg-[var(--soft-gold-bg)] text-xs">
+                {p.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <label className="text-xs font-bold mb-1.5 block" style={{ color: "var(--accent-gold-bright)" }}>
+          الوصف
+        </label>
+        <AutoTextarea value={edit.description} onChange={(v) => set("description", v)} />
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+        <Input value={edit.location} onChange={(e) => set("location", e.target.value)} placeholder="الموقع / المرجع" className={fieldCls} />
+        <Input value={edit.pageNumber} onChange={(e) => set("pageNumber", e.target.value)} placeholder="رقم الصفحة" className={fieldCls} />
+        <Input value={edit.fieldTag} onChange={(e) => set("fieldTag", e.target.value)} placeholder="الحقل (CSL/مندلي)" className={fieldCls} />
+      </div>
+      <Input value={edit.tags} onChange={(e) => set("tags", e.target.value)} placeholder="الوسوم (مفصولة بفواصل)" className={fieldCls} />
+
+      <div className="flex gap-2 justify-end pt-1">
+        <Button
+          variant="outline"
+          onClick={onCancel}
+          className="gap-1.5 border-[var(--border-soft)] text-[var(--text-strong)] hover:bg-[var(--soft-gold-bg)]"
+        >
+          <X className="w-4 h-4" /> إلغاء
+        </Button>
+        <Button
+          onClick={onSave}
+          disabled={saving}
+          className="gap-1.5"
+          style={{
+            background: "linear-gradient(180deg, var(--accent-green), var(--accent-green))",
+            color: "var(--primary-foreground)",
+          }}
+        >
+          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+          حفظ التعديلات
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// قسم الشواهد/الأمثلة القابل للطي أسفل كل بطاقة بلاغ.
+function ExamplesSection({
+  report,
+  onExamplesChange,
+}: {
+  report: Report;
+  onExamplesChange: (reportId: string, examples: Example[]) => void;
+}) {
+  const { current, isAdmin } = useMember();
+  const examples = report.examples ?? [];
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState("");
+  const [adding, setAdding] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDraft, setEditDraft] = useState("");
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  const canManageExample = (ex: Example) =>
+    !!current && (current.id === ex.author.id || isAdmin);
+
+  const addExample = async () => {
+    const text = draft.trim();
+    if (!text) {
+      toast.error("اكتب نص الشاهد أولًا.");
+      return;
+    }
+    if (!current) {
+      toast.error("تعذّر تحديد عضويتك.");
+      return;
+    }
+    setAdding(true);
+    try {
+      const res = await fetch(`/api/reports/${report.id}/examples`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body: text }),
+      });
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      onExamplesChange(report.id, [...examples, data.example]);
+      setDraft("");
+      toast.success("تمت إضافة الشاهد.");
+    } catch {
+      toast.error("تعذّر إضافة الشاهد.");
+    } finally {
+      setAdding(false);
+    }
+  };
+
+  const saveEdit = async (id: string) => {
+    const text = editDraft.trim();
+    if (!text) {
+      toast.error("نص الشاهد فارغ.");
+      return;
+    }
+    setBusyId(id);
+    try {
+      const res = await fetch(`/api/reports/${report.id}/examples/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ body: text }),
+      });
+      if (res.status === 403) {
+        toast.error("لا تملك صلاحية تعديل هذا الشاهد.");
+        return;
+      }
+      if (!res.ok) throw new Error();
+      const data = await res.json();
+      onExamplesChange(report.id, examples.map((x) => (x.id === id ? data.example : x)));
+      setEditingId(null);
+      setEditDraft("");
+      toast.success("تم تحديث الشاهد.");
+    } catch {
+      toast.error("تعذّر حفظ التعديل.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const removeExample = async (id: string) => {
+    if (!confirm("هل تريد حذف هذا الشاهد؟")) return;
+    setBusyId(id);
+    try {
+      const res = await fetch(`/api/reports/${report.id}/examples/${id}`, {
+        method: "DELETE",
+      });
+      if (res.status === 403) {
+        toast.error("لا تملك صلاحية حذف هذا الشاهد.");
+        return;
+      }
+      if (!res.ok) throw new Error();
+      onExamplesChange(report.id, examples.filter((x) => x.id !== id));
+      toast.success("تم حذف الشاهد.");
+    } catch {
+      toast.error("تعذّر الحذف.");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const n = examples.length;
+  const label =
+    n === 0
+      ? "إضافة شاهد"
+      : `عرض ${n} ${n === 1 ? "شاهد" : n === 2 ? "شاهدين" : n <= 10 ? "شواهد" : "شاهدًا"}`;
+
+  return (
+    <Collapsible open={open} onOpenChange={setOpen}>
+      <div className="border-t" style={{ borderColor: "var(--border-soft)" }}>
+        <CollapsibleTrigger asChild>
+          <button className="w-full flex items-center justify-between gap-2 px-4 py-2.5 text-xs font-semibold transition hover:bg-[var(--soft-gold-bg)]">
+            <span className="inline-flex items-center gap-1.5" style={{ color: "var(--accent-gold-bright)" }}>
+              <Quote className="w-3.5 h-3.5" />
+              {label}
+            </span>
+            <ChevronDown
+              className={`w-4 h-4 transition-transform ${open ? "rotate-180" : ""}`}
+              style={{ color: "var(--text-dim)" }}
+            />
+          </button>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="px-4 pb-4 pt-1 space-y-3">
+            {/* حقل الإضافة الذكي */}
+            <div className="space-y-2">
+              <AutoTextarea
+                value={draft}
+                onChange={setDraft}
+                placeholder="أضف شاهدًا أو مثالًا تطبيقيًا… (سطر أو فقرة كاملة)"
+              />
+              <div className="flex items-center gap-2 justify-end">
+                {draft.trim() && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setDraft("")}
+                    className="gap-1 text-[var(--text-dim)] hover:bg-[var(--soft-crimson-bg)]"
+                  >
+                    <X className="w-3.5 h-3.5" /> مسح
+                  </Button>
+                )}
+                <Button
+                  size="sm"
+                  onClick={addExample}
+                  disabled={adding || !draft.trim()}
+                  className="gap-1.5"
+                  style={{
+                    background: "linear-gradient(180deg, var(--accent-green), var(--accent-green))",
+                    color: "var(--primary-foreground)",
+                  }}
+                >
+                  {adding ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+                  إضافة شاهد
+                </Button>
+              </div>
+            </div>
+
+            {/* قائمة الشواهد المحفوظة */}
+            {n > 0 ? (
+              <div className="space-y-2">
+                {examples.map((ex, i) => (
+                  <div
+                    key={ex.id}
+                    className="rounded-lg p-2.5"
+                    style={{ background: "var(--ink-2)", border: "1px solid var(--border-soft)" }}
+                  >
+                    {editingId === ex.id ? (
+                      <div className="space-y-2">
+                        <AutoTextarea value={editDraft} onChange={setEditDraft} autoFocus />
+                        <div className="flex gap-2 justify-end">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setEditingId(null);
+                              setEditDraft("");
+                            }}
+                            className="gap-1 text-[var(--text-dim)]"
+                          >
+                            <X className="w-3.5 h-3.5" /> إلغاء
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => saveEdit(ex.id)}
+                            disabled={busyId === ex.id}
+                            className="gap-1.5"
+                            style={{ background: "var(--accent-green)", color: "var(--primary-foreground)" }}
+                          >
+                            {busyId === ex.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Check className="w-3.5 h-3.5" />}
+                            حفظ
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex items-start gap-2.5">
+                        <span className="tnum text-xs mt-0.5 shrink-0" style={{ color: "var(--accent-gold-bright)" }}>
+                          {i + 1}.
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs m-0 whitespace-pre-wrap leading-relaxed" style={{ color: "var(--text-strong)" }}>
+                            {ex.body}
+                          </p>
+                          <div className="flex items-center gap-1.5 mt-1.5 text-[11px]" style={{ color: "var(--text-dim)" }}>
+                            <MemberAvatar name={ex.author.name} color={ex.author.color} initials={ex.author.initials} size={16} />
+                            <span>{ex.author.name}</span>
+                            <span>·</span>
+                            <span>{fmtRelative(ex.createdAt)}</span>
+                          </div>
+                        </div>
+                        {canManageExample(ex) && (
+                          <div className="flex items-center gap-0.5 shrink-0">
+                            <button
+                              onClick={() => {
+                                setEditingId(ex.id);
+                                setEditDraft(ex.body);
+                              }}
+                              title="تعديل الشاهد"
+                              className="p-1 rounded hover:bg-[var(--soft-gold-bg)]"
+                              style={{ color: "var(--accent-gold-bright)" }}
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => removeExample(ex.id)}
+                              disabled={busyId === ex.id}
+                              title="حذف الشاهد"
+                              className="p-1 rounded hover:bg-[var(--soft-crimson-bg)]"
+                              style={{ color: "var(--accent-crimson)" }}
+                            >
+                              {busyId === ex.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Trash2 className="w-3.5 h-3.5" />}
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-center py-1" style={{ color: "var(--text-dim)" }}>
+                لا شواهد بعد — كن أول من يضيف مثالًا.
+              </p>
+            )}
+          </div>
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
   );
 }

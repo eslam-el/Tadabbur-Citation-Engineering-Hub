@@ -38,6 +38,10 @@ export async function GET(req: NextRequest) {
           include: { author: true },
           orderBy: { createdAt: "asc" },
         },
+        examples: {
+          include: { author: true },
+          orderBy: { createdAt: "asc" },
+        },
       },
     });
 
@@ -91,6 +95,7 @@ export async function POST(req: NextRequest) {
         author: true,
         solutionAuthor: true,
         comments: { include: { author: true } },
+        examples: { include: { author: true } },
       },
     });
 

@@ -31,6 +31,7 @@ model Member {
   reports        ErrorReport[]     @relation("ReportAuthor")
   solvedReports  ErrorReport[]     @relation("ReportSolver")
   comments       ReportComment[]
+  examples       ReportExample[]
 }
 
 // أنواع البلاغات: خطأ في البيانات، خطأ في النمط، خطأ في إضافة مندلي، ملاحظة، مقترح، أخرى
@@ -73,6 +74,7 @@ model ErrorReport {
   updatedAt     DateTime @updatedAt
 
   comments      ReportComment[]
+  examples      ReportExample[]
 
   @@index([type])
   @@index([status])
@@ -90,6 +92,20 @@ model ReportComment {
   body      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([reportId])
+}
+
+// شواهد / أمثلة تطبيقية مرفقة بالبلاغ (سطر أو فقرة لكل شاهد)
+model ReportExample {
+  id        String      @id @default(cuid())
+  reportId  String
+  report    ErrorReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    Member      @relation(fields: [authorId], references: [id])
+  body      String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 
   @@index([reportId])
 }

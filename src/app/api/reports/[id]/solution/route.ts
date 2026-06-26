@@ -41,7 +41,8 @@ export async function POST(
       include: {
         author: true,
         solutionAuthor: true,
-        comments: { include: { author: true } },
+        comments: { include: { author: true }, orderBy: { createdAt: "asc" } },
+        examples: { include: { author: true }, orderBy: { createdAt: "asc" } },
       },
     });
 

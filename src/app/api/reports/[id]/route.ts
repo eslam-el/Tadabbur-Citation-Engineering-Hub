@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireActive } from "@/lib/api-guard";
+import { isAdmin } from "@/lib/permissions";
 
 // GET /api/reports/[id]
 export async function GET(
@@ -18,6 +19,7 @@ export async function GET(
         author: true,
         solutionAuthor: true,
         comments: { include: { author: true }, orderBy: { createdAt: "asc" } },
+        examples: { include: { author: true }, orderBy: { createdAt: "asc" } },
       },
     });
     if (!report) return NextResponse.json({ error: "not_found" }, { status: 404 });
@@ -41,7 +43,10 @@ export async function PATCH(
     const body = await req.json();
     const data: Record<string, unknown> = {};
 
-    const allowed = [
+    // الحالة قابلة للتغيير من أي عضو مُعتمَد (تعاون الفريق).
+    // أما تعديل البلاغ الأساسي فمقصور على صاحب البلاغ أو المدير.
+    const statusOnly = ["status"] as const;
+    const coreFields = [
       "type",
       "severity",
       "title",
@@ -49,12 +54,22 @@ export async function PATCH(
       "location",
       "pageNumber",
       "fieldTag",
-      "status",
       "priority",
       "tags",
     ] as const;
 
-    for (const k of allowed) {
+    const wantsCoreEdit = coreFields.some((k) => k in body);
+    if (wantsCoreEdit) {
+      const existing = await db.errorReport.findUnique({
+        where: { id },
+        select: { authorId: true },
+      });
+      if (!existing) return NextResponse.json({ error: "not_found" }, { status: 404 });
+      const canManage = existing.authorId === gate.user.memberId || isAdmin(gate.user);
+      if (!canManage) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    }
+
+    for (const k of [...statusOnly, ...coreFields]) {
       if (k in body) data[k] = body[k];
     }
 
@@ -71,7 +86,8 @@ export async function PATCH(
       include: {
         author: true,
         solutionAuthor: true,
-        comments: { include: { author: true } },
+        comments: { include: { author: true }, orderBy: { createdAt: "asc" } },
+        examples: { include: { author: true }, orderBy: { createdAt: "asc" } },
       },
     });
 
@@ -103,6 +119,15 @@ export async function DELETE(
     if (!gate.ok) return gate.res;
 
     const { id } = await params;
+
+    const existing = await db.errorReport.findUnique({
+      where: { id },
+      select: { authorId: true },
+    });
+    if (!existing) return NextResponse.json({ error: "not_found" }, { status: 404 });
+    const canManage = existing.authorId === gate.user.memberId || isAdmin(gate.user);
+    if (!canManage) return NextResponse.json({ error: "forbidden" }, { status: 403 });
+
     await db.errorReport.delete({ where: { id } });
     await db.activityLog.create({
       data: {
