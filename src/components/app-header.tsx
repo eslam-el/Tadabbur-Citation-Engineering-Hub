@@ -3,6 +3,7 @@
 import { MemberAvatar } from "@/components/chips";
 import { useMember } from "@/lib/member-context";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { FontSizeControl } from "@/components/font-size-control";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { signOut } from "next-auth/react";
@@ -75,6 +76,7 @@ export function Header({
 
         {/* أدوات: تبديل الثيم + هوية المستخدم */}
         <div className="flex items-center gap-3 flex-wrap">
+          <FontSizeControl />
           <ThemeToggle />
 
           {isAdmin && (

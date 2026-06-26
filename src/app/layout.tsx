@@ -4,7 +4,11 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as SonnerToaster } from "@/components/ui/sonner";
+import { FontScaleProvider } from "@/components/font-scale-provider";
 import { SessionProvider } from "next-auth/react";
+
+// يطبّق حجم الخط المحفوظ قبل الرسم (يمنع وميض تغيّر الحجم عند التحميل).
+const FONT_SCALE_INIT = `try{var s=localStorage.getItem('tadabbur-font-scale');var m=[90,100,110,120,132];var i=s===null?1:parseInt(s,10);if(!(i>=0&&i<m.length))i=1;document.documentElement.style.fontSize=m[i]+'%';}catch(e){}`;
 
 const ibmPlexArabic = IBM_Plex_Sans_Arabic({
   variable: "--font-plex-arabic",
@@ -56,6 +60,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="antialiased bg-background text-foreground">
+        <script dangerouslySetInnerHTML={{ __html: FONT_SCALE_INIT }} />
         <SessionProvider>
           <ThemeProvider
             attribute="class"
@@ -63,9 +68,11 @@ export default function RootLayout({
             enableSystem={false}
             disableTransitionOnChange
           >
-            {children}
-            <Toaster />
-            <SonnerToaster position="top-center" richColors />
+            <FontScaleProvider>
+              {children}
+              <Toaster />
+              <SonnerToaster position="top-center" richColors />
+            </FontScaleProvider>
           </ThemeProvider>
         </SessionProvider>
       </body>
